@@ -37,38 +37,6 @@ dialog::backdrop {
   background: rgb(0 0 0 / 0.55);
 }
 
-/* Loop continuo dei loghi servizi (stile "logo loop"): tutto CSS. */
-.loop-loghi {
-  overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-}
-
-.loop-loghi-traccia {
-  display: flex;
-  align-items: center;
-  gap: 4rem;
-  width: max-content;
-  padding-block: 1rem;
-  animation: scorri-loghi 25s linear infinite;
-}
-
-.loop-loghi:hover .loop-loghi-traccia {
-  animation-play-state: paused;
-}
-
-@keyframes scorri-loghi {
-  to {
-    /* metà traccia + metà gap: le due metà identiche si danno il cambio */
-    transform: translateX(calc(-50% - 2rem));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loop-loghi-traccia {
-    animation: none;
-  }
-}
-
 /*
  * Pannello admin: "minimo sindacale" — regole element-scoped sotto .admin
  * così non serve toccare ogni form del pannello.
