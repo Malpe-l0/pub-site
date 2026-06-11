@@ -48,6 +48,13 @@ export default async function Home() {
         )}
       </section>
 
+      {loghi.length > 0 && (
+        <section aria-labelledby="titolo-servizi">
+          <TitoloSezione id="titolo-servizi">Da noi trovi</TitoloSezione>
+          <LoghiServizi loghi={loghi} />
+        </section>
+      )}
+
       <SezioneEventi eventi={eventi} />
 
       {paginaUnica && (
@@ -61,13 +68,6 @@ export default async function Home() {
         <section id="galleria" aria-labelledby="titolo-galleria" className="mt-12">
           <TitoloSezione id="titolo-galleria">Galleria</TitoloSezione>
           <GalleriaFoto foto={galleria} />
-        </section>
-      )}
-
-      {loghi.length > 0 && (
-        <section aria-labelledby="titolo-servizi" className="mt-12">
-          <TitoloSezione id="titolo-servizi">Da noi trovi</TitoloSezione>
-          <LoghiServizi loghi={loghi} />
         </section>
       )}
     </>
