@@ -111,12 +111,25 @@ const evento = db.prepare('INSERT INTO eventi (titolo, data_ora, descrizione) VA
 evento.run('Serata quiz', traGiorni(3, '21:00'), 'A squadre, max 6 persone. In palio una cassa di birra artigianale.')
 evento.run('Live: blues al Chelsea', traGiorni(10, '22:00'), 'Trio blues dal vivo, ingresso libero.')
 
-// --- servizi (loghi segnaposto: quelli veri li carichi dal pannello) ---
+// --- servizi: loghi SVG ufficiali da scripts/loghi-demo/ se presenti,
+// --- altrimenti segnaposto generati ---
+
+const LOGHI_DEMO = path.join(process.cwd(), 'scripts', 'loghi-demo')
+
+async function logoDemo(slug, testo, colore) {
+  const sorgente = path.join(LOGHI_DEMO, `${slug}.svg`)
+  if (fs.existsSync(sorgente)) {
+    const file = `demo-logo-${slug}.svg`
+    fs.copyFileSync(sorgente, path.join(UPLOADS, file))
+    return file
+  }
+  return logoSegnaposto(`demo-logo-${slug}.webp`, testo, colore)
+}
 
 const servizio = db.prepare('INSERT INTO servizi (nome, logo, ordine, attivo) VALUES (?, ?, ?, 1)')
-servizio.run('Sky', await logoSegnaposto('demo-logo-sky.webp', 'SKY', '#1b2a6b'), 0)
-servizio.run('DAZN', await logoSegnaposto('demo-logo-dazn.webp', 'DAZN', '#0a0a0a'), 1)
-servizio.run('Serie A', await logoSegnaposto('demo-logo-seriea.webp', 'SERIE A', '#0b6e4f'), 2)
+servizio.run('Sky Sport', await logoDemo('sky', 'SKY', '#1b2a6b'), 0)
+servizio.run('DAZN', await logoDemo('dazn', 'DAZN', '#0a0a0a'), 1)
+servizio.run('Serie A', await logoDemo('serie-a', 'SERIE A', '#0b6e4f'), 2)
 
 // --- galleria (foto segnaposto in toni caldi: da sostituire con foto vere) ---
 

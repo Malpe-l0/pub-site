@@ -10,6 +10,15 @@ import { UPLOADS_DIR } from './db'
  */
 export async function salvaFoto(file: File, larghezzaMax = 1600): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer())
+
+  // Gli SVG (es. loghi ufficiali dei servizi) restano vettoriali: salvarli
+  // com'è li tiene nitidi a ogni dimensione invece di rasterizzarli.
+  if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) {
+    const nomeSvg = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}.svg`
+    await fs.writeFile(path.join(UPLOADS_DIR, nomeSvg), buffer)
+    return nomeSvg
+  }
+
   const nome = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}.webp`
   await sharp(buffer)
     .rotate() // rispetta l'orientamento EXIF delle foto da telefono

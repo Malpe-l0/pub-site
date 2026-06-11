@@ -7,7 +7,7 @@ import {
 } from '@/lib/dati'
 import { stemmaDisponibile } from '@/lib/stemma'
 import { SezioneEventi } from '@/components/SezioneEventi'
-import { CaroselloLoghi } from '@/components/CaroselloLoghi'
+import { LoopLoghi } from '@/components/LoopLoghi'
 import { ListaMenu } from '@/components/ListaMenu'
 import { GalleriaFoto } from '@/components/GalleriaFoto'
 import { TitoloSezione } from '@/components/TitoloSezione'
@@ -67,7 +67,7 @@ export default async function Home() {
       {loghi.length > 0 && (
         <section aria-labelledby="titolo-servizi" className="mt-12">
           <TitoloSezione id="titolo-servizi">Da noi trovi</TitoloSezione>
-          <CaroselloLoghi loghi={loghi} />
+          <LoopLoghi loghi={loghi} />
         </section>
       )}
     </>

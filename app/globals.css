@@ -37,19 +37,36 @@ dialog::backdrop {
   background: rgb(0 0 0 / 0.55);
 }
 
-/* Strutturale per embla-carousel (non estetico). */
-.carosello {
+/* Loop continuo dei loghi servizi (stile "logo loop"): tutto CSS. */
+.loop-loghi {
   overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
 }
 
-.carosello-contenitore {
+.loop-loghi-traccia {
   display: flex;
-  gap: 2rem;
   align-items: center;
+  gap: 4rem;
+  width: max-content;
+  padding-block: 1rem;
+  animation: scorri-loghi 25s linear infinite;
 }
 
-.carosello-slide {
-  flex: 0 0 auto;
+.loop-loghi:hover .loop-loghi-traccia {
+  animation-play-state: paused;
+}
+
+@keyframes scorri-loghi {
+  to {
+    /* metà traccia + metà gap: le due metà identiche si danno il cambio */
+    transform: translateX(calc(-50% - 2rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop-loghi-traccia {
+    animation: none;
+  }
 }
 
 /*
