@@ -1,8 +1,16 @@
-import { getImpostazioni, getEventiFuturi, getServiziAttivi, getMenuPubblico, getGalleria } from '@/lib/dati'
+import {
+  getImpostazioni,
+  getEventiFuturi,
+  getServiziAttivi,
+  getMenuPubblico,
+  getGalleria,
+} from '@/lib/dati'
+import { stemmaDisponibile } from '@/lib/stemma'
 import { SezioneEventi } from '@/components/SezioneEventi'
 import { CaroselloLoghi } from '@/components/CaroselloLoghi'
 import { ListaMenu } from '@/components/ListaMenu'
 import { GalleriaFoto } from '@/components/GalleriaFoto'
+import { TitoloSezione } from '@/components/TitoloSezione'
 
 export default async function Home() {
   const impostazioni = getImpostazioni()
@@ -23,30 +31,42 @@ export default async function Home() {
 
   return (
     <>
-      <section aria-labelledby="titolo-presentazione">
-        <h1 id="titolo-presentazione">{impostazioni.nomePub || 'Il nostro pub'}</h1>
-        {impostazioni.descrizione && <p>{impostazioni.descrizione}</p>}
+      <section aria-labelledby="titolo-presentazione" className="py-10 text-center">
+        {stemmaDisponibile() && (
+          <img src="/stemma.png" alt="" className="mx-auto mb-6 h-44 w-auto" />
+        )}
+        <h1 id="titolo-presentazione" className="font-titoli text-verde text-5xl">
+          {impostazioni.nomePub || 'Il nostro pub'}
+        </h1>
+        {/* Tagline fissa: il sito è del Chelsea House. Se servirà renderla
+            modificabile diventerà un campo delle impostazioni. */}
+        <p className="font-titoli text-ottone mt-3 text-sm tracking-[0.3em] uppercase">
+          — Birreria dal 1993 —
+        </p>
+        {impostazioni.descrizione && (
+          <p className="mx-auto mt-6 max-w-xl text-lg">{impostazioni.descrizione}</p>
+        )}
       </section>
 
       <SezioneEventi eventi={eventi} />
 
       {paginaUnica && (
-        <section id="menu" aria-labelledby="titolo-menu">
-          <h2 id="titolo-menu">Menu</h2>
+        <section id="menu" aria-labelledby="titolo-menu" className="mt-12">
+          <TitoloSezione id="titolo-menu">Menu</TitoloSezione>
           <ListaMenu categorie={getMenuPubblico()} />
         </section>
       )}
 
       {paginaUnica && galleria.length > 0 && (
-        <section id="galleria" aria-labelledby="titolo-galleria">
-          <h2 id="titolo-galleria">Galleria</h2>
+        <section id="galleria" aria-labelledby="titolo-galleria" className="mt-12">
+          <TitoloSezione id="titolo-galleria">Galleria</TitoloSezione>
           <GalleriaFoto foto={galleria} />
         </section>
       )}
 
       {loghi.length > 0 && (
-        <section aria-labelledby="titolo-servizi">
-          <h2 id="titolo-servizi">Da noi trovi</h2>
+        <section aria-labelledby="titolo-servizi" className="mt-12">
+          <TitoloSezione id="titolo-servizi">Da noi trovi</TitoloSezione>
           <CaroselloLoghi loghi={loghi} />
         </section>
       )}
