@@ -50,7 +50,7 @@ function inizializza(db: Database.Database) {
       facebook TEXT NOT NULL DEFAULT '',
       instagram TEXT NOT NULL DEFAULT '',
       orari TEXT NOT NULL DEFAULT '[]', -- JSON: [{giorni, orario}]
-      stile_sito TEXT NOT NULL DEFAULT 'multipagina' -- 'multipagina' | 'onepage'
+      stile_sito TEXT NOT NULL DEFAULT 'onepage' -- 'onepage' | 'multipagina'
     );
 
     CREATE TABLE IF NOT EXISTS popup (
@@ -110,7 +110,7 @@ function inizializza(db: Database.Database) {
   // CREATE TABLE non basta, serve l'ALTER (che fallisce se già applicato).
   try {
     db.exec(
-      `ALTER TABLE impostazioni ADD COLUMN stile_sito TEXT NOT NULL DEFAULT 'multipagina'`
+      `ALTER TABLE impostazioni ADD COLUMN stile_sito TEXT NOT NULL DEFAULT 'onepage'`
     )
   } catch {
     // colonna già presente

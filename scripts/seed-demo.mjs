@@ -41,7 +41,7 @@ async function fotoSegnaposto(file, etichetta, colore) {
 
 db.prepare(
   `UPDATE impostazioni SET nome_pub=?, descrizione=?, indirizzo=?, telefono=?, email=?,
-   facebook=?, instagram=?, orari=? WHERE id=1`
+   facebook=?, instagram=?, orari=?, stile_sito='onepage' WHERE id=1`
 ).run(
   'Chelsea House',
   'Birre alla spina, cucina fino a tardi e trent’anni di serate tra mattoni e legno.',
