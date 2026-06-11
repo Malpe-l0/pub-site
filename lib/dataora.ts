@@ -22,6 +22,17 @@ export function adessoInItalia(): string {
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`
 }
 
+/** "2026-06-12T21:00" → { giorno: "12", mese: "giu" } per il blocchetto data. */
+export function giornoMese(naive: string): { giorno: string; mese: string } {
+  const [data] = naive.split('T')
+  const [anno, mese, giorno] = data.split('-').map(Number)
+  const d = new Date(Date.UTC(anno, mese - 1, giorno))
+  return {
+    giorno: String(giorno),
+    mese: new Intl.DateTimeFormat('it-IT', { month: 'short', timeZone: 'UTC' }).format(d),
+  }
+}
+
 /** "2026-06-10T21:30" → "mercoledì 10 giugno 2026, 21:30". */
 export function formattaDataOra(naive: string): string {
   const [data, ora] = naive.split('T')
