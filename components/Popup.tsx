@@ -24,10 +24,12 @@ export function Popup({ titolo, messaggio }: { titolo: string; messaggio?: strin
 
   return (
     <dialog ref={dialogo} onClose={ricordaChiusura} aria-labelledby="popup-titolo">
-      <h2 id="popup-titolo">{titolo}</h2>
-      {messaggio && <p>{messaggio}</p>}
-      <form method="dialog">
-        <button>Chiudi</button>
+      <h2 id="popup-titolo" className="font-titoli text-verde text-2xl">
+        {titolo}
+      </h2>
+      {messaggio && <p className="mt-3">{messaggio}</p>}
+      <form method="dialog" className="mt-5 text-right">
+        <button className="bg-verde text-crema cursor-pointer rounded px-4 py-2">Chiudi</button>
       </form>
     </dialog>
   )

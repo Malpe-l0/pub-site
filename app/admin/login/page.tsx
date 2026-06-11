@@ -14,7 +14,7 @@ export default async function PaginaLogin({
   const { errore } = await searchParams
 
   return (
-    <main>
+    <main className="admin mx-auto max-w-sm px-4 py-16">
       <h1>Pannello del pub</h1>
       {errore && <p role="alert">Password sbagliata, riprova.</p>}
       <form action={accedi}>

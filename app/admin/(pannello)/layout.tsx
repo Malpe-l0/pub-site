@@ -9,43 +9,58 @@ export default async function LayoutPannello({ children }: { children: React.Rea
   await richiediAdmin()
 
   return (
-    <>
-      <header>
-        <nav aria-label="Pannello">
-          <ul>
+    <div className="admin mx-auto max-w-3xl px-4 pb-12">
+      <header className="bg-verde -mx-4 mb-4 px-4 py-3">
+        <nav aria-label="Pannello" className="flex flex-wrap items-center justify-between gap-2">
+          <ul className="text-crema flex list-none flex-wrap gap-x-4 gap-y-1 p-0!">
             <li>
-              <Link href="/admin">Pannello</Link>
+              <Link className="hover:text-oro" href="/admin">
+                Pannello
+              </Link>
             </li>
             <li>
-              <Link href="/admin/menu">Menu</Link>
+              <Link className="hover:text-oro" href="/admin/menu">
+                Menu
+              </Link>
             </li>
             <li>
-              <Link href="/admin/eventi">Eventi</Link>
+              <Link className="hover:text-oro" href="/admin/eventi">
+                Eventi
+              </Link>
             </li>
             <li>
-              <Link href="/admin/galleria">Galleria</Link>
+              <Link className="hover:text-oro" href="/admin/galleria">
+                Galleria
+              </Link>
             </li>
             <li>
-              <Link href="/admin/servizi">Servizi</Link>
+              <Link className="hover:text-oro" href="/admin/servizi">
+                Servizi
+              </Link>
             </li>
             <li>
-              <Link href="/admin/popup">Pop-up</Link>
+              <Link className="hover:text-oro" href="/admin/popup">
+                Pop-up
+              </Link>
             </li>
             <li>
-              <Link href="/admin/impostazioni">Impostazioni</Link>
+              <Link className="hover:text-oro" href="/admin/impostazioni">
+                Impostazioni
+              </Link>
             </li>
             <li>
-              <Link href="/" target="_blank">
+              <Link className="hover:text-oro" href="/" target="_blank">
                 Vedi il sito
               </Link>
             </li>
           </ul>
           <form action={esci}>
-            <button>Esci</button>
+            {/* Tailwind v4: l'important è col punto esclamativo FINALE */}
+            <button className="mt-0! bg-transparent! text-oro! underline">Esci</button>
           </form>
         </nav>
       </header>
       <main>{children}</main>
-    </>
+    </div>
   )
 }
