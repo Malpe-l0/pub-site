@@ -1,0 +1,34 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+
+const CHIAVE_STORAGE = 'popup-avviso-chiuso'
+
+/**
+ * Avviso a tutto schermo (pausa estiva ecc.). Usa l'elemento nativo <dialog>:
+ * overlay, centratura e chiusura con Esc funzionano senza CSS.
+ * Una volta chiuso non riappare nella stessa sessione di navigazione, ma un
+ * avviso con testo diverso viene mostrato di nuovo.
+ */
+export function Popup({ titolo, messaggio }: { titolo: string; messaggio?: string }) {
+  const dialogo = useRef<HTMLDialogElement>(null)
+  const chiave = `${titolo}|${messaggio ?? ''}`
+
+  useEffect(() => {
+    if (sessionStorage.getItem(CHIAVE_STORAGE) !== chiave) {
+      dialogo.current?.showModal()
+    }
+  }, [chiave])
+
+  const ricordaChiusura = () => sessionStorage.setItem(CHIAVE_STORAGE, chiave)
+
+  return (
+    <dialog ref={dialogo} onClose={ricordaChiusura} aria-labelledby="popup-titolo">
+      <h2 id="popup-titolo">{titolo}</h2>
+      {messaggio && <p>{messaggio}</p>}
+      <form method="dialog">
+        <button>Chiudi</button>
+      </form>
+    </dialog>
+  )
+}

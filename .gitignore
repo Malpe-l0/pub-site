@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+!.env.local.example
+
+# database e foto caricate dal pannello
+/data
+
+# sessioni del visual companion
+/.superpowers

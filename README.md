@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sito vetrina del pub
 
-## Getting Started
+Sito vetrina in Next.js (React) con pannello admin **costruito in casa**:
+niente CMS, niente servizi esterni. Database SQLite in un file, foto su disco,
+login a password. Pensato per essere gestito da una persona non tecnica.
 
-First, run the development server:
+## Cosa fa
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Menu modificabile** dal pannello: categorie, voci, prezzi, foto; ogni voce
+  ha un pulsante Nascondi/Mostra per toglierla dal sito senza cancellarla.
+- **Pop-up avvisi** (es. pausa estiva): si accende/spegne dal pannello, con
+  date di inizio/fine opzionali; compare e sparisce da solo nelle date scelte.
+- **Sezione eventi** in home: compare solo se ci sono eventi futuri; quelli
+  passati spariscono da soli dal sito (nel pannello restano, per riusarli).
+- **Carosello loghi servizi** (Sky, Serie A, ...): gestibile dal pannello.
+- **Galleria fotografica**: pagina `/galleria` con caricamento multiplo; il
+  link in navigazione compare solo se ci sono foto.
+- **Pannello admin** in italiano su `/admin`, protetto da password.
+- **Struttura a scelta**: dalle Impostazioni si passa con un click tra
+  **multipagina** (menu e galleria su pagine proprie) e **pagina unica**
+  (tutto in home, barra di navigazione con ancore alle sezioni). In entrambe
+  le modalità `/menu` e `/galleria` restano raggiungibili (comodo per QR code
+  e Google).
+
+## Come funziona
+
+- **Dati**: SQLite (`better-sqlite3`) in `data/pub.db`, schema creato in
+  automatico al primo avvio ([lib/db.ts](lib/db.ts)). Letture in
+  [lib/dati.ts](lib/dati.ts). Le pagine sono dinamiche: ogni richiesta legge il
+  database, quindi le modifiche dal pannello sono online all'istante, senza
+  cache né webhook.
+- **Foto**: caricate dal pannello, ridimensionate e convertite in webp con
+  sharp ([lib/upload.ts](lib/upload.ts)), salvate in `data/uploads/` e servite
+  da [app/uploads/[file]/route.ts](app/uploads/%5Bfile%5D/route.ts).
+- **Login**: un solo utente; password in `ADMIN_PASSWORD`, sessione in un
+  cookie httpOnly firmato HMAC ([lib/auth.ts](lib/auth.ts)). Ogni pagina e ogni
+  azione del pannello rifanno il controllo.
+- **Backup** = copiare la cartella `data/` (database + foto).
+
+```
+app/
+├── (sito)/                     # pagine pubbliche (header, footer, pop-up)
+│   ├── page.tsx                # home: presentazione, eventi, carosello
+│   ├── menu/  galleria/
+├── admin/
+│   ├── login/                  # accesso
+│   └── (pannello)/             # sezioni protette: menu, eventi, galleria,
+│                               # servizi, popup, impostazioni
+└── uploads/[file]/route.ts     # serve le foto caricate
+components/                     # componenti del sito e del pannello
+lib/                            # db, dati, auth, upload, date italiane
+scripts/seed-prova.mjs          # dati finti per lo sviluppo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Avvio in locale
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.local.example .env.local   # poi compila ADMIN_PASSWORD e SESSION_SECRET
+npm install
+npm run dev                        # sito su http://localhost:3000, pannello su /admin
+node scripts/seed-prova.mjs        # (facoltativo) riempie il sito di dati finti
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`SESSION_SECRET` dev'essere una stringa lunga e casuale: `openssl rand -base64 32`.
 
-## Learn More
+## Messa online (Fase 3)
 
-To learn more about Next.js, take a look at the following resources:
+Serve un host con disco persistente e Node (es. un VPS da ~5€/mese — il piano
+gratuito di Vercel non va bene perché serverless non ha disco):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `npm run build && npm start` dietro un reverse proxy (Caddy o nginx) con
+   HTTPS; il cookie di sessione in produzione è `secure`.
+2. Variabili d'ambiente: `ADMIN_PASSWORD`, `SESSION_SECRET`, ed eventualmente
+   `DATA_DIR` (es. `/var/lib/pub-site`) per tenere i dati fuori dalla cartella
+   del codice.
+3. Backup periodico della cartella dati (un `rsync`/`tar` in cron basta).
+4. Consegna al gestore: indirizzo `https://<dominio>/admin` e password.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Fasi successive
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Fase 2 (design, ~fine luglio)**: i componenti sono headless e il markup è
+  semantico: lo stile si applica senza toccare la logica. In
+  [globals.css](app/globals.css) c'è solo il minimo strutturale del carosello.
+- **Fase 3 (go-live)**: vedi sopra.
