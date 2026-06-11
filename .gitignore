@@ -46,3 +46,6 @@ next-env.d.ts
 
 # sessioni del visual companion
 /.superpowers
+
+# stato locale di impeccable live
+/.impeccable
