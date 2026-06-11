@@ -11,14 +11,14 @@ export function CaroselloLoghi({ loghi }: { loghi: LogoCarosello[] }) {
   ])
 
   return (
-    <div className="carosello" ref={riferimento}>
+    <div className="carosello bg-crema py-4" ref={riferimento}>
       <div className="carosello-contenitore">
         {loghi.map((logo) => (
           <div className="carosello-slide" key={logo.id}>
             {logo.url ? (
-              <img src={logo.url} alt={logo.nome} style={{ height: 64, width: 'auto' }} />
+              <img src={logo.url} alt={logo.nome} className="h-14 w-auto" />
             ) : (
-              <span>{logo.nome}</span>
+              <span className="font-titoli text-verde text-lg">{logo.nome}</span>
             )}
           </div>
         ))}

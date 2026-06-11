@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'Galleria' }
 export default async function PaginaGalleria() {
   return (
     <>
-      <h1>Galleria</h1>
+      <h1 className="font-titoli text-verde mt-8 mb-6 text-4xl">Galleria</h1>
       <GalleriaFoto foto={getGalleria()} />
     </>
   )
