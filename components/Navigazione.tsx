@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { StileSito } from '@/lib/tipi'
+import { stemmaDisponibile } from '@/lib/stemma'
 
 export function Navigazione({
   nomePub,
@@ -29,13 +30,21 @@ export function Navigazione({
         ]
 
   return (
-    <header>
-      <nav aria-label="Principale">
-        <Link href="/">{nomePub}</Link>
-        <ul>
+    <header className="bg-verde">
+      <nav
+        aria-label="Principale"
+        className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3"
+      >
+        <Link href="/" className="flex items-center gap-3">
+          {stemmaDisponibile() && <img src="/stemma.png" alt="" className="h-10 w-auto" />}
+          <span className="font-titoli text-oro text-2xl">{nomePub}</span>
+        </Link>
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
           {voci.map((voce) => (
             <li key={voce.href}>
-              <Link href={voce.href}>{voce.testo}</Link>
+              <Link href={voce.href} className="text-crema hover:text-oro">
+                {voce.testo}
+              </Link>
             </li>
           ))}
         </ul>
