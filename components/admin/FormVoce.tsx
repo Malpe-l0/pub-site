@@ -61,7 +61,7 @@ export function FormVoce({
       </p>
       <p>
         <label>
-          Ordine nella categoria
+          Posizione nella categoria (numero basso = più in alto)
           <input type="number" name="ordine" defaultValue={voce?.ordine ?? 0} />
         </label>
       </p>

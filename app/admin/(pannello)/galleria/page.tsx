@@ -31,16 +31,17 @@ export default async function PaginaGalleriaAdmin() {
               <img src={`/uploads/${f.file}`} alt="" style={{ height: 120 }} />
               <form action={aggiornaFoto} style={{ display: 'inline' }}>
                 <input type="hidden" name="id" value={f.id} />
-                <input
-                  name="didascalia"
-                  defaultValue={f.didascalia}
-                  placeholder="Didascalia (facoltativa)"
-                  aria-label="Didascalia"
-                />
-                <input type="number" name="ordine" defaultValue={f.ordine} aria-label="Ordine" />
+                <label>
+                  Didascalia (facoltativa)
+                  <input name="didascalia" defaultValue={f.didascalia} placeholder="Es. Il bancone" />
+                </label>
+                <label>
+                  Posizione (numero basso = più in alto)
+                  <input type="number" name="ordine" defaultValue={f.ordine} />
+                </label>
                 <button>Salva</button>
               </form>{' '}
-              <details style={{ display: 'inline-block' }}>
+              <details style={{ display: 'inline-block' }} className="pericolo">
                 <summary>Elimina</summary>
                 <form action={eliminaFotoGalleria}>
                   <input type="hidden" name="id" value={f.id} />

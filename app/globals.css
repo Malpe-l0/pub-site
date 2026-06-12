@@ -11,6 +11,7 @@
   --color-crema: #f5f1e8;
   --color-pergamena: #fffdf7;
   --color-inchiostro: #2b2418;
+  --color-mattone: #8c2f1b;
 
   --font-titoli: var(--font-im-fell);
   --font-testo: var(--font-lora);
@@ -85,14 +86,48 @@ dialog::backdrop {
   font: inherit;
 }
 
-.admin details button {
+/* I <details> ripiegano le azioni meno frequenti. Quelli neutri (rinomina,
+   nuova categoria) sono verdi come i link; i distruttivi prendono .pericolo. */
+.admin details summary {
+  cursor: pointer;
+  color: var(--color-verde);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin details.pericolo summary {
+  color: #8c2f1b;
+}
+
+.admin details.pericolo button {
   background: #8c2f1b; /* azioni distruttive: rosso mattone */
 }
 
-.admin details summary {
-  cursor: pointer;
-  color: #8c2f1b;
-  font-size: 0.9rem;
+/* Azioni secondarie nelle righe (Nascondi/Mostra): presenti ma non dominanti. */
+.admin button.secondario {
+  background: #fff;
+  color: var(--color-verde);
+  border: 1px solid #b8a878;
+  margin-top: 0;
+}
+
+/* I link nel contenuto del pannello devono distinguersi dal testo:
+   il gestore non è tecnico, l'affordance va dichiarata. (La nav in alto
+   ha le sue classi e resta esclusa.) */
+.admin main a {
+  color: var(--color-verde);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin main a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.admin ::placeholder {
+  color: #6e6552; /* 4.6:1 su bianco: anche gli esempi si devono leggere */
+  opacity: 1;
 }
 
 .admin p {

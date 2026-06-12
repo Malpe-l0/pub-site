@@ -9,6 +9,7 @@ import type {
   Evento,
   Servizio,
   FotoGalleria,
+  Punteggio,
 } from './tipi'
 
 // Letture dal database. Le pagine pubbliche sono dinamiche (force-dynamic),
@@ -189,4 +190,45 @@ export function getGalleria(): FotoGalleria[] {
   return db
     .prepare('SELECT id, file, didascalia, ordine FROM foto_galleria ORDER BY ordine, id')
     .all() as FotoGalleria[]
+}
+
+type RigaPunteggio = { id: number; sigla: string; punteggio: number; creato_il: string }
+
+function punteggiDaRighe(righe: RigaPunteggio[]): Punteggio[] {
+  return righe.map((r) => ({
+    id: r.id,
+    sigla: r.sigla,
+    punteggio: r.punteggio,
+    creatoIl: r.creato_il,
+  }))
+}
+
+/** Classifica del gioco: i migliori punteggi, a parità vince il più vecchio. */
+export function getClassifica(limite = 10): Punteggio[] {
+  return punteggiDaRighe(
+    db
+      .prepare('SELECT * FROM punteggi ORDER BY punteggio DESC, id ASC LIMIT ?')
+      .all(limite) as RigaPunteggio[]
+  )
+}
+
+/** Tutti i punteggi, per la moderazione dal pannello admin. */
+export function getPunteggi(): Punteggio[] {
+  return punteggiDaRighe(
+    db.prepare('SELECT * FROM punteggi ORDER BY punteggio DESC, id ASC').all() as RigaPunteggio[]
+  )
+}
+
+/** Salva un punteggio e restituisce la posizione in classifica (1 = primo). */
+export function inserisciPunteggio(sigla: string, punteggio: number): number {
+  const { lastInsertRowid } = db
+    .prepare('INSERT INTO punteggi (sigla, punteggio) VALUES (?, ?)')
+    .run(sigla, punteggio)
+  const { posizione } = db
+    .prepare(
+      `SELECT COUNT(*) + 1 AS posizione FROM punteggi
+       WHERE punteggio > ? OR (punteggio = ? AND id < ?)`
+    )
+    .get(punteggio, punteggio, lastInsertRowid) as { posizione: number }
+  return posizione
 }

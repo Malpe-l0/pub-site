@@ -14,8 +14,14 @@ export default async function PaginaServiziAdmin() {
       <section aria-label="Nuovo servizio">
         <h2>Nuovo servizio</h2>
         <form action={creaServizio} encType="multipart/form-data">
-          <input name="nome" placeholder="Es. Sky" required />
-          <input type="number" name="ordine" defaultValue={servizi.length} aria-label="Ordine" />
+          <label>
+            Nome
+            <input name="nome" placeholder="Es. Sky" required />
+          </label>
+          <label>
+            Posizione (numero basso = più in alto)
+            <input type="number" name="ordine" defaultValue={servizi.length} />
+          </label>
           <label>
             Logo
             <input type="file" name="logo" accept="image/*" />
@@ -35,13 +41,14 @@ export default async function PaginaServiziAdmin() {
               )}
               <form action={aggiornaServizio} encType="multipart/form-data" style={{ display: 'inline' }}>
                 <input type="hidden" name="id" value={servizio.id} />
-                <input name="nome" defaultValue={servizio.nome} required aria-label="Nome" />
-                <input
-                  type="number"
-                  name="ordine"
-                  defaultValue={servizio.ordine}
-                  aria-label="Ordine"
-                />
+                <label>
+                  Nome
+                  <input name="nome" defaultValue={servizio.nome} required />
+                </label>
+                <label>
+                  Posizione (numero basso = più in alto)
+                  <input type="number" name="ordine" defaultValue={servizio.ordine} />
+                </label>
                 <label>
                   Sostituisci logo
                   <input type="file" name="logo" accept="image/*" />
@@ -54,7 +61,7 @@ export default async function PaginaServiziAdmin() {
                 <button>{servizio.attivo ? 'Nascondi dal sito' : 'Mostra sul sito'}</button>
               </form>{' '}
               {!servizio.attivo && '(nascosto)'}{' '}
-              <details style={{ display: 'inline-block' }}>
+              <details style={{ display: 'inline-block' }} className="pericolo">
                 <summary>Elimina</summary>
                 <form action={eliminaServizio}>
                   <input type="hidden" name="id" value={servizio.id} />

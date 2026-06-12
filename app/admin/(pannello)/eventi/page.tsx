@@ -28,7 +28,7 @@ export default async function PaginaEventiAdmin() {
               {evento.titolo} — {formattaDataOra(evento.dataOra)}
               {evento.dataOra < adesso && ' (passato, non visibile sul sito)'}{' '}
               <Link href={`/admin/eventi/${evento.id}`}>Modifica</Link>{' '}
-              <details style={{ display: 'inline-block' }}>
+              <details style={{ display: 'inline-block' }} className="pericolo">
                 <summary>Elimina</summary>
                 <form action={eliminaEvento}>
                   <input type="hidden" name="id" value={evento.id} />

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getImpostazioni, getPopup, getGalleria, getEventiFuturi } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
 import { Navigazione } from '@/components/Navigazione'
@@ -73,6 +74,11 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
                 </a>
               </li>
             )}
+            <li>
+              <Link className="hover:text-oro underline" href="/gioco">
+                La spillata perfetta
+              </Link>
+            </li>
           </ul>
         </div>
       </footer>

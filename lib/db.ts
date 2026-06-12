@@ -102,6 +102,15 @@ function inizializza(db: Database.Database) {
       ordine INTEGER NOT NULL DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS punteggi (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sigla TEXT NOT NULL CHECK (length(sigla) = 3),
+      punteggio INTEGER NOT NULL CHECK (punteggio >= 0),
+      creato_il TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_punteggi_punteggio ON punteggi (punteggio DESC);
+
     INSERT OR IGNORE INTO impostazioni (id) VALUES (1);
     INSERT OR IGNORE INTO popup (id) VALUES (1);
   `)
