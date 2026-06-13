@@ -5,82 +5,45 @@ import { useRouter } from 'next/navigation'
 import { salvaPunteggio } from '@/app/(sito)/gioco/azioni'
 
 /**
- * La spillata perfetta: tieni premuto per spillare, rilascia sulla zona
- * segnata prima di traboccare. Una spillata sbagliata chiude la serata.
- * Tutto disegnato in caratteri dentro un <pre>, come il resto del menu.
+ * La spillata perfetta: tieni premuto per spillare, rilascia sulla fascia
+ * dorata prima di traboccare. Una spillata sbagliata chiude la serata.
+ * Una grande pinta da pub, illustrazione SVG piatta da etichetta di birreria.
  */
 
-// Ogni bicchiere è disegnato a mano riga per riga (dall'orlo al fondo):
-// `pre` e `post` sono pareti e aria, `w` è la larghezza interna da riempire.
-// Tutte le righe di uno stesso bicchiere hanno la stessa lunghezza totale.
-type RigaBicchiere = { pre: string; post: string; w: number }
+// Geometria della pinta nel viewBox 200×300: `contorno` è il vetro,
+// `interno` il path che ritaglia il liquido, cima/fondo gli estremi utili.
 type Bicchiere = {
   nome: string
-  altezza: number // = righe.length, comodo averlo esplicito
-  righe: RigaBicchiere[]
-  sopra: string // orlo
-  sotto: string[] // base ed eventuale stelo
+  altezza: number // unità di gioco: la logica ragiona in "righe" come prima
+  contorno: string
+  interno: string
+  cimaY: number
+  fondoY: number
+  orloCy: number
+  orloRx: number
 }
 
 const PINTA: Bicchiere = {
   nome: 'la pinta',
   altezza: 10,
-  sopra: '  .────────────.  ',
-  righe: [
-    { pre: '  │', post: '│  ', w: 12 },
-    { pre: '  │', post: '│  ', w: 12 },
-    { pre: '  │', post: '│  ', w: 12 },
-    { pre: '  \\', post: '/  ', w: 12 },
-    { pre: '   │', post: '│   ', w: 10 },
-    { pre: '   │', post: '│   ', w: 10 },
-    { pre: '   \\', post: '/   ', w: 10 },
-    { pre: '    │', post: '│    ', w: 8 },
-    { pre: '    │', post: '│    ', w: 8 },
-    { pre: '    │', post: '│    ', w: 8 },
-  ],
-  sotto: ['    └────────┘    '],
+  contorno: 'M54 32 L74 260 Q76 268 84 268 L116 268 Q124 268 126 260 L146 32',
+  interno: 'M59 36 L78 256 Q80 262 86 262 L114 262 Q120 262 122 256 L141 36 Z',
+  cimaY: 42,
+  fondoY: 258,
+  orloCy: 32,
+  orloRx: 46,
 }
 
-const BOCCALE: Bicchiere = {
-  nome: 'il boccale',
-  altezza: 8,
-  sopra: '  .────────────.   ',
-  righe: [
-    { pre: '  │', post: '│   ', w: 12 },
-    { pre: '  │', post: '│─┐ ', w: 12 },
-    { pre: '  │', post: '│ │ ', w: 12 },
-    { pre: '  │', post: '│ │ ', w: 12 },
-    { pre: '  │', post: '│─┘ ', w: 12 },
-    { pre: '  │', post: '│   ', w: 12 },
-    { pre: '  │', post: '│   ', w: 12 },
-    { pre: '  │', post: '│   ', w: 12 },
-  ],
-  sotto: ['  └────────────┘   '],
-}
-
-const CALICE: Bicchiere = {
-  nome: 'il calice',
-  altezza: 5,
-  sopra: '   .──────────.   ',
-  righe: [
-    { pre: '   │', post: '│   ', w: 10 },
-    { pre: '   │', post: '│   ', w: 10 },
-    { pre: '   \\', post: '/   ', w: 10 },
-    { pre: '    \\', post: '/    ', w: 8 },
-    { pre: '     \\', post: '/     ', w: 6 },
-  ],
-  sotto: ['      └──────┘    ', '         ││       ', '       ──────     '],
-}
-
-const BICCHIERI: Bicchiere[] = [PINTA, BOCCALE, CALICE]
-const PINTE_PER_BICCHIERE = 3
-
-function bicchierePerPinta(pinta: number): Bicchiere {
-  return BICCHIERI[Math.floor((pinta - 1) / PINTE_PER_BICCHIERE) % BICCHIERI.length]
-}
+// Palette dell'illustrazione: la birra è ambrata come si deve, il resto
+// resta nei colori dello stemma.
+const BIRRA = '#d4912a'
+const BIRRA_SCURA = '#a96f1c'
+const BOLLA = '#edbe5e'
+const SCHIUMA = '#fffdf7'
+const VETRO = '#2b2418'
 
 function velocitaPerPinta(pinta: number): number {
-  return Math.min(22, 5.5 * Math.pow(1.07, pinta - 1)) // righe al secondo
+  return Math.min(22, 5.5 * Math.pow(1.07, pinta - 1)) // unità al secondo
 }
 
 function zonaPerPinta(pinta: number, altezza: number): { bassa: number; alta: number } {
@@ -89,74 +52,132 @@ function zonaPerPinta(pinta: number, altezza: number): { bassa: number; alta: nu
   return { bassa: alta - larghezza, alta }
 }
 
-/** Birra con qualche bollicina che sale: posizioni pseudo-casuali ma stabili. */
-function rigaBirra(w: number, fondo: number, faseBolle: number): string {
-  const caratteri = Array.from({ length: w }, () => '▓')
-  if (faseBolle > 0) {
-    caratteri[(fondo * 37 + faseBolle * 5) % w] = '°'
-    if (w > 8) caratteri[(fondo * 61 + faseBolle * 13) % w] = '°'
-  }
-  return caratteri.join('')
-}
-
-function disegna(
-  bicchiere: Bicchiere,
-  livello: number,
-  spillando: boolean,
-  zona: { bassa: number; alta: number },
-  faseBolle: number,
+function BicchiereSvg({
+  bicchiere,
+  livello,
+  spillando,
+  trabocco,
+  zona,
+}: {
+  bicchiere: Bicchiere
+  livello: number
+  spillando: boolean
   trabocco: boolean
-): string {
-  const { altezza, righe, sopra, sotto } = bicchiere
-  const linee: string[] = []
+  zona: { bassa: number; alta: number }
+}) {
+  const { altezza, cimaY, fondoY, orloCy, orloRx } = bicchiere
+  const aY = (unita: number) => fondoY - (Math.min(unita, altezza) / altezza) * (fondoY - cimaY)
 
-  if (trabocco) {
-    // La schiuma scavalca l'orlo e cola sulle pareti.
-    const inizio = sopra.search(/[.─]/)
-    const fine = sopra.length - [...sopra].reverse().join('').search(/[.─]/)
-    linee.push('  ' + ' '.repeat(inizio) + '░'.repeat(Math.max(0, fine - inizio)))
-    linee.push('  ' + sopra.replace(/─/g, '▒'))
-  } else {
-    linee.push('  ' + sopra)
-  }
+  const birraY = aY(livello)
+  const schiumaAlta = livello <= 0 ? 0 : spillando ? 14 : 9
+  const zonaAltaY = aY(zona.alta)
+  const zonaBassaY = aY(zona.bassa)
+  const conBirra = livello > 0
 
-  for (let i = 0; i < altezza; i++) {
-    const riga = righe[i]
-    const fondo = altezza - 1 - i // la riga occupa [fondo, fondo+1)
-    let interno: string
-    if (trabocco) {
-      interno = fondo >= altezza - 2 ? '░'.repeat(riga.w) : rigaBirra(riga.w, fondo, faseBolle)
-    } else if (livello >= fondo + 1) {
-      interno = rigaBirra(riga.w, fondo, faseBolle)
-    } else if (livello > fondo) {
-      // superficie: schiuma che monta mentre spilli, cappello quando ti fermi
-      interno = (spillando ? '▒' : '░').repeat(riga.w)
-    } else {
-      interno = ' '.repeat(riga.w)
-    }
+  return (
+    <svg
+      viewBox="0 0 200 300"
+      width="200"
+      height="300"
+      role="img"
+      aria-label={`${bicchiere.nome}, riempito al ${Math.round((livello / altezza) * 100)} per cento`}
+      className="mx-auto block"
+    >
+      <defs>
+        <clipPath id="clip-interno">
+          <path d={bicchiere.interno} />
+        </clipPath>
+        <clipPath id="clip-birra">
+          <rect x="30" y={birraY} width="140" height={Math.max(0, fondoY - birraY + 4)} />
+        </clipPath>
+      </defs>
 
-    // La "riga della pinta": tacche sul vetro all'altezza giusta, come
-    // sui bicchieri veri. Solo sulle pareti dritte.
-    const inZona = fondo + 1 > zona.bassa && fondo < zona.alta
-    let { pre, post } = riga
-    if (inZona && pre.endsWith('│')) {
-      pre = pre.slice(0, -1) + '├'
-      post = '┤' + post.slice(1)
-    }
-    linee.push((inZona ? '► ' : '  ') + pre + interno + post)
-  }
+      {/* Il rubinetto della spina, sempre presente sopra il bicchiere */}
+      <g>
+        <rect x="86" y="0" width="28" height="9" rx="2" fill="#1f3d2b" />
+        <path d="M90 9 L110 9 L106 20 L94 20 Z" fill="#8a6d1f" />
+      </g>
+      {/* Il getto, solo mentre si spilla */}
+      {spillando && !trabocco && (
+        <rect x="96" y="20" width="8" height={Math.max(0, birraY - schiumaAlta - 20)} fill={BIRRA} opacity="0.9" />
+      )}
 
-  for (const base of sotto) linee.push('  ' + base)
-  return linee.join('\n')
+      {/* La fascia dorata della spillata, dietro al vetro */}
+      <g clipPath="url(#clip-interno)">
+        <rect x="30" y={zonaAltaY} width="140" height={zonaBassaY - zonaAltaY} fill="#d4b14a" opacity="0.35" />
+      </g>
+      {/* Tacche della fascia, fuori dal vetro, con la freccia */}
+      <line x1="30" y1={zonaAltaY} x2="52" y2={zonaAltaY} stroke="#8a6d1f" strokeWidth="2.5" />
+      <line x1="30" y1={zonaBassaY} x2="52" y2={zonaBassaY} stroke="#8a6d1f" strokeWidth="2.5" />
+      <path
+        d={`M18 ${(zonaAltaY + zonaBassaY) / 2 - 7} L30 ${(zonaAltaY + zonaBassaY) / 2} L18 ${(zonaAltaY + zonaBassaY) / 2 + 7} Z`}
+        fill="#8a6d1f"
+      />
+
+      {/* La birra */}
+      {conBirra && (
+        <g clipPath="url(#clip-interno)">
+          <rect x="30" y={birraY} width="140" height={fondoY - birraY + 6} fill={BIRRA} />
+          <line x1="30" y1={birraY + 1} x2="170" y2={birraY + 1} stroke={BIRRA_SCURA} strokeWidth="2" opacity="0.6" />
+          {/* Bollicine che salgono, ritagliate dentro la birra */}
+          <g clipPath="url(#clip-birra)">
+            <circle className="bolla" cx="90" cy={fondoY - 8} r="2.6" fill={BOLLA} style={{ animationDuration: '2.1s' }} />
+            <circle className="bolla" cx="104" cy={fondoY - 5} r="2" fill={BOLLA} style={{ animationDuration: '2.7s', animationDelay: '0.5s' }} />
+            <circle className="bolla" cx="97" cy={fondoY - 12} r="1.6" fill={BOLLA} style={{ animationDuration: '1.8s', animationDelay: '1.1s' }} />
+            <circle className="bolla" cx="111" cy={fondoY - 10} r="1.8" fill={BOLLA} style={{ animationDuration: '2.4s', animationDelay: '1.6s' }} />
+            <circle className="bolla" cx="85" cy={fondoY - 16} r="1.4" fill={BOLLA} style={{ animationDuration: '2.9s', animationDelay: '0.9s' }} />
+          </g>
+          {/* La schiuma, col bordo basso a bolle */}
+          <rect x="30" y={birraY - schiumaAlta} width="140" height={schiumaAlta} fill={SCHIUMA} />
+          <circle cx="72" cy={birraY} r="6" fill={SCHIUMA} />
+          <circle cx="92" cy={birraY + 2} r="7" fill={SCHIUMA} />
+          <circle cx="113" cy={birraY} r="6" fill={SCHIUMA} />
+          <circle cx="130" cy={birraY + 1} r="5" fill={SCHIUMA} />
+        </g>
+      )}
+
+      {/* Schiuma che deborda quando trabocca */}
+      {trabocco && (
+        <g>
+          <ellipse cx="100" cy={orloCy} rx={orloRx + 6} ry="11" fill={SCHIUMA} stroke={VETRO} strokeWidth="2" />
+          <path
+            d={`M${100 - orloRx} ${orloCy + 6} v22`}
+            stroke={SCHIUMA}
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
+          <path
+            d={`M${100 + orloRx - 4} ${orloCy + 6} v30`}
+            stroke={SCHIUMA}
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
+          <circle cx="82" cy={orloCy - 10} r="5" fill={SCHIUMA} />
+          <circle cx="116" cy={orloCy - 12} r="4" fill={SCHIUMA} />
+        </g>
+      )}
+
+      {/* Il vetro, sopra tutto */}
+      <path d={bicchiere.contorno} fill="none" stroke={VETRO} strokeWidth="3" strokeLinecap="round" />
+      {!trabocco && (
+        <ellipse cx="100" cy={orloCy} rx={orloRx} ry="6" fill="none" stroke={VETRO} strokeWidth="2.5" />
+      )}
+      {/* Riflesso del vetro */}
+      <line
+        x1={100 - orloRx * 0.62}
+        y1={cimaY + 8}
+        x2={100 - orloRx * 0.45}
+        y2={fondoY - 24}
+        stroke="#fffdf7"
+        strokeWidth="4"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+    </svg>
+  )
 }
 
 type Fase = 'attesa' | 'gioco' | 'verdetto' | 'pausa' | 'fine' | 'inviato'
-
-function frameIniziale(): string {
-  // In attesa si mostra una pinta servita a regola d'arte, col suo cappello.
-  const zona = zonaPerPinta(1, PINTA.altezza)
-  return disegna(PINTA, (zona.bassa + zona.alta) / 2, false, zona, 0, false)
-}
 
 export function SpillataPerfetta({ token }: { token: string }) {
   const router = useRouter()
@@ -165,7 +186,9 @@ export function SpillataPerfetta({ token }: { token: string }) {
   const [fase, setFase] = useState<Fase>('attesa')
   const [pinta, setPinta] = useState(1)
   const [punti, setPunti] = useState(0)
-  const [frame, setFrame] = useState(frameIniziale)
+  const [livello, setLivello] = useState(0)
+  const [spillando, setSpillando] = useState(false)
+  const [trabocco, setTrabocco] = useState(false)
   const [messaggio, setMessaggio] = useState('')
   const [annuncio, setAnnuncio] = useState('') // per aria-live
   const [sigla, setSigla] = useState('')
@@ -179,28 +202,11 @@ export function SpillataPerfetta({ token }: { token: string }) {
     punti: 0,
     livello: 0,
     spillando: false,
-    trabocco: false,
     ultimoT: 0,
     rafId: 0,
     timeoutId: 0,
     inizioPartita: 0,
   })
-
-  const aggiornaFrame = useCallback(() => {
-    const s = ref.current
-    const bicchiere = bicchierePerPinta(s.pinta)
-    const faseBolle = s.spillando || s.trabocco ? Math.floor(performance.now() / 180) : 0
-    setFrame(
-      disegna(
-        bicchiere,
-        s.livello,
-        s.spillando,
-        zonaPerPinta(s.pinta, bicchiere.altezza),
-        faseBolle,
-        s.trabocco
-      )
-    )
-  }, [])
 
   const cambiaFase = useCallback((nuova: Fase) => {
     ref.current.fase = nuova
@@ -211,47 +217,54 @@ export function SpillataPerfetta({ token }: { token: string }) {
     (motivo: string) => {
       const s = ref.current
       s.spillando = false
+      setSpillando(false)
       cancelAnimationFrame(s.rafId)
       cambiaFase('fine')
       setMessaggio(motivo)
       setAnnuncio(`${motivo} Punteggio finale: ${s.punti}.`)
-      aggiornaFrame()
+      setLivello(s.livello)
     },
-    [aggiornaFrame, cambiaFase]
+    [cambiaFase]
   )
 
+  // Il loop si auto-richiama passando da una ref: niente auto-riferimento
+  // dentro useCallback, e ogni frame usa sempre la versione più recente.
+  const tickRef = useRef<(t: number) => void>(() => {})
   const tick = useCallback(
     (t: number) => {
       const s = ref.current
       if (s.fase !== 'gioco' || !s.spillando) return
       const dt = Math.min(0.1, (t - s.ultimoT) / 1000)
       s.ultimoT = t
-      const bicchiere = bicchierePerPinta(s.pinta)
       s.livello += velocitaPerPinta(s.pinta) * dt
-      if (s.livello >= bicchiere.altezza) {
-        s.livello = bicchiere.altezza
-        s.trabocco = true
+      if (s.livello >= PINTA.altezza) {
+        s.livello = PINTA.altezza
+        setTrabocco(true)
         gameOver('Traboccata!')
         return
       }
-      aggiornaFrame()
-      s.rafId = requestAnimationFrame(tick)
+      setLivello(s.livello)
+      s.rafId = requestAnimationFrame((x) => tickRef.current(x))
     },
-    [aggiornaFrame, gameOver]
+    [gameOver]
   )
+  useEffect(() => {
+    tickRef.current = tick
+  }, [tick])
 
   const avviaPartita = useCallback(() => {
     ref.current.inizioPartita = Date.now()
     ref.current.livello = 0
+    setLivello(0)
     cambiaFase('gioco')
-    aggiornaFrame()
-  }, [aggiornaFrame, cambiaFase])
+  }, [cambiaFase])
 
   const iniziaSpillata = useCallback(() => {
     const s = ref.current
     if (s.fase === 'pausa') cambiaFase('gioco')
     if (s.fase !== 'gioco' || s.spillando) return
     s.spillando = true
+    setSpillando(true)
     s.ultimoT = performance.now()
     s.rafId = requestAnimationFrame(tick)
   }, [cambiaFase, tick])
@@ -260,10 +273,10 @@ export function SpillataPerfetta({ token }: { token: string }) {
     const s = ref.current
     if (s.fase !== 'gioco' || !s.spillando) return
     s.spillando = false
+    setSpillando(false)
     cancelAnimationFrame(s.rafId)
 
-    const bicchiere = bicchierePerPinta(s.pinta)
-    const zona = zonaPerPinta(s.pinta, bicchiere.altezza)
+    const zona = zonaPerPinta(s.pinta, PINTA.altezza)
     if (s.livello < zona.bassa) {
       gameOver('Troppo poca!')
       return
@@ -282,17 +295,16 @@ export function SpillataPerfetta({ token }: { token: string }) {
     setMessaggio(`Pinta servita! +${guadagno}`)
     setAnnuncio(`Pinta ${s.pinta} servita, più ${guadagno} punti.`)
     cambiaFase('verdetto')
-    aggiornaFrame()
 
     s.timeoutId = window.setTimeout(() => {
       s.pinta += 1
       s.livello = 0
       setPinta(s.pinta)
+      setLivello(0)
       setMessaggio('')
       cambiaFase('gioco')
-      aggiornaFrame()
     }, 800)
-  }, [aggiornaFrame, cambiaFase, gameOver])
+  }, [cambiaFase, gameOver])
 
   const rigioca = useCallback(() => {
     const s = ref.current
@@ -301,14 +313,15 @@ export function SpillataPerfetta({ token }: { token: string }) {
     s.punti = 0
     s.livello = 0
     s.spillando = false
-    s.trabocco = false
     setPinta(1)
     setPunti(0)
+    setLivello(0)
+    setSpillando(false)
+    setTrabocco(false)
     setMessaggio('')
     setSigla('')
     setPosizione(null)
     setErroreInvio('')
-    setFrame(frameIniziale())
     cambiaFase('attesa')
   }, [cambiaFase])
 
@@ -319,9 +332,9 @@ export function SpillataPerfetta({ token }: { token: string }) {
       const s = ref.current
       if (document.hidden && s.fase === 'gioco') {
         s.spillando = false
+        setSpillando(false)
         cancelAnimationFrame(s.rafId)
         cambiaFase('pausa')
-        aggiornaFrame()
       }
     }
     const s = ref.current
@@ -335,7 +348,7 @@ export function SpillataPerfetta({ token }: { token: string }) {
       cancelAnimationFrame(s.rafId)
       window.clearTimeout(s.timeoutId)
     }
-  }, [aggiornaFrame, cambiaFase, fineSpillata])
+  }, [cambiaFase, fineSpillata])
 
   const suTasto = useCallback(
     (e: React.KeyboardEvent) => {
@@ -368,8 +381,11 @@ export function SpillataPerfetta({ token }: { token: string }) {
     [avviaInvio, cambiaFase, router, sigla, token]
   )
 
-  const bicchiere = bicchierePerPinta(pinta)
+  const zona = zonaPerPinta(pinta, PINTA.altezza)
   const inPartita = fase === 'gioco' || fase === 'verdetto' || fase === 'pausa'
+
+  // In attesa si mostra una pinta servita a regola d'arte.
+  const zonaIniziale = zonaPerPinta(1, PINTA.altezza)
 
   return (
     <div className="border-ottone/50 bg-pergamena mx-auto max-w-md rounded border-2 p-4">
@@ -379,12 +395,16 @@ export function SpillataPerfetta({ token }: { token: string }) {
 
       {fase === 'attesa' && (
         <div className="text-center">
-          <pre aria-hidden className="font-mono inline-block text-left leading-tight">
-            {frame}
-          </pre>
+          <BicchiereSvg
+            bicchiere={PINTA}
+            livello={(zonaIniziale.bassa + zonaIniziale.alta) / 2}
+            spillando={false}
+            trabocco={false}
+            zona={zonaIniziale}
+          />
           <p className="mt-3">
-            Tieni premuto per spillare, lascia andare quando la birra è tra le tacche segnate sul
-            vetro (►). Se trabocca o resta corta, la serata finisce lì.
+            Tieni premuto per spillare, lascia andare quando la birra è nella fascia dorata. Se
+            trabocca o resta corta, la serata finisce lì.
           </p>
           <button
             type="button"
@@ -412,11 +432,15 @@ export function SpillataPerfetta({ token }: { token: string }) {
           style={{ touchAction: 'none' }}
         >
           <p className="font-titoli text-verde">
-            Pinta {pinta} — {bicchiere.nome} · Punti {punti}
+            Pinta {pinta} · Punti {punti}
           </p>
-          <pre aria-hidden className="font-mono inline-block text-left leading-tight">
-            {frame}
-          </pre>
+          <BicchiereSvg
+            bicchiere={PINTA}
+            livello={livello}
+            spillando={spillando}
+            trabocco={trabocco}
+            zona={zona}
+          />
           <p className="min-h-6">
             {fase === 'pausa' ? 'In pausa: tieni premuto per riprendere.' : messaggio || ' '}
           </p>
@@ -425,9 +449,13 @@ export function SpillataPerfetta({ token }: { token: string }) {
 
       {(fase === 'fine' || fase === 'inviato') && (
         <div className="text-center">
-          <pre aria-hidden className="font-mono inline-block text-left leading-tight">
-            {frame}
-          </pre>
+          <BicchiereSvg
+            bicchiere={PINTA}
+            livello={livello}
+            spillando={false}
+            trabocco={trabocco}
+            zona={zona}
+          />
           <p className="font-titoli text-verde mt-3 text-2xl">{messaggio}</p>
           <p className="mt-1">
             Punteggio finale: <strong>{punti}</strong> ({pinta - 1}{' '}

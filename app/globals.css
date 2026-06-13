@@ -38,6 +38,29 @@ dialog::backdrop {
   background: rgb(0 0 0 / 0.55);
 }
 
+/* Bollicine del gioco della spillata: salgono e svaniscono nella birra. */
+@keyframes bolla-sale {
+  from {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(-90px);
+    opacity: 0;
+  }
+}
+
+.bolla {
+  animation: bolla-sale 2.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bolla {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /*
  * Pannello admin: "minimo sindacale" — regole element-scoped sotto .admin
  * così non serve toccare ogni form del pannello.
