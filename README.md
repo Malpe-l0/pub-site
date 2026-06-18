@@ -49,7 +49,7 @@ app/
 └── uploads/[file]/route.ts     # serve le foto caricate
 components/                     # componenti del sito e del pannello
 lib/                            # db, dati, auth, upload, date italiane
-scripts/seed-prova.mjs          # dati finti per lo sviluppo
+scripts/seed-demo.mjs           # contenuti demo per popolare il sito
 ```
 
 ## Avvio in locale
@@ -58,7 +58,7 @@ scripts/seed-prova.mjs          # dati finti per lo sviluppo
 cp .env.local.example .env.local   # poi compila ADMIN_PASSWORD e SESSION_SECRET
 npm install
 npm run dev                        # sito su http://localhost:3000, pannello su /admin
-node scripts/seed-prova.mjs        # (facoltativo) riempie il sito di dati finti
+node scripts/seed-demo.mjs         # (facoltativo) riempie il sito di contenuti demo
 ```
 
 `SESSION_SECRET` dev'essere una stringa lunga e casuale: `openssl rand -base64 32`.

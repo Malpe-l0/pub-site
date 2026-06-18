@@ -19,6 +19,11 @@ export async function salvaFoto(file: File, larghezzaMax = 1600): Promise<string
     return nomeSvg
   }
 
+  return salvaFotoBuffer(buffer, larghezzaMax)
+}
+
+/** Ridimensiona un buffer immagine in webp e lo salva (pipeline condivisa: upload del pannello e foto Instagram). */
+export async function salvaFotoBuffer(buffer: Buffer, larghezzaMax = 1600): Promise<string> {
   const nome = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}.webp`
   await sharp(buffer)
     .rotate() // rispetta l'orientamento EXIF delle foto da telefono
@@ -36,4 +41,27 @@ export async function eliminaFoto(nome: string | null) {
 /** True se nel form è stato caricato un file vero (i campi file vuoti arrivano con size 0). */
 export function fileCaricato(valore: FormDataEntryValue | null): valore is File {
   return valore instanceof File && valore.size > 0
+}
+
+/**
+ * Risolve il file di un campo form: nuovo caricamento (rimpiazza e ridimensiona),
+ * rimozione (checkbox `rimuovi<Campo>`), oppure invariato.
+ */
+export async function fileDaForm(
+  formData: FormData,
+  campo: string,
+  larghezza: number,
+  esistente: string | null
+): Promise<string | null> {
+  const file = formData.get(campo)
+  if (fileCaricato(file)) {
+    await eliminaFoto(esistente)
+    return salvaFoto(file, larghezza)
+  }
+  const flag = `rimuovi${campo[0].toUpperCase()}${campo.slice(1)}` // foto→rimuoviFoto
+  if (formData.get(flag) === 'on') {
+    await eliminaFoto(esistente)
+    return null
+  }
+  return esistente
 }

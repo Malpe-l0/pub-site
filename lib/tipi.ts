@@ -72,3 +72,20 @@ export type Punteggio = {
   punteggio: number
   creatoIl: string // datetime('now') di SQLite, UTC
 }
+
+/** Stato dell'integrazione Instagram, per il pannello (token escluso). */
+export type StatoInstagram = {
+  configurato: boolean
+  userId: string
+  tokenScadeIl: string | null
+  ultimaSync: string | null
+  ultimoEsito: string
+  numeroFoto: number
+}
+
+/** Foto normalizzata per la galleria pubblica (Instagram o caricata a mano). */
+export type FotoVetrina = {
+  src: string // percorso pubblico, es. /uploads/xxx.webp
+  didascalia: string
+  href: string | null // link al post Instagram, se la foto viene da lì
+}

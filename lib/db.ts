@@ -111,8 +111,28 @@ function inizializza(db: Database.Database) {
 
     CREATE INDEX IF NOT EXISTS idx_punteggi_punteggio ON punteggi (punteggio DESC);
 
+    CREATE TABLE IF NOT EXISTS foto_instagram (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ig_id TEXT NOT NULL UNIQUE,        -- id del media su Instagram (dedup)
+      file TEXT NOT NULL,                -- foto scaricata e ricompressa in data/uploads
+      permalink TEXT NOT NULL DEFAULT '',
+      didascalia TEXT NOT NULL DEFAULT '',
+      scattata_il TEXT NOT NULL DEFAULT '',
+      ordine INTEGER NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS instagram_stato (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      access_token TEXT NOT NULL DEFAULT '', -- token a lunga durata, server-only
+      user_id TEXT NOT NULL DEFAULT '',
+      token_scade_il TEXT,
+      ultima_sync TEXT,
+      ultimo_esito TEXT NOT NULL DEFAULT ''
+    );
+
     INSERT OR IGNORE INTO impostazioni (id) VALUES (1);
     INSERT OR IGNORE INTO popup (id) VALUES (1);
+    INSERT OR IGNORE INTO instagram_stato (id) VALUES (1);
   `)
 
   // Colonne aggiunte dopo la prima versione: sui database già esistenti la

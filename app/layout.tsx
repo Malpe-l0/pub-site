@@ -1,18 +1,20 @@
 import type { Metadata } from 'next'
-import { IM_Fell_English, Lora } from 'next/font/google'
+import { Oswald, Mulish } from 'next/font/google'
 import { getImpostazioni } from '@/lib/dati'
 import './globals.css'
 
-const imFell = IM_Fell_English({
-  weight: '400',
-  style: ['normal', 'italic'],
+// Sistema "Taproom": Oswald (display/UI, condensato) + Mulish (testo corrente).
+const oswald = Oswald({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-im-fell',
+  variable: '--font-oswald',
 })
 
-const lora = Lora({
+const mulish = Mulish({
+  weight: ['400'],
+  style: ['normal', 'italic'],
   subsets: ['latin'],
-  variable: '--font-lora',
+  variable: '--font-mulish',
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${imFell.variable} ${lora.variable}`}>
+    <html lang="it" className={`${oswald.variable} ${mulish.variable}`}>
       <body>{children}</body>
     </html>
   )

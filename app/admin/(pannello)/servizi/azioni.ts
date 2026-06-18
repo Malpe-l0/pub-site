@@ -5,10 +5,11 @@ import { richiediAdmin } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getServizio } from '@/lib/dati'
 import { salvaFoto, eliminaFoto, fileCaricato } from '@/lib/upload'
+import { testo, numero } from '@/lib/form'
 
 export async function creaServizio(formData: FormData) {
   await richiediAdmin()
-  const nome = String(formData.get('nome') ?? '').trim()
+  const nome = testo(formData, 'nome')
   if (!nome) redirect('/admin/servizi')
 
   const file = formData.get('logo')
@@ -16,16 +17,16 @@ export async function creaServizio(formData: FormData) {
   db.prepare('INSERT INTO servizi (nome, logo, ordine, attivo) VALUES (?, ?, ?, 1)').run(
     nome,
     logo,
-    Number(formData.get('ordine')) || 0
+    numero(formData, 'ordine')
   )
   redirect('/admin/servizi')
 }
 
 export async function aggiornaServizio(formData: FormData) {
   await richiediAdmin()
-  const id = Number(formData.get('id'))
+  const id = numero(formData, 'id')
   const esistente = getServizio(id)
-  const nome = String(formData.get('nome') ?? '').trim()
+  const nome = testo(formData, 'nome')
   if (!esistente || !nome) redirect('/admin/servizi')
 
   let logo = esistente.logo
@@ -38,7 +39,7 @@ export async function aggiornaServizio(formData: FormData) {
   db.prepare('UPDATE servizi SET nome = ?, logo = ?, ordine = ? WHERE id = ?').run(
     nome,
     logo,
-    Number(formData.get('ordine')) || 0,
+    numero(formData, 'ordine'),
     id
   )
   redirect('/admin/servizi')
@@ -48,14 +49,14 @@ export async function impostaAttivo(formData: FormData) {
   await richiediAdmin()
   db.prepare('UPDATE servizi SET attivo = ? WHERE id = ?').run(
     formData.get('attivo') === '1' ? 1 : 0,
-    Number(formData.get('id'))
+    numero(formData, 'id')
   )
   redirect('/admin/servizi')
 }
 
 export async function eliminaServizio(formData: FormData) {
   await richiediAdmin()
-  const id = Number(formData.get('id'))
+  const id = numero(formData, 'id')
   const servizio = getServizio(id)
   if (servizio) {
     await eliminaFoto(servizio.logo)
