@@ -19,15 +19,15 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
       <NavTaproom nomePub={nome} />
       <main className="flex-1">{children}</main>
 
-      <footer id="dove" className="isola-notte bg-espresso-3 border-ambra scroll-mt-24 border-t-[3px]">
+      <footer className="isola-notte bg-espresso-3 border-ambra border-t-[3px]">
         <div className="mx-auto max-w-[1200px] px-[clamp(24px,5vw,40px)] pt-[clamp(60px,8vw,100px)] pb-11">
           <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
             <div>
               <h2 className="font-insegna text-ambra-ink text-[2rem] leading-none font-bold">{nome}</h2>
               <p className="text-panna-4 mt-[12px]">
-                Birreria inglese
+                British pub
                 <br />
-                Catania, dal 1993
+                Imola
               </p>
             </div>
 
@@ -85,7 +85,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
           </div>
 
           <p className="border-ambra/20 text-panna-4 mt-[46px] border-t pt-[22px] text-center text-[0.82rem] tracking-[0.04em]">
-            © {nome} · Catania · MCMXCIII
+            © {nome} · Imola
           </p>
         </div>
       </footer>

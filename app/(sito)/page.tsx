@@ -7,6 +7,7 @@ import {
 } from '@/lib/dati'
 import { giornoMese, formattaDataOra } from '@/lib/dataora'
 import { MuroBirre } from '@/components/sito/MuroBirre'
+import { ComeArrivare } from '@/components/sito/ComeArrivare'
 
 const COMPETIZIONI = [
   'Premier League',
@@ -59,7 +60,7 @@ export default async function Home() {
       >
         <div className="mx-auto w-full max-w-[1180px] px-[clamp(24px,5vw,56px)] pb-[clamp(56px,9vw,104px)]">
           <p className="font-insegna text-ambra-ink mb-[18px] text-[0.84rem] font-semibold tracking-[0.18em] uppercase">
-            Birreria inglese a Catania, dal 1993
+            British pub a Imola
           </p>
           <h1 className="font-insegna text-[clamp(3rem,9.5vw,7.4rem)] leading-[0.95] font-bold tracking-[-0.01em] text-balance">
             {impostazioni.nomePub || 'Il nostro pub'}
@@ -299,6 +300,12 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* ===== COME ARRIVARE ===== */}
+      <ComeArrivare
+        nomePub={impostazioni.nomePub || 'Il nostro pub'}
+        indirizzo={impostazioni.indirizzo}
+      />
     </>
   )
 }
