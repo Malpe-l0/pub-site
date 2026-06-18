@@ -33,8 +33,9 @@
   --color-inchiostro: #2b2418;
   --color-mattone: #8c2f1b;
 
-  --font-titoli: var(--font-oswald);
+  --font-titoli: var(--font-oswald); /* pannello admin + gioco (palette araldica) */
   --font-testo: var(--font-mulish);
+  --font-insegna: var(--font-zilla); /* sito pubblico: titoli e insegne, slab serif */
 }
 
 html {
@@ -90,38 +91,44 @@ body:has(.sito-taproom) {
   }
 }
 
-/* Pulsanti "targhetta a doppio filetto": la firma del look Taproom. */
-.btn-targhetta {
-  display: inline-block;
-  font-family: var(--font-titoli), sans-serif;
+/*
+ * Pulsanti — direzione editoriale. Pieni, squadrati, con press tattile.
+ * Il primario è una placca d'ottone (ambra) con un filo di luce in alto;
+ * il ghost è un filetto ambra. Etichette in slab maiuscolo/minuscolo, non urlate.
+ */
+.btn-insegna {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-insegna), Georgia, serif;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  font-size: 0.95rem;
-  padding: 17px 40px;
-  transition: background-color 0.2s ease;
+  letter-spacing: 0.01em;
+  font-size: 1.02rem;
+  line-height: 1;
+  padding: 15px 30px;
+  transition:
+    transform 0.12s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
-.btn-targhetta-primario {
+.btn-insegna:active {
+  transform: translateY(1px);
+}
+.btn-insegna-primario {
   background: var(--color-ambra);
   color: var(--color-nerocaldo);
-  border: 2px solid var(--color-nerocaldo);
-  box-shadow:
-    inset 0 0 0 2px var(--color-ambra),
-    inset 0 0 0 4px var(--color-nerocaldo);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35); /* riflesso ottone */
 }
-.btn-targhetta-primario:hover {
+.btn-insegna-primario:hover {
   background: var(--color-ambra-hover);
 }
-.btn-targhetta-ghost {
+.btn-insegna-ghost {
   background: transparent;
-  color: var(--color-panna);
-  border: 2px solid var(--color-ambra);
-  box-shadow:
-    inset 0 0 0 2px var(--color-espresso),
-    inset 0 0 0 4px var(--color-ambra);
+  color: var(--color-ambra-ink);
+  border: 1px solid var(--color-ambra-ink);
 }
-.btn-targhetta-ghost:hover {
-  background: rgb(226 162 58 / 0.12);
+.btn-insegna-ghost:hover {
+  background: rgb(226 162 58 / 0.1);
 }
 
 /* Focus da tastiera: anello ambra, squadrato come il resto del sistema.
@@ -131,18 +138,6 @@ body:has(.sito-taproom) {
   outline-offset: 2px;
 }
 
-/* Marquee: due copie della lista, scorrimento continuo translateX(0 → -50%). */
-@keyframes marquee-scorri {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-.marquee-traccia {
-  animation: marquee-scorri 28s linear infinite;
-}
 
 /* Pop-up avvisi: <dialog> nativo, vestito da pannello scuro Taproom. */
 dialog {
@@ -177,9 +172,6 @@ dialog::backdrop {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-  .marquee-traccia {
-    animation: none;
   }
   .bolla {
     animation: none;

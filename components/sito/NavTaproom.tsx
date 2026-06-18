@@ -16,24 +16,29 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
 
   return (
     <header className="isola-notte absolute inset-x-0 top-0 z-40">
+      {/* Scrim morbido in alto: tiene leggibili logo e link su qualsiasi foto. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/55 to-transparent"
+      />
       <nav
         aria-label="Principale"
-        className="mx-auto flex max-w-[1180px] items-center justify-between px-[clamp(24px,5vw,56px)] py-[22px]"
+        className="relative mx-auto flex max-w-[1180px] items-center justify-between px-[clamp(24px,5vw,56px)] py-[20px]"
       >
         <a
           href="/"
-          className="font-titoli text-panna text-[1.35rem] font-bold tracking-[0.06em] uppercase"
+          className="font-insegna text-panna text-[1.5rem] leading-none font-bold tracking-[0.005em]"
         >
           {nomePub}
         </a>
 
         {/* Desktop (≥860px) */}
-        <ul className="hidden items-center gap-[clamp(14px,2.4vw,34px)] min-[860px]:flex">
+        <ul className="hidden items-center gap-[clamp(16px,2.4vw,34px)] min-[860px]:flex">
           {VOCI.map((v) => (
             <li key={v.href}>
               <a
                 href={v.href}
-                className="font-titoli text-panna-3 hover:text-ambra text-[0.82rem] font-normal tracking-[0.14em] uppercase transition-colors"
+                className="font-insegna text-panna-2 hover:text-ambra text-[0.95rem] font-medium tracking-[0.01em] transition-colors"
               >
                 {v.testo}
               </a>
@@ -79,14 +84,14 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
       {aperto && (
         <ul
           id="menu-mobile"
-          className="bg-espresso-3/95 border-ambra/20 flex flex-col border-t px-[clamp(24px,5vw,56px)] py-2 backdrop-blur-sm min-[860px]:hidden"
+          className="bg-espresso-3/95 border-ambra/20 relative flex flex-col border-t px-[clamp(24px,5vw,56px)] py-2 backdrop-blur-sm min-[860px]:hidden"
         >
           {VOCI.map((v) => (
             <li key={v.href}>
               <a
                 href={v.href}
                 onClick={() => setAperto(false)}
-                className="font-titoli text-panna hover:text-ambra flex min-h-[44px] items-center py-3 text-[0.95rem] tracking-[0.14em] uppercase"
+                className="font-insegna text-panna hover:text-ambra flex min-h-[48px] items-center py-3 text-[1.1rem] font-medium tracking-[0.01em]"
               >
                 {v.testo}
               </a>

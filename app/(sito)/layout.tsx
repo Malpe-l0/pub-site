@@ -23,16 +23,16 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
         <div className="mx-auto max-w-[1200px] px-[clamp(24px,5vw,40px)] pt-[clamp(60px,8vw,100px)] pb-11">
           <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
             <div>
-              <h2 className="font-titoli text-ambra-ink text-[1.9rem] font-bold uppercase">{nome}</h2>
-              <p className="text-panna-4 mt-[10px]">
-                Taproom &amp; birreria inglese
+              <h2 className="font-insegna text-ambra-ink text-[2rem] leading-none font-bold">{nome}</h2>
+              <p className="text-panna-4 mt-[12px]">
+                Birreria inglese
                 <br />
-                Catania · dal 1993
+                Catania, dal 1993
               </p>
             </div>
 
             <div className="text-panna-3 flex flex-col gap-[6px]">
-              <p className="font-titoli text-ambra-ink mb-[6px] text-[0.76rem] font-medium tracking-[0.16em] uppercase">
+              <p className="font-insegna text-ambra-ink mb-[8px] text-[0.76rem] font-semibold tracking-[0.16em] uppercase">
                 Dove &amp; quando
               </p>
               {impostazioni.indirizzo && <p>{impostazioni.indirizzo}</p>}
@@ -46,7 +46,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
             </div>
 
             <div className="flex flex-col gap-[6px]">
-              <p className="font-titoli text-ambra-ink mb-[6px] text-[0.76rem] font-medium tracking-[0.16em] uppercase">
+              <p className="font-insegna text-ambra-ink mb-[8px] text-[0.76rem] font-semibold tracking-[0.16em] uppercase">
                 Contatti
               </p>
               {impostazioni.telefono && (

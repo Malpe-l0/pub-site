@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
-import { Oswald, Mulish } from 'next/font/google'
+import { Oswald, Mulish, Zilla_Slab } from 'next/font/google'
 import { getImpostazioni } from '@/lib/dati'
 import './globals.css'
 
-// Sistema "Taproom": Oswald (display/UI, condensato) + Mulish (testo corrente).
+// Direzione "Editoriale": Zilla Slab (insegne/titoli, slab serif in maiuscolo e
+// minuscolo) + Mulish (testo corrente). Oswald resta caricato solo per il
+// pannello /admin e il gioco, che mantengono la palette araldica.
+const zilla = Zilla_Slab({
+  weight: ['500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-zilla',
+})
+
 const oswald = Oswald({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
@@ -11,7 +19,7 @@ const oswald = Oswald({
 })
 
 const mulish = Mulish({
-  weight: ['400'],
+  weight: ['400', '600'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
   variable: '--font-mulish',
@@ -28,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${oswald.variable} ${mulish.variable}`}>
+    <html lang="it" className={`${zilla.variable} ${oswald.variable} ${mulish.variable}`}>
       <body>{children}</body>
     </html>
   )

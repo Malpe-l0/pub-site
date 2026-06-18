@@ -9,10 +9,7 @@ export default async function PaginaMenu() {
 
   return (
     <div className="mx-auto max-w-[900px] px-[clamp(24px,5vw,40px)] pt-[120px] pb-[clamp(64px,9vw,110px)]">
-      <p className="font-titoli text-ambra-ink mb-3 text-[0.8rem] font-medium tracking-[0.32em] uppercase">
-        In cucina
-      </p>
-      <h1 className="font-titoli mb-12 text-[clamp(2.6rem,7vw,4.5rem)] leading-[0.95] font-bold uppercase">
+      <h1 className="font-insegna mb-12 text-[clamp(2.8rem,7vw,4.6rem)] leading-[1] font-bold">
         Il menu
       </h1>
 
@@ -23,28 +20,28 @@ export default async function PaginaMenu() {
           <section key={cat.id} aria-labelledby={`cat-${cat.id}`} className="mb-12">
             <h2
               id={`cat-${cat.id}`}
-              className="font-titoli text-ambra-ink border-ambra/25 mb-6 border-b pb-2 text-[1.6rem] font-semibold uppercase"
+              className="font-insegna text-ambra-ink border-ambra/25 mb-6 border-b pb-[10px] text-[1.7rem] font-bold"
             >
               {cat.nome}
             </h2>
-            <ul className="space-y-5">
+            <ul className="space-y-6">
               {cat.voci.map((v) => (
                 <li key={v.id} className="flex items-start gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
-                      <h3 className="font-titoli text-panna text-[1.1rem] font-medium tracking-[0.02em] uppercase">
+                      <h3 className="font-insegna text-panna text-[1.2rem] font-semibold">
                         {v.nome}
                       </h3>
                       <span
                         aria-hidden
                         className="border-panna-4/40 mx-1 flex-1 border-b border-dotted"
                       />
-                      <p className="text-ambra-ink font-semibold whitespace-nowrap">
+                      <p className="font-insegna text-ambra-ink text-[1.1rem] font-semibold whitespace-nowrap">
                         {euro.format(v.prezzoCentesimi / 100)}
                       </p>
                     </div>
                     {v.descrizione && (
-                      <p className="text-panna-3 mt-1 text-[0.95rem] leading-[1.6]">
+                      <p className="text-panna-3 mt-1 text-[0.97rem] leading-[1.6]">
                         {v.descrizione}
                       </p>
                     )}
