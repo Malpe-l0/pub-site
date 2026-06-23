@@ -49,6 +49,11 @@ export default async function LayoutPannello({ children }: { children: React.Rea
               </Link>
             </li>
             <li>
+              <Link className="hover:text-oro" href="/admin/instagram">
+                Instagram
+              </Link>
+            </li>
+            <li>
               <Link className="hover:text-oro" href="/admin/impostazioni">
                 Impostazioni
               </Link>

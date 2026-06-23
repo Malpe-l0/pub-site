@@ -111,8 +111,34 @@ function inizializza(db: Database.Database) {
 
     CREATE INDEX IF NOT EXISTS idx_punteggi_punteggio ON punteggi (punteggio DESC);
 
+    -- Collegamento al profilo Instagram (account Business/Creator): un solo
+    -- token a lunga scadenza, riga unica come impostazioni e popup.
+    CREATE TABLE IF NOT EXISTS instagram (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      token TEXT NOT NULL DEFAULT '',
+      token_scadenza TEXT,          -- ISO: stima di quando scade il token
+      attivo INTEGER NOT NULL DEFAULT 0,
+      username TEXT NOT NULL DEFAULT '',
+      aggiornato_il TEXT,           -- datetime('now') UTC dell'ultimo sync riuscito
+      ultimo_errore TEXT NOT NULL DEFAULT ''
+    );
+
+    -- Cache dei post: gli URL delle immagini di Instagram scadono, quindi la
+    -- cache va rinfrescata spesso (vedi lib/instagram.ts).
+    CREATE TABLE IF NOT EXISTS instagram_post (
+      id TEXT PRIMARY KEY,          -- id del media su Instagram
+      permalink TEXT NOT NULL DEFAULT '',
+      media_url TEXT NOT NULL DEFAULT '',
+      thumbnail_url TEXT NOT NULL DEFAULT '',
+      caption TEXT NOT NULL DEFAULT '',
+      media_type TEXT NOT NULL DEFAULT '',
+      timestamp TEXT NOT NULL DEFAULT '',
+      ordine INTEGER NOT NULL DEFAULT 0
+    );
+
     INSERT OR IGNORE INTO impostazioni (id) VALUES (1);
     INSERT OR IGNORE INTO popup (id) VALUES (1);
+    INSERT OR IGNORE INTO instagram (id) VALUES (1);
   `)
 
   // Colonne aggiunte dopo la prima versione: sui database già esistenti la

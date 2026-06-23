@@ -6,10 +6,16 @@ import {
   getGalleria,
 } from '@/lib/dati'
 import { stemmaDisponibile } from '@/lib/stemma'
+import {
+  getConfigInstagram,
+  getPostInstagram,
+  avviaAggiornamentoSeStantio,
+} from '@/lib/instagram'
 import { SezioneEventi } from '@/components/SezioneEventi'
 import { LoghiServizi } from '@/components/LoghiServizi'
 import { ListaMenu } from '@/components/ListaMenu'
 import { GalleriaFoto } from '@/components/GalleriaFoto'
+import { SezioneInstagram } from '@/components/SezioneInstagram'
 import { TitoloSezione } from '@/components/TitoloSezione'
 
 export default async function Home() {
@@ -28,6 +34,12 @@ export default async function Home() {
   // raggiunte dalle ancore della barra di navigazione. Il footer (contatti e
   // orari) sta nel layout e fa da sezione #contatti.
   const galleria = paginaUnica ? getGalleria() : []
+
+  // Post di Instagram: se attivo, innesca un refresh in sottofondo quando la
+  // cache è vecchia e mostra ciò che c'è già in cache.
+  const instagram = getConfigInstagram()
+  if (instagram.attivo) avviaAggiornamentoSeStantio()
+  const postInstagram = instagram.attivo ? getPostInstagram(8) : []
 
   return (
     <>
@@ -70,6 +82,12 @@ export default async function Home() {
           <GalleriaFoto foto={galleria} />
         </section>
       )}
+
+      <SezioneInstagram
+        post={postInstagram}
+        username={instagram.username}
+        profilo={impostazioni.instagram}
+      />
     </>
   )
 }

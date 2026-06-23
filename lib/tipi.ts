@@ -65,6 +65,27 @@ export type FotoGalleria = {
   ordine: number
 }
 
+/** Collegamento al profilo Instagram (account Business/Creator). */
+export type InstagramConfig = {
+  token: string
+  tokenScadenza: string | null // ISO, stima di quando scade il token
+  attivo: boolean
+  username: string
+  aggiornatoIl: string | null // datetime('now') di SQLite, UTC
+  ultimoErrore: string
+}
+
+/** Un post di Instagram in cache. */
+export type InstagramPost = {
+  id: string
+  permalink: string
+  mediaUrl: string
+  thumbnailUrl: string
+  caption: string
+  mediaType: string // IMAGE | VIDEO | CAROUSEL_ALBUM
+  timestamp: string
+}
+
 /** Riga della classifica del gioco della spillata. */
 export type Punteggio = {
   id: number
