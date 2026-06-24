@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { richiediAdmin } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { salvaFoto, eliminaFoto, fileCaricato } from '@/lib/upload'
+import { testo, numero } from '@/lib/form'
+import { salvaConfigInstagram, sincronizzaInstagram } from '@/lib/instagram'
 
 export async function caricaFoto(formData: FormData) {
   await richiediAdmin()
@@ -28,16 +30,16 @@ export async function caricaFoto(formData: FormData) {
 export async function aggiornaFoto(formData: FormData) {
   await richiediAdmin()
   db.prepare('UPDATE foto_galleria SET didascalia = ?, ordine = ? WHERE id = ?').run(
-    String(formData.get('didascalia') ?? '').trim(),
-    Number(formData.get('ordine')) || 0,
-    Number(formData.get('id'))
+    testo(formData, 'didascalia'),
+    numero(formData, 'ordine'),
+    numero(formData, 'id')
   )
   redirect('/admin/galleria')
 }
 
 export async function eliminaFotoGalleria(formData: FormData) {
   await richiediAdmin()
-  const id = Number(formData.get('id'))
+  const id = numero(formData, 'id')
   const riga = db.prepare('SELECT file FROM foto_galleria WHERE id = ?').get(id) as
     | { file: string }
     | undefined
@@ -45,5 +47,17 @@ export async function eliminaFotoGalleria(formData: FormData) {
     await eliminaFoto(riga.file)
     db.prepare('DELETE FROM foto_galleria WHERE id = ?').run(id)
   }
+  redirect('/admin/galleria')
+}
+
+export async function configuraInstagram(formData: FormData) {
+  await richiediAdmin()
+  salvaConfigInstagram(testo(formData, 'userId'), testo(formData, 'accessToken'))
+  redirect('/admin/galleria')
+}
+
+export async function sincronizzaOra() {
+  await richiediAdmin()
+  await sincronizzaInstagram()
   redirect('/admin/galleria')
 }

@@ -23,34 +23,47 @@ aggiorna tutto da solo senza chiamare uno sviluppatore. Il sito è in italiano.
 
 ## Brand Personality
 
-Britannico, d'epoca, solenne. Il Chelsea House prende sul serio il proprio
-stemma araldico (leoni, corona, scritta gotica, "birreria 1993"): l'emozione da
-evocare è rispetto e tradizione — un pub londinese storico, non un cocktail
-bar. Tono di voce caldo ma composto; niente entusiasmi da marketing.
+Britannico ma deciso, da **taproom** serale. Il Chelsea House resta un pub
+inglese con trent'anni di storia, ma si racconta con piglio contemporaneo:
+sala scura di legno e mattoni, ottone del bancone, l'ambra della birra contro
+il nero del locale. L'emozione da evocare è quella della porta che si apre la
+sera — calore, sei spine aperte, partita ai maxischermi — non la solennità da
+museo né l'effetto cocktail bar. Tono di voce caldo e diretto; niente
+entusiasmi da marketing.
+
+> Direzione visiva attuale: **"Taproom"** (handoff giugno 2026). Sostituisce il
+> precedente sistema "menu stampato del 1993", che sopravvive solo nella palette
+> araldica del pannello /admin.
 
 ## Anti-references
 
-- Landing page SaaS moderne: gradienti, glassmorphism, hero full-screen con
-  parallax, metriche giganti.
-- Componenti "animati da libreria": il committente ha esplicitamente respinto
-  un logo-marquee in stile ReactBits perché "estetica troppo moderna".
+- Look "carta chiara" / menu stampato per il sito pubblico: lo scuro (espresso)
+  è default e identità. C'è un tema chiaro automatico che segue il dispositivo,
+  ma è "il pub di giorno" sulla crema del brand, non pergamena. Stemma araldico
+  e palette su carta restano solo nel pannello /admin.
 - Minimalismo freddo da startup e template "ristorante contemporaneo".
-- Tutto ciò che non potrebbe esistere su un menu stampato o un'insegna di legno.
+- Cliché SaaS fini a se stessi: testo in gradiente, glassmorphism decorativo,
+  metriche giganti.
+- Pill e bordi arrotondati ovunque: il sistema è squadrato per scelta (solo
+  tile foto/loghi prendono 4px).
 
 ## Design Principles
 
-1. **Trent'anni prima dei trend** — ogni scelta visiva deve poter sembrare del
-   1993 (o del 1893): se un pattern esiste solo da TikTok in poi, non
-   appartiene al Chelsea.
-2. **Lo stemma comanda** — l'identità discende dallo stemma esistente (verdi,
-   oro/ottone, araldica), mai da palette inventate da zero.
-3. **Solido come il bancone** — superfici stabili, statiche; il movimento è
-   l'eccezione motivata, non il default.
-4. **Prima gli orari e il menu** — è un sito di servizio travestito da insegna:
-   le informazioni che portano gente al pub vincono su ogni vezzo estetico.
-5. **Regge i contenuti veri** — testi e foto arrivano dal pannello del gestore:
-   il design deve restare dignitoso con foto imperfette, descrizioni assenti e
-   prezzi che cambiano.
+1. **Insegna, non interfaccia** — ogni superficie deve poter stare su
+   un'insegna di birreria: tipografia condensata, maiuscole, filetti, ambra su
+   scuro. Squadrato di default.
+2. **L'ambra accende il buio** — l'identità nasce dal contrasto espresso/crema
+   con un unico accento acceso, l'ambra/ottone della birra. Niente seconda
+   tinta che compete.
+3. **La foto è il design** — le sezioni image-led (hero, menu, sport, galleria)
+   poggiano sulle foto del locale: portano loro l'atmosfera, il testo ci sta
+   sopra.
+4. **Prima gli orari e il menu** — è un sito di servizio: le informazioni che
+   portano gente al pub (orari, menu coi prezzi, dove vedere la partita)
+   vincono su ogni vezzo estetico.
+5. **Regge i contenuti veri** — testi, foto, eventi e loghi arrivano dal
+   pannello del gestore: il design resta dignitoso con foto imperfette,
+   descrizioni assenti, pochi o nessun evento.
 
 ## Accessibility & Inclusion
 

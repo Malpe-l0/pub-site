@@ -9,6 +9,7 @@ import type {
   Evento,
   Servizio,
   FotoGalleria,
+  FotoVetrina,
   Punteggio,
 } from './tipi'
 
@@ -231,4 +232,27 @@ export function inserisciPunteggio(sigla: string, punteggio: number): number {
     )
     .get(punteggio, punteggio, lastInsertRowid) as { posizione: number }
   return posizione
+}
+
+function fotoInstagramVetrina(): FotoVetrina[] {
+  const righe = db
+    .prepare('SELECT file, permalink FROM foto_instagram ORDER BY ordine, id')
+    .all() as { file: string; permalink: string }[]
+  return righe.map((r) => ({ src: `/uploads/${r.file}`, didascalia: '', href: r.permalink || null }))
+}
+
+/**
+ * Galleria pubblica: i post Instagram se ce ne sono, altrimenti le foto
+ * caricate a mano dal pannello. Così la galleria non resta mai vuota per colpa
+ * di Instagram (token scaduto, API giù…).
+ */
+export function getGalleriaPubblica(): { fonte: 'instagram' | 'manuale'; foto: FotoVetrina[] } {
+  const instagram = fotoInstagramVetrina()
+  if (instagram.length > 0) return { fonte: 'instagram', foto: instagram }
+  const manuali: FotoVetrina[] = getGalleria().map((f) => ({
+    src: `/uploads/${f.file}`,
+    didascalia: f.didascalia,
+    href: null,
+  }))
+  return { fonte: 'manuale', foto: manuali }
 }

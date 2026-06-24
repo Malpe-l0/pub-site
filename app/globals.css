@@ -1,10 +1,30 @@
 @import 'tailwindcss';
 
 /*
- * Tema "assaggio di pub" — palette presa dallo stemma del Chelsea House.
+ * Due sistemi convivono:
+ * - Sito pubblico "Taproom": fondo espresso scuro, crema, ambra/ottone. Oswald + Mulish.
+ * - Pannello admin + gioco: palette "stemma" originale (verde/ottone/oro su carta).
  * I font sono esposti come variabili da next/font nel root layout.
  */
 @theme {
+  /* Taproom — sito pubblico */
+  --color-espresso: #15120e;
+  --color-espresso-2: #1c1813;
+  --color-espresso-3: #0d0b08;
+  --color-nerocaldo: #1a140c;
+  --color-panna: #f1e7d3;
+  --color-panna-2: #d7cab0;
+  --color-panna-3: #cdbfa4;
+  --color-panna-4: #8d7f66;
+  --color-panna-muro: #efe6d3;
+  --color-panna-muro-hover: #f6efe0;
+  --color-lineamuro: #ddccaa;
+  --color-ambra: #e2a23a;
+  --color-ambra-hover: #f0b54f;
+  --color-ambra-scura: #7e5b1f; /* etichette stile birra su crema: 4.97:1 su panna-muro, WCAG AA per testo piccolo */
+  --color-ambra-ink: #e2a23a; /* l'ambra quando è TESTO: piena su scuro, si scurisce su crema nel tema chiaro */
+
+  /* Palette "stemma" — pannello admin e gioco */
   --color-verde: #1f3d2b;
   --color-ottone: #8a6d1f;
   --color-oro: #d4b14a;
@@ -13,29 +33,124 @@
   --color-inchiostro: #2b2418;
   --color-mattone: #8c2f1b;
 
-  --font-titoli: var(--font-im-fell);
-  --font-testo: var(--font-lora);
+  --font-titoli: var(--font-oswald); /* pannello admin + gioco (palette araldica) */
+  --font-testo: var(--font-mulish);
+  --font-insegna: var(--font-zilla); /* sito pubblico: titoli e insegne, slab serif */
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--color-crema);
   color: var(--color-inchiostro);
-  font-family: var(--font-testo), Georgia, serif;
+  font-family: var(--font-testo), system-ui, sans-serif;
 }
 
-/* Pop-up avvisi: l'elemento <dialog> nativo, vestito da pannello pergamena. */
+/* Il sito pubblico (Taproom) vira tutta la pagina sullo scuro; il pannello
+   admin resta su carta chiara. Distinzione via :has() sul wrapper del sito. */
+body:has(.sito-taproom) {
+  background: var(--color-espresso);
+  color: var(--color-panna);
+}
+
+/*
+ * Tema chiaro automatico — "il pub di giorno". Se il dispositivo preferisce il
+ * chiaro, le superfici piatte virano sulla crema del brand (palette panna) con
+ * inchiostro espresso e ambra scurita sui testi. Le "isole notturne" (hero, nav,
+ * marquee, sport, footer) restano scure in ogni tema: sono i momenti foto/ambra.
+ * Tutto via prefers-color-scheme: niente JS, niente flash; lo scuro resta l'identità.
+ * Contrasti verificati: testo >=4.5:1, ambra-ink 5.0:1 su crema.
+ */
+@media (prefers-color-scheme: light) {
+  body:has(.sito-taproom) {
+    --color-espresso: #f1e7d3; /* sfondo pagina → crema */
+    --color-espresso-2: #e7dac0; /* sezioni/card alternate */
+    --color-panna: #1c1813; /* testo principale → espresso */
+    --color-panna-2: #2c2519;
+    --color-panna-3: #4a4031; /* paragrafi secondari → bruno scuro */
+    --color-panna-4: #6a5e47; /* note/footnote */
+    --color-ambra-ink: #745419; /* ambra-testo scurita: 5.0:1 su crema, WCAG AA */
+    background: var(--color-espresso);
+    color: var(--color-panna);
+  }
+
+  /* Isole notturne: ripinnano i primitivi ai valori notte per il loro sottoalbero.
+     `color` esplicito così anche il testo ereditato (es. l'H1 dell'hero) resta crema. */
+  body:has(.sito-taproom) .isola-notte {
+    --color-espresso: #15120e;
+    --color-espresso-2: #1c1813;
+    --color-espresso-3: #0d0b08;
+    --color-panna: #f1e7d3;
+    --color-panna-2: #d7cab0;
+    --color-panna-3: #cdbfa4;
+    --color-panna-4: #8d7f66;
+    --color-ambra-ink: #e2a23a;
+    color: var(--color-panna);
+  }
+}
+
+/*
+ * Pulsanti — direzione editoriale. Pieni, squadrati, con press tattile.
+ * Il primario è una placca d'ottone (ambra) con un filo di luce in alto;
+ * il ghost è un filetto ambra. Etichette in slab maiuscolo/minuscolo, non urlate.
+ */
+.btn-insegna {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-insegna), Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-size: 1.02rem;
+  line-height: 1;
+  padding: 15px 30px;
+  transition:
+    transform 0.12s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+.btn-insegna:active {
+  transform: translateY(1px);
+}
+.btn-insegna-primario {
+  background: var(--color-ambra);
+  color: var(--color-nerocaldo);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35); /* riflesso ottone */
+}
+.btn-insegna-primario:hover {
+  background: var(--color-ambra-hover);
+}
+.btn-insegna-ghost {
+  background: transparent;
+  color: var(--color-ambra-ink);
+  border: 1px solid var(--color-ambra-ink);
+}
+.btn-insegna-ghost:hover {
+  background: rgb(226 162 58 / 0.1);
+}
+
+/* Focus da tastiera: anello ambra, squadrato come il resto del sistema.
+   Usa ambra-ink così resta visibile anche in tema chiaro (scurita su crema). */
+.sito-taproom :focus-visible {
+  outline: 2px solid var(--color-ambra-ink);
+  outline-offset: 2px;
+}
+
+
+/* Pop-up avvisi: <dialog> nativo, vestito da pannello scuro Taproom. */
 dialog {
   margin: auto;
   max-width: 28rem;
-  border: 2px solid var(--color-ottone);
-  border-radius: 6px;
-  background: var(--color-pergamena);
-  color: var(--color-inchiostro);
+  border: 1px solid var(--color-ambra);
+  background: var(--color-espresso-2);
+  color: var(--color-panna);
   padding: 1.5rem 2rem;
 }
 
 dialog::backdrop {
-  background: rgb(0 0 0 / 0.55);
+  background: rgb(13 11 8 / 0.7);
 }
 
 /* Bollicine del gioco della spillata: salgono e svaniscono nella birra. */
@@ -55,6 +170,9 @@ dialog::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   .bolla {
     animation: none;
     opacity: 0;

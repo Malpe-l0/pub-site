@@ -1,84 +1,95 @@
-import { getImpostazioni, getPopup, getGalleria, getEventiFuturi } from '@/lib/dati'
+import { getImpostazioni, getPopup } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
-import { Navigazione } from '@/components/Navigazione'
+import { NavTaproom } from '@/components/sito/NavTaproom'
 import { Popup } from '@/components/Popup'
 
 // Pagine dinamiche: ogni richiesta legge il database, così le modifiche dal
 // pannello (e le logiche a date di pop-up ed eventi) sono subito visibili.
 export const dynamic = 'force-dynamic'
 
-// Layout delle pagine pubbliche: header, footer e pop-up.
-// Il pannello /admin è fuori da questo gruppo e ha il suo layout.
+// Layout del sito pubblico "Taproom": nav sovrapposta all'hero, footer #dove, pop-up.
+// Il marker .sito-taproom fa virare lo sfondo della pagina sullo scuro (vedi globals.css).
 export default async function LayoutSito({ children }: { children: React.ReactNode }) {
   const impostazioni = getImpostazioni()
   const avviso = popupDaMostrare(getPopup())
-  const mostraGalleria = getGalleria().length > 0
-  const mostraEventi = getEventiFuturi().length > 0
+  const nome = impostazioni.nomePub || 'Il nostro pub'
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navigazione
-        nomePub={impostazioni.nomePub || 'Il nostro pub'}
-        stile={impostazioni.stileSito}
-        mostraGalleria={mostraGalleria}
-        mostraEventi={mostraEventi}
-      />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-12">{children}</main>
-      <footer id="contatti" className="bg-verde text-crema mt-auto">
-        <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 sm:grid-cols-3">
-          <div className="space-y-1">
-            {impostazioni.indirizzo && <p>{impostazioni.indirizzo}</p>}
-            {impostazioni.telefono && (
-              <p>
+    <div className="sito-taproom relative flex min-h-screen flex-col overflow-x-hidden">
+      <NavTaproom nomePub={nome} />
+      <main className="flex-1">{children}</main>
+
+      <footer className="isola-notte bg-espresso-3 border-ambra border-t-[3px]">
+        <div className="mx-auto max-w-[1200px] px-[clamp(24px,5vw,40px)] pt-[clamp(60px,8vw,100px)] pb-11">
+          <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+            <div>
+              <h2 className="font-insegna text-ambra-ink text-[2rem] leading-none font-bold">{nome}</h2>
+              <p className="text-panna-4 mt-[12px]">
+                British pub
+                <br />
+                Imola
+              </p>
+            </div>
+
+            <div className="text-panna-3 flex flex-col gap-[6px]">
+              <p className="font-insegna text-ambra-ink mb-[8px] text-[0.76rem] font-semibold tracking-[0.16em] uppercase">
+                Dove &amp; quando
+              </p>
+              {impostazioni.indirizzo && <p>{impostazioni.indirizzo}</p>}
+              {impostazioni.orari.map((fascia, i) => (
+                <p key={i}>
+                  {fascia.giorni}
+                  {fascia.giorni && fascia.orario ? ': ' : ''}
+                  {fascia.orario}
+                </p>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-[6px]">
+              <p className="font-insegna text-ambra-ink mb-[8px] text-[0.76rem] font-semibold tracking-[0.16em] uppercase">
+                Contatti
+              </p>
+              {impostazioni.telefono && (
                 <a
-                  className="hover:text-oro underline"
+                  className="text-panna-3 hover:text-ambra inline-block py-1 transition-colors"
                   href={`tel:${impostazioni.telefono.replace(/\s/g, '')}`}
                 >
                   {impostazioni.telefono}
                 </a>
-              </p>
-            )}
-            {impostazioni.email && (
-              <p>
-                <a className="hover:text-oro underline" href={`mailto:${impostazioni.email}`}>
-                  {impostazioni.email}
-                </a>
-              </p>
-            )}
-          </div>
-          {impostazioni.orari.length > 0 && (
-            <section aria-label="Orari di apertura">
-              <h2 className="font-titoli text-oro mb-2 text-xl">Orari</h2>
-              <ul className="space-y-1">
-                {impostazioni.orari.map((fascia, indice) => (
-                  <li key={indice}>
-                    {fascia.giorni}: {fascia.orario}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-          <ul className="space-y-1">
-            {impostazioni.facebook && (
-              <li>
-                <a className="hover:text-oro underline" href={impostazioni.facebook}>
-                  Facebook
-                </a>
-              </li>
-            )}
-            {impostazioni.instagram && (
-              <li>
-                <a className="hover:text-oro underline" href={impostazioni.instagram}>
+              )}
+              {impostazioni.instagram && (
+                <a
+                  className="text-panna-3 hover:text-ambra inline-block py-1 transition-colors"
+                  href={impostazioni.instagram}
+                >
                   Instagram
                 </a>
-              </li>
-            )}
-            {/* Link al gioco /gioco temporaneamente nascosto: la pagina esiste
-                ancora ma non è raggiungibile dal sito. Rimettere questo <li>
-                per riattivarlo. */}
-          </ul>
+              )}
+              {impostazioni.facebook && (
+                <a
+                  className="text-panna-3 hover:text-ambra inline-block py-1 transition-colors"
+                  href={impostazioni.facebook}
+                >
+                  Facebook
+                </a>
+              )}
+              {impostazioni.email && (
+                <a
+                  className="text-panna-3 hover:text-ambra inline-block py-1 transition-colors"
+                  href={`mailto:${impostazioni.email}`}
+                >
+                  {impostazioni.email}
+                </a>
+              )}
+            </div>
+          </div>
+
+          <p className="border-ambra/20 text-panna-4 mt-[46px] border-t pt-[22px] text-center text-[0.82rem] tracking-[0.04em]">
+            © {nome} · Imola
+          </p>
         </div>
       </footer>
+
       {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} />}
     </div>
   )

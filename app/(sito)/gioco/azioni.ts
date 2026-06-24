@@ -1,12 +1,11 @@
 'use server'
 
 import { headers } from 'next/headers'
-import { getClassifica, inserisciPunteggio } from '@/lib/dati'
+import { inserisciPunteggio } from '@/lib/dati'
 import { verificaTokenPartita, punteggioPlausibile, rateLimitSuperato } from '@/lib/gioco'
-import type { Punteggio } from '@/lib/tipi'
 
 export type EsitoInvio =
-  | { esito: 'ok'; posizione: number; classifica: Punteggio[] }
+  | { esito: 'ok'; posizione: number }
   | { esito: 'errore'; messaggio: string }
 
 /**
@@ -42,5 +41,5 @@ export async function salvaPunteggio(
   }
 
   const posizione = inserisciPunteggio(siglaPulita, Number(punteggio))
-  return { esito: 'ok', posizione, classifica: getClassifica() }
+  return { esito: 'ok', posizione }
 }

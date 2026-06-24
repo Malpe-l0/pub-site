@@ -4,16 +4,8 @@ import { redirect } from 'next/navigation'
 import { richiediAdmin } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getVoceMenu } from '@/lib/dati'
-import { salvaFoto, eliminaFoto, fileCaricato } from '@/lib/upload'
-
-function testo(formData: FormData, nome: string): string {
-  return String(formData.get(nome) ?? '').trim()
-}
-
-function numero(formData: FormData, nome: string): number {
-  const n = Number(formData.get(nome))
-  return Number.isFinite(n) ? n : 0
-}
+import { eliminaFoto, fileDaForm } from '@/lib/upload'
+import { testo, numero } from '@/lib/form'
 
 // --- Categorie ---
 
@@ -56,26 +48,13 @@ export async function eliminaCategoria(formData: FormData) {
 
 // --- Voci ---
 
-async function fotoDaForm(formData: FormData, esistente: string | null): Promise<string | null> {
-  const file = formData.get('foto')
-  if (fileCaricato(file)) {
-    await eliminaFoto(esistente)
-    return salvaFoto(file, 800)
-  }
-  if (formData.get('rimuoviFoto') === 'on') {
-    await eliminaFoto(esistente)
-    return null
-  }
-  return esistente
-}
-
 export async function creaVoce(formData: FormData) {
   await richiediAdmin()
   const nome = testo(formData, 'nome')
   if (!nome) redirect('/admin/menu')
 
   const prezzoCentesimi = Math.round(Number(formData.get('prezzo')) * 100)
-  const foto = await fotoDaForm(formData, null)
+  const foto = await fileDaForm(formData, 'foto', 800, null)
 
   db.prepare(
     `INSERT INTO voci_menu (nome, descrizione, prezzo_centesimi, categoria_id, disponibile, ordine, foto)
@@ -100,7 +79,7 @@ export async function aggiornaVoce(formData: FormData) {
   if (!esistente || !nome) redirect('/admin/menu')
 
   const prezzoCentesimi = Math.round(Number(formData.get('prezzo')) * 100)
-  const foto = await fotoDaForm(formData, esistente.foto)
+  const foto = await fileDaForm(formData, 'foto', 800, esistente.foto)
 
   db.prepare(
     `UPDATE voci_menu

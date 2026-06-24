@@ -4,52 +4,40 @@ import { redirect } from 'next/navigation'
 import { richiediAdmin } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getEvento } from '@/lib/dati'
-import { salvaFoto, eliminaFoto, fileCaricato } from '@/lib/upload'
-
-async function immagineDaForm(formData: FormData, esistente: string | null) {
-  const file = formData.get('immagine')
-  if (fileCaricato(file)) {
-    await eliminaFoto(esistente)
-    return salvaFoto(file, 1200)
-  }
-  if (formData.get('rimuoviImmagine') === 'on') {
-    await eliminaFoto(esistente)
-    return null
-  }
-  return esistente
-}
+import { eliminaFoto, fileDaForm } from '@/lib/upload'
+import { testo, numero } from '@/lib/form'
 
 export async function creaEvento(formData: FormData) {
   await richiediAdmin()
-  const titolo = String(formData.get('titolo') ?? '').trim()
-  const dataOra = String(formData.get('dataOra') ?? '')
+  const titolo = testo(formData, 'titolo')
+  const dataOra = testo(formData, 'dataOra')
   if (!titolo || !dataOra) redirect('/admin/eventi')
 
-  const immagine = await immagineDaForm(formData, null)
+  const immagine = await fileDaForm(formData, 'immagine', 1200, null)
   db.prepare(
     'INSERT INTO eventi (titolo, data_ora, descrizione, immagine) VALUES (?, ?, ?, ?)'
-  ).run(titolo, dataOra, String(formData.get('descrizione') ?? '').trim(), immagine)
+  ).run(titolo, dataOra, testo(formData, 'descrizione'), immagine)
   redirect('/admin/eventi')
 }
 
 export async function aggiornaEvento(formData: FormData) {
   await richiediAdmin()
-  const id = Number(formData.get('id'))
+  const id = numero(formData, 'id')
   const esistente = getEvento(id)
-  const titolo = String(formData.get('titolo') ?? '').trim()
-  const dataOra = String(formData.get('dataOra') ?? '')
+  const titolo = testo(formData, 'titolo')
+  const dataOra = testo(formData, 'dataOra')
   if (!esistente || !titolo || !dataOra) redirect('/admin/eventi')
 
-  const immagine = await immagineDaForm(formData, esistente.immagine)
+  const immagine = await fileDaForm(formData, 'immagine', 1200, esistente.immagine)
   db.prepare(
     'UPDATE eventi SET titolo = ?, data_ora = ?, descrizione = ?, immagine = ? WHERE id = ?'
-  ).run(titolo, dataOra, String(formData.get('descrizione') ?? '').trim(), immagine, id)
+  ).run(titolo, dataOra, testo(formData, 'descrizione'), immagine, id)
   redirect('/admin/eventi')
 }
 
 export async function eliminaEvento(formData: FormData) {
   await richiediAdmin()
-  const id = Number(formData.get('id'))
+  const id = numero(formData, 'id')
   const evento = getEvento(id)
   if (evento) {
     await eliminaFoto(evento.immagine)

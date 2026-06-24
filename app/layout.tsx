@@ -1,18 +1,28 @@
 import type { Metadata } from 'next'
-import { IM_Fell_English, Lora } from 'next/font/google'
+import { Oswald, Mulish, Zilla_Slab } from 'next/font/google'
 import { getImpostazioni } from '@/lib/dati'
 import './globals.css'
 
-const imFell = IM_Fell_English({
-  weight: '400',
-  style: ['normal', 'italic'],
+// Direzione "Editoriale": Zilla Slab (insegne/titoli, slab serif in maiuscolo e
+// minuscolo) + Mulish (testo corrente). Oswald resta caricato solo per il
+// pannello /admin e il gioco, che mantengono la palette araldica.
+const zilla = Zilla_Slab({
+  weight: ['500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-im-fell',
+  variable: '--font-zilla',
 })
 
-const lora = Lora({
+const oswald = Oswald({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-lora',
+  variable: '--font-oswald',
+})
+
+const mulish = Mulish({
+  weight: ['400', '600'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-mulish',
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${imFell.variable} ${lora.variable}`}>
+    <html lang="it" className={`${zilla.variable} ${oswald.variable} ${mulish.variable}`}>
       <body>{children}</body>
     </html>
   )
