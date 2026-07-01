@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-import { Oswald, Mulish } from 'next/font/google'
+import { Cinzel, EB_Garamond } from 'next/font/google'
 import { getImpostazioni } from '@/lib/dati'
 import './globals.css'
 
-// Sistema "Taproom": Oswald (display/UI, condensato) + Mulish (testo corrente).
-const oswald = Oswald({
+// Sistema "Black Friar": Cinzel (display, capitali romane) + EB Garamond (testo).
+const cinzel = Cinzel({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-oswald',
 })
 
-const mulish = Mulish({
-  weight: ['400'],
+const ebGaramond = EB_Garamond({
+  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
   variable: '--font-mulish',
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${oswald.variable} ${mulish.variable}`}>
+    <html lang="it" className={`${cinzel.variable} ${ebGaramond.variable}`}>
       <body>{children}</body>
     </html>
   )

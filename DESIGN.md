@@ -1,245 +1,223 @@
 ---
 name: Chelsea House
-description: Birreria inglese di Catania dal 1993 — direzione visiva "Taproom": sala scura espresso, accento ambra/ottone, tipografia condensata Oswald + Mulish. Il pannello /admin conserva la palette araldica su carta.
+description: British pub di Imola dal 1993 — direzione visiva "Black Friar": verde British drenched, accento oro/ottone, tipografia serif Cinzel + EB Garamond, sezioni "carta" su texture a grana. Il pannello /admin conserva la palette araldica su carta.
 colors:
-  espresso: "#15120e"
-  espresso-2: "#1c1813"
-  espresso-3: "#0d0b08"
-  nero-caldo: "#1a140c"
-  panna: "#f1e7d3"
-  panna-2: "#d7cab0"
-  panna-3: "#cdbfa4"
-  panna-4: "#8d7f66"
-  panna-muro: "#efe6d3"
-  ambra: "#e2a23a"
-  ambra-hover: "#f0b54f"
-  ambra-scura: "#7e5b1f"
+  verde: "#1e6240"
+  verde-2: "#1e6240"
+  verde-footer: "#2e3732"
+  verde-inchiostro: "#243a2d"
+  panna: "#f4eedd"
+  panna-2: "#d8ccb4"
+  panna-3: "#d8ccb4"
+  panna-4: "#a99f8c"
+  carta: "#f4eedd"
+  oro: "#eab325"
+  oro-hover: "#f4c54a"
+  oro-ink: "#f2cb5c"
+  oro-scuro: "#7e5b1f"
 typography:
   display:
-    fontFamily: "Oswald, sans-serif"
-    fontSize: "clamp(3.6rem, 11.5vw, 9.5rem)"
-    fontWeight: 700
-    lineHeight: 0.9
-    letterSpacing: "-0.015em"
-    textTransform: "uppercase"
-  headline:
-    fontFamily: "Oswald, sans-serif"
-    fontSize: "clamp(2.2rem, 5vw, 3.6rem)"
+    fontFamily: "Cinzel, Georgia, serif"
+    fontSize: "clamp(2.6rem, 7vw, 6rem)"
     fontWeight: 600
-    lineHeight: 0.95
-    textTransform: "uppercase"
+    lineHeight: 1.04
+  headline:
+    fontFamily: "Cinzel, Georgia, serif"
+    fontSize: "clamp(2.2rem, 5.6vw, 4.6rem)"
+    fontWeight: 600
+    lineHeight: 1.05
   eyebrow:
-    fontFamily: "Oswald, sans-serif"
-    fontSize: "0.8rem"
-    fontWeight: 500
-    letterSpacing: "0.32em"
+    fontFamily: "EB Garamond, Georgia, serif"
+    fontSize: "0.74rem"
+    fontWeight: 400
+    letterSpacing: "0.4em"
     textTransform: "uppercase"
   body:
-    fontFamily: "Mulish, system-ui, sans-serif"
-    fontSize: "1.1rem"
+    fontFamily: "EB Garamond, Georgia, serif"
+    fontSize: "0.98rem"
     fontWeight: 400
-    lineHeight: 1.7
+    lineHeight: 1.85
 rounded:
   none: "0"
-  tile: "4px"
 spacing:
-  sezione-y: "clamp(64px, 9vw, 118px)"
-  container-x: "clamp(24px, 5vw, 40px)"
-  container: "1200px"
+  sezione-y: "clamp(64px, 9vw, 120px)"
+  container-x: "clamp(24px, 5vw, 52px)"
+  container: "1180px"
 components:
-  bottone-targhetta-primario:
-    backgroundColor: "{colors.ambra}"
-    textColor: "{colors.nero-caldo}"
-    border: "doppio filetto via inset box-shadow"
-    padding: "17px 40px"
-  bottone-targhetta-ghost:
+  bottone-primario:
+    backgroundColor: "{colors.oro}"
+    textColor: "{colors.verde-inchiostro}"
+    border: "1px solid {colors.oro}"
+    padding: "15px 30px"
+  bottone-ghost:
     backgroundColor: "transparent"
     textColor: "{colors.panna}"
-    border: "doppio filetto ambra via inset box-shadow"
+    border: "1px solid {colors.panna}"
+  nav:
+    behavior: "fixed; trasparente sull'hero, verde solido + blur dopo lo scroll"
+  carta-menu:
+    behavior: "schede per categoria (dal DB) + righe con filetto di puntini e prezzo oro"
   muro-birre:
-    backgroundColor: "{colors.panna-muro}"
-    divisori: "1px solid #ddccaa"
-  tile-sport:
-    backgroundColor: "{colors.panna}"
-    rounded: "{rounded.tile}"
-    height: "110px"
+    backgroundColor: "{colors.carta}"
+    behavior: "griglia 3 col su carta, loghi centrati, nessun bordo-muro"
 ---
 
-# Design System: Chelsea House — "Taproom"
+# Design System: Chelsea House — "Black Friar"
 
 ## 1. Overview
 
-**Creative North Star: "La sala la sera, vista dalla porta che si apre."**
+**Creative North Star: "Un angolo d'Inghilterra a Imola."**
 
-Il sito pubblico è la birreria al buio della sera: legno scuro, mattoni, i
-bicchieri appesi, e l'ambra della birra come unica luce accesa. Lo sfondo è
-espresso quasi nero, il testo è crema, l'accento è l'ottone/ambra del bancone.
-La tipografia condensata in maiuscolo (Oswald) fa da insegna; Mulish tiene il
-testo corrente leggibile.
+Il sito pubblico è il verde British del pub: il verde profondo della sala, la
+crema dei bicchieri, l'oro/ottone dell'insegna. Lo sfondo è un verde racing
+drenched (`#1e6240`); il testo è crema; l'accento è un oro caldo. Le sezioni
+"carta" (birre, galleria) ribaltano la logica: fondo crema su texture a grana,
+inchiostro verde scuro. La tipografia è **serif** — Cinzel a capitali romane per
+i titoli (insegna scolpita), EB Garamond per il testo.
 
-Il sistema discende da un **handoff hi-fi** (direzione "Taproom", giugno 2026)
-e rimpiazza il precedente "menu stampato del 1993". Quel sistema su carta
-(verdi araldici, IM Fell English) **sopravvive solo nel pannello /admin**, che
-non è toccato da questa direzione.
+Il sistema discende da un **handoff hi-fi** ("Black Friar", giugno 2026) e
+rimpiazza la precedente direzione "Taproom" (espresso/ambra, Oswald). La palette
+araldica su carta del vecchio "menu stampato del 1993" **sopravvive solo nel
+pannello /admin**, che non è toccato.
 
 **Key Characteristics:**
-- Sala scura drenched: lo sfondo è espresso, non carta. La pagina è il locale.
-- Un solo accento acceso: l'ambra/ottone della birra. Tutto il resto è
-  espresso e crema.
-- Insegna prima che interfaccia: maiuscole condensate, filetti, ◆, doppi bordi.
-- Squadrato di default: niente pill arrotondate (solo le tile foto/loghi: 4px).
-- Image-led: hero, menu, sport e galleria poggiano sulle foto del locale.
-- Mobile-first: si legge bene su un telefono, la sera, con una birra in mano.
+- Verde British drenched: lo sfondo è verde, non espresso né carta. La pagina è il pub.
+- Un solo accento: l'oro/ottone dell'insegna. Il calore in più lo portano le foto.
+- Serif scolpito: Cinzel (capitali) per i titoli, EB Garamond per il corpo.
+- Doppio registro di superficie: verde per le sezioni "sala", crema-a-grana per le sezioni "documento" (birre, galleria).
+- Squadrato di default: niente pill, niente bordi arrotondati.
+- Image-led: hero e galleria poggiano sulle foto del locale.
+- Mobile-first: si legge bene su un telefono, la sera.
 
 ## 2. Colors
 
-Palette "taproom": il buio della sala, la crema dei bicchieri, l'ambra della
-spina.
+Palette "Black Friar": il verde della sala, la crema dei bicchieri, l'oro
+dell'insegna.
 
-### Sfondi (espresso)
-- **Espresso** (#15120e): sfondo della pagina e testo su ambra.
-- **Espresso 2** (#1c1813): sezioni alternate (menu) e card delle serate.
-- **Espresso 3** (#0d0b08): footer e pannello "Trasmettiamo con".
-- **Nero caldo** (#1a140c): testo e bordi sui pulsanti ambra.
+### Verdi (sfondo)
+- **Verde** (#1e6240): sfondo pagina, hero (overlay), statement band, sezione menu.
+- **Verde footer** (#2e3732): footer.
+- **Verde inchiostro** (#243a2d): testo sui pulsanti oro; nomi birre su carta.
 
-### Testo (crema)
-- **Panna** (#f1e7d3): testo principale su scuro.
-- **Panna 2** (#d7cab0): sottotitolo dell'hero.
-- **Panna 3** (#cdbfa4): paragrafi secondari, link del footer.
-- **Panna 4** (#8d7f66): note e footnote.
-- **Panna muro** (#efe6d3): unica grande superficie chiara — il pannello del
-  muro birre. Le tile sport usano la panna piena (#f1e7d3).
+### Crema (testo + carta)
+- **Panna** (#f4eedd): testo principale su verde; superficie "carta" delle sezioni birre/galleria.
+- **Panna 2** (#d8ccb4): riga di servizio dell'hero. (4.59:1 su verde — AA.)
+- **Panna 3** (#d8ccb4): paragrafi secondari su verde.
+- **Panna 4** (#a99f8c): note brevi/footnote su verde.
 
-### Accento (ambra)
-- **Ambra** (#e2a23a): l'accento unico — eyebrow, titoli del footer, CTA,
-  marquee, tag delle serate, bordi hairline. Su espresso ha contrasto pieno.
-- **Ambra hover** (#f0b54f): hover dei pulsanti primari.
-- **Ambra scura** (#7e5b1f): etichette "stile birra" sul muro crema (4.97:1 su
-  panna-muro — WCAG AA verificato per il testo piccolo; ribassata dal #8f6d24
-  del mock, che si fermava a 3.86:1).
+### Oro (accento)
+- **Oro** (#eab325): accento pieno — pulsante primario, tab attiva, bordo superiore del footer, pulsante Maps.
+- **Oro hover** (#f4c54a): hover dei pulsanti.
+- **Oro-ink** (#f2cb5c): oro **come testo sul verde** — eyebrow, titoli del footer, prezzi del menu. (4.68:1 su verde — AA.)
+- **Oro-scuro** (#7e5b1f): oro **come testo sulla carta** — eyebrow "La selezione", etichette stile birra. (5.32:1 su crema — AA verificato; il gold chiaro del mock #a8820f si fermava a 3.09:1.)
 
 ### Named Rules
-**La Regola dell'Unico Acceso.** C'è una sola tinta accesa, l'ambra. Niente
-seconda tinta che le compete: il calore lo portano le foto, non un secondo
-colore.
-**La Regola del Muro.** Le superfici chiare (crema) sono l'eccezione che
-incornicia i marchi (muro birre, tile sport), non il fondo della pagina. La
-pagina resta espresso — salvo quando il dispositivo chiede il tema chiaro (sotto).
+**La Regola dell'Unico Accento.** C'è una sola tinta accesa, l'oro. Niente
+seconda tinta che compete: il colore in più lo portano le foto.
+**La Regola del Doppio Registro.** Verde = "la sala" (hero, statement, menu);
+crema-a-grana = "il documento" (birre, galleria). L'oro cambia tono col fondo:
+chiaro (oro-ink) sul verde, scuro (oro-scuro) sulla carta.
 
-### Tema chiaro automatico — "il pub di giorno"
-Il sito segue la preferenza del dispositivo (`prefers-color-scheme`). Lo scuro
-resta l'identità e il default; quando il dispositivo è in chiaro le superfici
-piatte virano sulla **crema del brand** (la palette panna, non una pergamena da
-startup) con inchiostro espresso e ambra scurita sui testi.
-
-Meccanismo: i token primitivi (espresso/panna) vengono ridefiniti dentro
-`@media (prefers-color-scheme: light)` sullo `.sito-taproom` — niente JS, niente
-flash, SSR-safe. Le **isole notturne** (`.isola-notte`: hero, nav, marquee,
-sport, footer) ripinnano i valori notte e restano scure in ogni tema: sono i
-momenti foto/ambra. L'ambra-testo passa per il token `--color-ambra-ink` (ambra
-piena su scuro, `#745419` su crema, 5.0:1 WCAG AA); l'ambra di sfondo (pulsanti,
-marquee, tag-data) resta piena, con testo `nerocaldo`. Il pannello /admin non è
-toccato.
+> Niente tema chiaro automatico: Black Friar è **una palette fissa**. Verde e
+> carta si alternano già nel design; non serve invertire col `prefers-color-scheme`.
 
 ## 3. Typography
 
-**Display / UI:** Oswald (300–700) — titoli, eyebrow, nav, pulsanti, chips,
-tag. Sempre MAIUSCOLO. Condensata: fa da insegna.
-**Testo corrente:** Mulish (400 + italic) — paragrafi e note. Self-hostati con
-next/font, nessuna richiesta esterna.
+**Display / titoli:** Cinzel (400–700) — capitali romane serif, fanno da insegna
+scolpita. Non servono maiuscole forzate: il font è già a capitali.
+**Testo corrente:** EB Garamond (400 + italic + 500/600) — paragrafi, eyebrow,
+note, pulsanti. Self-hostati con next/font.
+
+> Nota tecnica: i font sono esposti come variabili `--font-oswald` (Cinzel) e
+> `--font-mulish` (EB Garamond) per non rinominare le utility `font-titoli` /
+> `font-testo` già diffuse nel codice.
 
 ### Hierarchy
-- **Display H1** (Oswald 700, clamp(3.6→9.5rem), lh 0.9, tracking -0.015em):
-  solo il nome del pub nell'hero.
-- **Headline H2** (Oswald 600, clamp(2.2→3.6rem), lh 0.95): titoli di sezione.
-- **Eyebrow** (Oswald 500, 0.8rem, tracking 0.32em, MAIUSCOLO, ambra): la
-  riga che apre ogni sezione. Variante "insegna" con filetto + ◆ nell'hero e
-  nello sport.
-- **Body** (Mulish 400, 1.0–1.14rem, lh 1.6–1.7): paragrafi, max ~65–75ch.
-- **Tag / label** (Oswald 600, 0.74–0.82rem, tracking 0.1–0.16em): chips,
-  tag delle serate, etichette stile birra.
+- **Display H1** (Cinzel 600, clamp(2.6→6rem), lh 1.04, text-balance): nome del pub nell'hero, centrato.
+- **Headline H2** (Cinzel 600, clamp(2.2→4.6rem), lh 1.02–1.05): titoli di sezione.
+- **Eyebrow** (EB Garamond 400, 0.74rem, tracking 0.4em, MAIUSCOLO): oro-ink sul verde, oro-scuro sulla carta.
+- **Body** (EB Garamond 400, 0.98–1.06rem, lh 1.85): paragrafi, max ~65–75ch.
+- **Nota / prezzo** (EB Garamond, 0.82–0.86rem; italic per le note): prezzi in oro-ink.
 
 ### Named Rules
-**La Regola dell'Insegna.** Titoli, eyebrow e UI sono MAIUSCOLO condensato:
-se una composizione non potrebbe stare su un'insegna dipinta, ripensala.
-**La Regola dei Filetti.** L'eyebrow "a insegna" (filetto 1px ambra + ◆ +
-testo) è la firma di hero e sport. Non diventa decorazione su ogni sezione.
+**La Regola dell'Insegna Scolpita.** Titoli in Cinzel: capitali serif, come
+incise su una targa d'ottone.
+**La Regola dell'Eyebrow Misurato.** L'eyebrow apre alcune sezioni, non tutte:
+è un gesto, non un timbro su ogni blocco. (Hero + Birre + Menu; lo statement
+band ne fa a meno.)
 
 ## 4. Elevation & Bordi
 
-Sistema quasi piatto: la profondità nasce dai **cambi di espresso** (15→1c→0d)
-e dai **bordi hairline ambra** (`1px solid rgb(226 162 58 / .15–.4)`).
-L'unica ombra ammessa è quella del **muro birre** (`0 24px 60px rgb(0 0 0 /
-.4)`), che stacca il pannello crema dal fondo scuro — è un oggetto fisico
-appoggiato, non una card.
-
-Accenti a banda: bordi `3px solid` su marquee (espresso) e bordo superiore del
-footer (ambra). Border-radius: tutto **squadrato (0)**; solo le tile foto/loghi
-usano `4px`.
+Sistema piatto: la profondità nasce dal **cambio di superficie** (verde ↔
+carta-a-grana) e dai **bordi hairline** (`1px solid rgb(... / .16–.35)`). Le
+sezioni "carta" usano `background-image: url(grain.png)` per la texture.
+Border-radius: tutto **squadrato (0)**. Bordo superiore del footer in oro; nav
+solida con bordo inferiore hairline oro dopo lo scroll.
 
 ## 5. Components
 
-### Pulsanti — "targhetta a doppio filetto"
-La firma del look. Doppia cornice via `border` + due `inset box-shadow`.
-- **Primario:** fondo ambra, testo nero caldo, hover ambra chiara.
-- **Ghost:** trasparente, testo crema, cornice ambra, hover ambra al 12%.
-- Oswald 600, MAIUSCOLO, tracking 0.13em, padding 17×40px. Classi
-  `.btn-targhetta` + `.btn-targhetta-primario|ghost` in `globals.css`.
+### Nav (sticky)
+`position: fixed`. Sull'hero è trasparente (gradiente nero→trasparente); dopo
+~80px di scroll diventa **verde solido + backdrop-blur** con bordo inferiore oro
+e padding ridotto. Wordmark = **stemma (crest) + "Chelsea House"** (Cinzel). Link
+in MAIUSCOLO EB Garamond (hover oro). Sotto 860px diventa hamburger con pannello
+a tendina. Componente client `NavTaproom`.
 
-### Nav
-Barra trasparente sovrapposta all'hero (`position:absolute`). Wordmark testuale
-"Chelsea House" (Oswald 700) + link in MAIUSCOLO (hover ambra). Sotto 860px
-diventa **hamburger** con pannello a tendina scuro (componente client
-`NavTaproom`).
+### Pulsanti
+Filetto sottile, EB Garamond MAIUSCOLO tracking 0.2em, padding 15×30px.
+- **Primario:** fondo oro, testo verde-inchiostro, hover oro chiaro.
+- **Ghost:** trasparente, testo+bordo crema, hover fondo crema/testo verde.
+Classi `.btn-targhetta` + `-primario|-ghost` in `globals.css`.
 
-### Marquee (signature)
-Striscia ambra a tutta larghezza, testo espresso, bordi 3px espresso. Due copie
-della lista che scorrono `translateX(0 → -50%)` in 28s linear, loop senza
-stacchi. **Rispetta `prefers-reduced-motion`** (si ferma). È l'unico movimento
-ambientale del sito.
+### Hero
+Full-width (`clamp(560px,82vh,860px)`), foto `foto-sala` con overlay scuro,
+contenuto **centrato**: eyebrow + H1 (nome dal DB) + **riga di servizio**
+(indirizzo + orari dal pannello) + due CTA ("Vedi il menu", "Dove siamo"). La
+fold risponde subito a "che orari fa?".
+
+### Statement band
+Verde. Divisore con "30+ anni a Imola" (Cinzel) tra due filetti oro, poi griglia
+2 col: H2 "Un angolo d'Inghilterra a Imola" + paragrafo (`descrizione` dal DB) +
+CTA + foto `foto-pinta`.
 
 ### Muro birre (signature)
-Un solo pannello **crema** con i marchi in griglia 3 colonne (2 sotto 860px),
-divisi da linee `1px #ddccaa` per l'effetto "muro continuo". Logo + nome
-(Oswald 600) + stile (Oswald 700, ambra scura). Selezione **statica** nel
-codice (`MuroBirre`): i loghi ruotano cambiando l'asset, non dal DB.
+Sezione **carta-a-grana**. Griglia 3 col (2 sotto 640px), celle trasparenti
+(niente bordi-muro): logo centrato + nome (Cinzel) + stile (oro-scuro). Selezione
+**statica** nel codice (`MuroBirre`); loghi PNG puliti in `public/taproom/`.
 
-### Sport — "Trasmettiamo con"
-Pannello espresso con tile **crema** (110px, 4px) che ospitano i loghi dei
-servizi TV. I loghi arrivano dal **DB servizi** del pannello (Sky, DAZN, Serie
-A…). A sinistra le chips delle competizioni (statiche).
+### Carta menu (signature)
+Sezione verde. **Schede per categoria** generate dal **DB** (`getMenuPubblico`):
+tab attiva in oro, le altre con bordo crema. Sotto, griglia 2 col di righe — nome
+(Cinzel) + nota italica (`descrizione`) + filetto di puntini + prezzo (oro-ink).
+Componente client `CartaMenu`. Vuoto → messaggio "menu in aggiornamento".
 
-### Serate
-Card espresso-2 con bordo ambra (hover più acceso): tag data in ambra +
-titolo (Oswald) + nota. Alimentate dagli **eventi futuri del DB**; la sezione
-sparisce se non ci sono eventi.
+### Galleria
+Sezione carta-a-grana: 3 foto in griglia (1 col su mobile) dal **DB**
+(`getGalleriaPubblica`: Instagram o caricate a mano), con fallback alle foto del
+bundle.
 
-### La riga del menu
-Nome (Oswald) — filetto di puntini — prezzo (ambra), descrizione sotto in panna
-3. Sulla home il menu è introdotto da chips delle **categorie reali** + CTA
-verso `/menu`, dove vive la lista completa coi prezzi.
+### Footer
+Verde footer. Centrato: **stemma (crest)** + tagline "Fermati. Accomodati.
+Resta." (Cinzel). Sotto, griglia 1.4fr/1fr: nome + indirizzo + orari + pulsante
+oro "Indicazioni su Maps" (link calcolato su nome+indirizzo) | "Contatti"
+(tel/Instagram/Facebook/email dal DB). Riga finale "© Chelsea House · British
+Pub · Imola". Vive in `app/(sito)/layout.tsx`.
 
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** tenere l'ambra come unico accento acceso; il calore in più lo portano
-  le foto.
-- **Do** MAIUSCOLO condensato (Oswald) per titoli, eyebrow e UI; Mulish per il
-  corpo.
-- **Do** poggiare hero/menu/sport/galleria su foto vere del locale.
-- **Do** rispettare `prefers-reduced-motion` (marquee, scroll, bollicine) e
-  tenere il corpo testo ≥16px (clientela non giovane, WCAG AA).
-- **Do** progettare per contenuti veri e imperfetti dal pannello (foto storte,
-  descrizioni assenti, zero eventi, loghi mancanti).
+- **Do** tenere l'oro come unico accento; cambiare il suo tono col fondo (oro-ink su verde, oro-scuro su carta).
+- **Do** Cinzel per i titoli, EB Garamond per tutto il resto.
+- **Do** alternare i due registri di superficie (verde / carta-a-grana) per dare ritmo.
+- **Do** poggiare hero e galleria su foto vere del locale.
+- **Do** progettare per contenuti veri e imperfetti dal pannello (foto storte, descrizioni assenti, menu vuoto, orari mancanti) — i fallback ci sono.
+- **Do** tenere il corpo testo ≥16px e i contrasti ≥4.5:1 (clientela non giovane, WCAG AA).
 
 ### Don't:
-- **Don't** fare del tema chiaro una "carta chiara da startup": è "il pub di
-  giorno" sulla crema del brand, attivato solo dal dispositivo. Lo scuro resta
-  default e identità; la palette araldica resta solo in /admin.
-- **Don't** introdurre una seconda tinta accesa accanto all'ambra.
-- **Don't** arrotondare: niente pill, solo 4px sulle tile foto/loghi.
-- **Don't** mettere testo crema chiaro (panna 4) come corpo lungo su espresso:
-  va bene per note brevi, non per paragrafi.
-- **Don't** aggiungere font: Oswald + Mulish sono il sistema del sito pubblico.
-- **Don't** trasformare l'eyebrow "a insegna" in una grammatica ripetuta su
-  ogni blocco: è un gesto, non un timbro.
+- **Don't** reintrodurre un tema chiaro automatico: Black Friar è una palette fissa.
+- **Don't** introdurre una seconda tinta accesa accanto all'oro.
+- **Don't** usare il gold chiaro (#eab325) come **testo piccolo su carta**: non passa AA (usa oro-scuro #7e5b1f).
+- **Don't** arrotondare: niente pill, tutto squadrato.
+- **Don't** aggiungere font: Cinzel + EB Garamond sono il sistema del sito pubblico.
+- **Don't** mettere l'eyebrow su ogni sezione: è un gesto misurato, non una grammatica.
+- **Don't** toccare il pannello /admin con questa direzione: lì resta la palette araldica su carta.
