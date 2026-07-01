@@ -10,7 +10,7 @@ export default async function PaginaGioco() {
 
   return (
     <div className="mx-auto max-w-[900px] px-[clamp(24px,5vw,40px)] pt-[120px] pb-[clamp(64px,9vw,110px)]">
-      <h1 className="font-titoli mb-2 text-[clamp(2.4rem,6vw,4rem)] leading-[0.95] font-bold uppercase">
+      <h1 className="font-titoli mb-2 text-[clamp(2.6rem,6vw,4rem)] leading-[1] font-bold">
         La spillata perfetta
       </h1>
       <p className="text-panna-3 mb-8 max-w-xl">
@@ -23,7 +23,7 @@ export default async function PaginaGioco() {
       <section aria-labelledby="titolo-classifica" className="mt-12">
         <h2
           id="titolo-classifica"
-          className="font-titoli text-ambra-ink border-ambra/25 mb-6 border-b pb-2 text-[1.6rem] font-semibold uppercase"
+          className="font-titoli text-ambra-ink border-ambra/25 mb-6 border-b pb-[10px] text-[1.7rem] font-bold"
         >
           La lavagna dei campioni
         </h2>

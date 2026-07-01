@@ -19,7 +19,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
       <NavTaproom nomePub={nome} />
       <main className="flex-1">{children}</main>
 
-      <footer id="dove" className="bg-espresso-3 scroll-mt-24 text-[#d8cfbe]">
+      <footer className="bg-espresso-3 text-[#d8cfbe]">
         <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] pt-[clamp(60px,7vw,92px)] pb-10">
           <div className="mb-[clamp(40px,5vw,60px)] flex flex-col items-center text-center">
             <img

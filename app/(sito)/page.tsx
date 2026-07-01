@@ -1,6 +1,7 @@
 import { getImpostazioni, getMenuPubblico, getGalleriaPubblica } from '@/lib/dati'
 import { MuroBirre } from '@/components/sito/MuroBirre'
 import { CartaMenu } from '@/components/sito/CartaMenu'
+import { ComeArrivare } from '@/components/sito/ComeArrivare'
 
 // Sfondo "carta" delle sezioni chiare (birre, gallery): crema + texture grana.
 const CARTA = {
@@ -167,6 +168,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <ComeArrivare nomePub={nome} indirizzo={impostazioni.indirizzo} />
     </>
   )
 }

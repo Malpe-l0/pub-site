@@ -8,11 +8,8 @@ export default async function PaginaGalleria() {
 
   return (
     <div className="mx-auto max-w-[1320px] px-[clamp(24px,5vw,40px)] pt-[120px] pb-[clamp(64px,9vw,110px)]">
-      <p className="font-titoli text-ambra-ink mb-3 text-[0.8rem] font-medium tracking-[0.32em] uppercase">
+      <h1 className="font-titoli mb-12 text-[clamp(2.8rem,7vw,4.6rem)] leading-[1] font-bold">
         Il locale
-      </p>
-      <h1 className="font-titoli mb-12 text-[clamp(2.6rem,7vw,4.5rem)] leading-[0.95] font-bold uppercase">
-        Galleria
       </h1>
 
       {foto.length === 0 ? (
