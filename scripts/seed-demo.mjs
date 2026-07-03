@@ -45,14 +45,14 @@ db.prepare(
 ).run(
   'Chelsea House',
   'Birre alla spina, cucina fino a tardi e trent’anni di serate tra mattoni e legno.',
-  'Via dei Malti 12, Catania',
-  '095 123 4567',
+  'Viale Domenico Rivalta 99/A, Imola (BO)',
+  '0542 27413',
   'info@chelseahouse.it',
   'https://www.facebook.com/chelseahousepub',
   'https://www.instagram.com/chelseahousepub',
   JSON.stringify([
-    { giorni: 'Martedì – Domenica', orario: '18:00 – 01:00' },
-    { giorni: 'Lunedì', orario: 'Chiuso' },
+    { giorni: 'Domenica – Giovedì', orario: '20:30 – 02:30' },
+    { giorni: 'Venerdì – Sabato', orario: '20:30 – 03:00' },
   ])
 )
 
@@ -77,7 +77,7 @@ const voce = db.prepare(
 const spina = categoria.run('Birre alla spina', 0).lastInsertRowid
 voce.run('Guinness', 'Stout irlandese, pinta', 600, spina, 0)
 voce.run('Kilkenny', 'Red ale cremosa, pinta', 600, spina, 1)
-voce.run('IPA della casa', 'Artigianale siciliana, 0,4 l', 550, spina, 2)
+voce.run('IPA della casa', 'Artigianale locale, 0,4 l', 550, spina, 2)
 voce.run('Lager', 'Chiara, 0,4 l', 450, spina, 3)
 
 const bottiglia = categoria.run('Birre in bottiglia', 1).lastInsertRowid
