@@ -10,8 +10,13 @@ const CARTA = {
   backgroundRepeat: 'repeat' as const,
 }
 
-// Galleria di riserva: foto del bundle, se il gestore non ne ha ancora caricate.
-const FOTO_DEFAULT = ['/taproom/foto-bancone.jpg', '/taproom/foto-pinta.jpg', '/taproom/foto-sala.jpg']
+// Galleria di riserva: foto del bundle, per rabboccare quando il gestore ne ha
+// caricate meno di tre — la griglia non deve mai restare mezza vuota.
+const FOTO_DEFAULT = [
+  { src: '/taproom/foto-bancone.jpg', alt: 'Il bancone in legno scuro, bicchieri appesi' },
+  { src: '/taproom/foto-pinta.jpg', alt: 'Una pinta appena spillata al bancone' },
+  { src: '/taproom/foto-sala.jpg', alt: 'La sala del pub, luci calde e boiserie' },
+]
 
 export default async function Home() {
   const impostazioni = getImpostazioni()
@@ -19,8 +24,13 @@ export default async function Home() {
   const vetrina = getGalleriaPubblica()
 
   const nome = impostazioni.nomePub || 'Il nostro pub'
-  const fotoGalleria =
-    vetrina.foto.length > 0 ? vetrina.foto.slice(0, 3).map((f) => f.src) : FOTO_DEFAULT
+  const fotoGalleria = [
+    ...vetrina.foto.slice(0, 3).map((f) => ({
+      src: f.src,
+      alt: f.didascalia || `Foto di ${nome}`,
+    })),
+    ...FOTO_DEFAULT,
+  ].slice(0, 3)
   const racconto =
     impostazioni.descrizione ||
     'Bancone in legno scuro, bicchieri appesi e l’atmosfera dei pub d’oltremanica. Buona compagnia, cucina semplice e una selezione di birre, cocktail e amari — dal 1993.'
@@ -31,6 +41,15 @@ export default async function Home() {
     .filter(Boolean)
     .join(' · ')
   const heroServizio = [impostazioni.indirizzo, orariSintesi].filter(Boolean).join(' — ')
+  // Orari non ancora inseriti dal pannello: la domanda "che orari fa?" merita
+  // comunque una risposta — si rimanda a un canale vivo (telefono, poi Instagram).
+  const fallbackOrari = !orariSintesi
+    ? impostazioni.telefono
+      ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: 'Chiama per gli orari' }
+      : impostazioni.instagram
+        ? { href: impostazioni.instagram, testo: 'Orari e aperture su Instagram' }
+        : null
+    : null
 
   return (
     <>
@@ -44,18 +63,28 @@ export default async function Home() {
         }}
       >
         <div className="px-6">
-          <p className="text-ambra-ink mb-[14px] text-[0.74rem] tracking-[0.42em] uppercase">
+          <p className="text-ambra-ink entrata-hero mb-[14px] text-[0.74rem] tracking-[0.42em] uppercase">
             British Pub · dal 1993
           </p>
-          <h1 className="font-titoli text-panna text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
+          <h1 className="font-titoli text-panna entrata-hero text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
             {nome}
           </h1>
           {heroServizio && (
-            <p className="text-panna-2 mx-auto mt-6 max-w-[34ch] text-[0.86rem] leading-[1.6] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
+            <p className="text-panna-2 entrata-hero entrata-hero-2 mx-auto mt-6 max-w-[34ch] text-[0.86rem] leading-[1.6] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
               {heroServizio}
             </p>
           )}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-[14px]">
+          {fallbackOrari && (
+            <p className="entrata-hero entrata-hero-2 mt-3 text-[0.86rem] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
+              <a
+                href={fallbackOrari.href}
+                className="text-panna-2 hover:text-panna inline-block py-2 underline underline-offset-4 transition-colors"
+              >
+                {fallbackOrari.testo}
+              </a>
+            </p>
+          )}
+          <div className="entrata-hero entrata-hero-3 mt-8 flex flex-wrap items-center justify-center gap-[14px]">
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
               Vedi il menu
             </a>
@@ -79,30 +108,24 @@ export default async function Home() {
             <span className="bg-ambra/40 h-px flex-1" />
           </div>
         </div>
-        <div className="mx-auto grid max-w-[1180px] items-center gap-[clamp(40px,6vw,80px)] px-[clamp(24px,5vw,52px)] pt-[clamp(40px,6vw,64px)] pb-[clamp(64px,9vw,108px)] md:grid-cols-2">
+        <div className="mx-auto grid max-w-[1180px] items-center gap-[clamp(32px,6vw,72px)] px-[clamp(24px,5vw,52px)] pt-[clamp(40px,6vw,64px)] pb-[clamp(64px,9vw,108px)] md:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <h2 className="font-titoli text-[clamp(2.6rem,5.6vw,4.6rem)] leading-[1.02] font-semibold">
-              Un angolo
-              <br />
-              d’Inghilterra
-              <br />a Imola
+            <h2 className="font-titoli text-[clamp(2.2rem,5.2vw,4rem)] leading-[1.04] font-semibold text-balance">
+              Un angolo d’Inghilterra a Imola
             </h2>
-            <p className="text-panna-3 mt-[26px] max-w-[430px] text-[0.98rem] leading-[1.85] text-pretty">
+            <p className="text-panna-3 mt-[26px] max-w-[46ch] text-[1rem] leading-[1.85] text-pretty">
               {racconto}
             </p>
-            <div className="mt-[34px] flex flex-wrap gap-[14px]">
-              <a href="#menu" className="btn-targhetta btn-targhetta-ghost">
+            <div className="mt-[34px]">
+              <a href="#menu" className="btn-targhetta btn-targhetta-primario">
                 Scopri la carta
-              </a>
-              <a href="#dove" className="btn-targhetta btn-targhetta-primario">
-                Dove siamo
               </a>
             </div>
           </div>
           <img
             src="/taproom/foto-pinta.jpg"
-            alt="Pinte al bancone"
-            className="h-[clamp(320px,42vw,480px)] w-full object-cover"
+            alt="Pinte appena spillate al bancone del Chelsea House"
+            className="h-[clamp(340px,46vw,520px)] w-full border border-[rgb(234_179_37/0.28)] object-cover"
           />
         </div>
       </section>
@@ -156,11 +179,11 @@ export default async function Home() {
       <section style={CARTA}>
         <div className="mx-auto max-w-[1320px] px-[clamp(24px,5vw,40px)] py-[clamp(56px,8vw,96px)]">
           <div className="grid grid-cols-1 gap-[14px] sm:h-[clamp(260px,34vw,400px)] sm:grid-cols-3">
-            {fotoGalleria.map((src, i) => (
+            {fotoGalleria.map((foto) => (
               <img
-                key={i}
-                src={src}
-                alt={`Foto di ${nome}`}
+                key={foto.src}
+                src={foto.src}
+                alt={foto.alt}
                 loading="lazy"
                 className="aspect-[16/10] w-full object-cover sm:aspect-auto sm:h-full"
               />

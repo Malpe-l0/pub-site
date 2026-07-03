@@ -18,7 +18,7 @@
   --color-panna: #f4eedd;
   --color-panna-2: #d8ccb4;
   --color-panna-3: #d8ccb4;
-  --color-panna-4: #a99f8c; /* note/footnote sul verde */
+  --color-panna-4: #d8ccb4; /* note/footnote sul verde — 4.59:1 è il pavimento AA: più scuro non passa; il "quieto" lo fanno corpo e corsivo */
   --color-panna-muro: #f4eedd; /* carta (sezioni birre/gallery) */
   --color-panna-muro-hover: #efe6d3;
   --color-lineamuro: #ddccaa;
@@ -89,6 +89,34 @@ body:has(.sito-taproom) {
 .btn-targhetta-ghost:hover {
   background: var(--color-panna);
   color: var(--color-espresso);
+}
+
+/* L'unico momento di motion della pagina: l'entrata dell'hero, "la porta che
+   si apre la sera". Keyframe CSS puri (partono al load, niente scroll-trigger),
+   ease-out-quint, tre battute brevi. Il resto della pagina resta fermo. */
+@keyframes entrata-hero {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.entrata-hero {
+  animation: entrata-hero 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.entrata-hero-2 {
+  animation-delay: 0.14s;
+}
+.entrata-hero-3 {
+  animation-delay: 0.28s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .entrata-hero {
+    animation: none;
+  }
 }
 
 /* Focus da tastiera: anello ambra, squadrato come il resto del sistema.

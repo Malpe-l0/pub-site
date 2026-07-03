@@ -2,6 +2,7 @@ import { getImpostazioni, getPopup } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
 import { NavTaproom } from '@/components/sito/NavTaproom'
 import { Popup } from '@/components/Popup'
+import { AnteprimaPalette } from '@/components/sito/AnteprimaPalette'
 
 // Pagine dinamiche: ogni richiesta legge il database, così le modifiche dal
 // pannello (e le logiche a date di pop-up ed eventi) sono subito visibili.
@@ -13,6 +14,11 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
   const impostazioni = getImpostazioni()
   const avviso = popupDaMostrare(getPopup())
   const nome = impostazioni.nomePub || 'Il nostro pub'
+  // La colonna "Contatti" esiste solo se c'è almeno un contatto nel pannello:
+  // un'etichetta sopra il nulla è peggio di nessuna colonna.
+  const haContatti = Boolean(
+    impostazioni.telefono || impostazioni.instagram || impostazioni.facebook || impostazioni.email
+  )
 
   return (
     <div className="sito-taproom relative flex min-h-screen flex-col overflow-x-hidden">
@@ -22,19 +28,24 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
       <footer className="bg-espresso-3 text-[#d8cfbe]">
         <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] pt-[clamp(60px,7vw,92px)] pb-10">
           <div className="mb-[clamp(40px,5vw,60px)] flex flex-col items-center text-center">
-            <img
-              src="/taproom/crest.png"
-              alt={`Stemma ${nome}`}
-              className="mb-[22px] h-auto w-[118px]"
-            />
-            <p className="font-titoli text-panna text-[clamp(1.6rem,3.6vw,2.6rem)] text-balance">
-              Fermati. Accomodati. Resta.
+            <p className="font-titoli text-ambra-ink text-[clamp(1.9rem,4vw,2.7rem)] font-semibold tracking-[0.01em]">
+              {nome}
             </p>
+            <div className="mt-[18px] flex items-center gap-[clamp(14px,3vw,26px)]">
+              <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
+              <p className="font-titoli text-panna text-[clamp(1.3rem,2.8vw,1.9rem)] text-balance">
+                Fermati. Accomodati. Resta.
+              </p>
+              <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
+            </div>
           </div>
 
-          <div className="grid gap-[clamp(32px,6vw,72px)] border-t border-[rgb(244_238_221/0.16)] pt-[clamp(40px,5vw,56px)] md:grid-cols-[1.4fr_1fr]">
+          <div
+            className={`grid gap-[clamp(32px,6vw,72px)] border-t border-[rgb(244_238_221/0.16)] pt-[clamp(40px,5vw,56px)] ${
+              haContatti ? 'md:grid-cols-[1.4fr_1fr]' : ''
+            }`}
+          >
             <div>
-              <p className="font-titoli text-ambra-ink mb-[14px] text-[1.5rem]">{nome}</p>
               {impostazioni.indirizzo && (
                 <p className="mb-[18px] text-[0.84rem] leading-[1.9]">{impostazioni.indirizzo}</p>
               )}
@@ -54,7 +65,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
                 href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(nome + ' ' + impostazioni.indirizzo)}`}
                 target="_blank"
                 rel="noopener"
-                className="bg-ambra hover:bg-ambra-hover inline-flex items-center gap-[10px] px-[22px] py-[13px] text-[0.74rem] tracking-[0.18em] text-[#243a2d] uppercase transition-colors"
+                className="btn-targhetta btn-targhetta-primario inline-flex items-center gap-[10px]"
               >
                 <svg
                   width="14"
@@ -74,8 +85,9 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
               </a>
             </div>
 
+            {haContatti && (
             <div className="flex flex-col gap-[11px]">
-              <p className="text-ambra-ink mb-1 text-[0.68rem] tracking-[0.22em] uppercase">
+              <p className="text-ambra-ink mb-1 text-[0.74rem] tracking-[0.22em] uppercase">
                 Contatti
               </p>
               {impostazioni.telefono && (
@@ -105,15 +117,18 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
                 </a>
               )}
             </div>
+            )}
           </div>
 
-          <p className="mt-[clamp(40px,5vw,60px)] text-center text-[0.72rem] tracking-[0.08em] text-[rgb(216_207_190/0.5)]">
+          <p className="text-panna-4 mt-[clamp(40px,5vw,60px)] text-center text-[0.78rem] tracking-[0.08em]">
             © {nome} · British Pub · Imola
           </p>
         </div>
       </footer>
 
       {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} />}
+      {/* ponytail: switcher palette TEMPORANEO — rimuovere dopo la scelta. */}
+      <AnteprimaPalette />
     </div>
   )
 }

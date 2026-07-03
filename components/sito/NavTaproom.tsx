@@ -36,12 +36,12 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
           fissa ? 'py-3' : 'py-5'
         }`}
       >
-        <a href="/" className="flex items-center gap-[10px]">
+        <a href="/" className="flex items-center gap-[12px]">
           <img
             src="/taproom/crest.png"
             alt=""
             aria-hidden
-            className={`w-auto transition-[height] duration-300 ${fissa ? 'h-8' : 'h-10'}`}
+            className={`w-auto transition-[height] duration-300 ${fissa ? 'h-11' : 'h-14'}`}
           />
           <span className="font-titoli text-panna text-[clamp(1.2rem,2.6vw,1.7rem)] tracking-[0.02em]">
             {nomePub}
@@ -54,7 +54,7 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
             <li key={v.href}>
               <a
                 href={v.href}
-                className="text-panna hover:text-ambra-ink text-[0.7rem] tracking-[0.2em] uppercase transition-colors"
+                className="text-panna hover:text-ambra-ink inline-block py-2 text-[0.76rem] tracking-[0.2em] uppercase transition-colors"
               >
                 {v.testo}
               </a>

@@ -28,7 +28,7 @@ export function MuroBirre() {
           </div>
           <div>
             <p className="font-titoli text-[1.3rem] text-[#243a2d]">{b.nome}</p>
-            <p className="text-ambra-scura mt-[7px] text-[0.66rem] tracking-[0.22em] uppercase">
+            <p className="text-ambra-scura mt-[7px] text-[0.72rem] tracking-[0.22em] uppercase">
               {b.stile}
             </p>
           </div>

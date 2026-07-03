@@ -9,7 +9,7 @@ colors:
   panna: "#f4eedd"
   panna-2: "#d8ccb4"
   panna-3: "#d8ccb4"
-  panna-4: "#a99f8c"
+  panna-4: "#d8ccb4"
   carta: "#f4eedd"
   oro: "#eab325"
   oro-hover: "#f4c54a"
@@ -103,7 +103,7 @@ dell'insegna.
 - **Panna** (#f4eedd): testo principale su verde; superficie "carta" delle sezioni birre/galleria.
 - **Panna 2** (#d8ccb4): riga di servizio dell'hero. (4.59:1 su verde — AA.)
 - **Panna 3** (#d8ccb4): paragrafi secondari su verde.
-- **Panna 4** (#a99f8c): note brevi/footnote su verde.
+- **Panna 4** (#d8ccb4): note brevi/footnote su verde. (Il vecchio #a99f8c dava 2.79:1 — sotto AA; 4.59:1 è il pavimento sul verde, il "quieto" lo fanno corpo ridotto e corsivo.)
 
 ### Oro (accento)
 - **Oro** (#eab325): accento pieno — pulsante primario, tab attiva, bordo superiore del footer, pulsante Maps.
@@ -172,8 +172,14 @@ Classi `.btn-targhetta` + `-primario|-ghost` in `globals.css`.
 ### Hero
 Full-width (`clamp(560px,82vh,860px)`), foto `foto-sala` con overlay scuro,
 contenuto **centrato**: eyebrow + H1 (nome dal DB) + **riga di servizio**
-(indirizzo + orari dal pannello) + due CTA ("Vedi il menu", "Dove siamo"). La
-fold risponde subito a "che orari fa?".
+(indirizzo + orari dal pannello; senza orari, link di fallback a telefono o
+Instagram) + due CTA ("Vedi il menu", "Dove siamo"). La fold risponde subito a
+"che orari fa?".
+
+**Motion: solo qui.** L'unica animazione della pagina è l'entrata dell'hero in
+tre battute (insegna → riga di servizio → CTA), keyframe CSS `entrata-hero`,
+ease-out-quint, 0.9s, disattivata con `prefers-reduced-motion`. Il resto della
+pagina resta fermo per scelta.
 
 ### Statement band
 Verde. Divisore con "30+ anni a Imola" (Cinzel) tra due filetti oro, poi griglia
