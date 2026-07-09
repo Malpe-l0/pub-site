@@ -14,8 +14,9 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
   const impostazioni = getImpostazioni()
   const avviso = popupDaMostrare(getPopup())
   const nome = impostazioni.nomePub || 'Il nostro pub'
-  // La colonna "Contatti" esiste solo se c'è almeno un contatto nel pannello:
-  // un'etichetta sopra il nulla è peggio di nessuna colonna.
+  // Le colonne del footer esistono solo se hanno qualcosa da mostrare:
+  // un'etichetta o un divisore sopra il nulla è peggio di nessuna colonna.
+  const haDove = Boolean(impostazioni.indirizzo || impostazioni.orari.length > 0)
   const haContatti = Boolean(
     impostazioni.telefono || impostazioni.instagram || impostazioni.facebook || impostazioni.email
   )
@@ -25,7 +26,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
       <NavTaproom nomePub={nome} />
       <main className="flex-1">{children}</main>
 
-      <footer className="bg-espresso-3 text-[#d8cfbe]">
+      <footer className="bg-espresso-3 border-ambra/25 text-[#d8cfbe] border-t">
         <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] pt-[clamp(60px,7vw,92px)] pb-10">
           <div className="mb-[clamp(40px,5vw,60px)] flex flex-col items-center text-center">
             <p className="font-titoli text-ambra-ink text-[clamp(1.9rem,4vw,2.7rem)] font-semibold tracking-[0.01em]">
@@ -40,27 +41,31 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
             </div>
           </div>
 
-          <div
-            className={`grid gap-[clamp(32px,6vw,72px)] border-t border-[rgb(244_238_221/0.16)] pt-[clamp(40px,5vw,56px)] ${
-              haContatti ? 'md:grid-cols-[1.4fr_1fr]' : ''
-            }`}
-          >
-            <div>
-              {impostazioni.indirizzo && (
-                <p className="mb-[18px] text-[0.84rem] leading-[1.9]">{impostazioni.indirizzo}</p>
-              )}
-              {impostazioni.orari.length > 0 && (
-                <p className="mb-[18px] text-[0.84rem] leading-[1.9]">
-                  {impostazioni.orari.map((fascia, i) => (
-                    <span key={i}>
-                      {fascia.giorni}
-                      {fascia.giorni && fascia.orario ? ' ' : ''}
-                      {fascia.orario}
-                      {i < impostazioni.orari.length - 1 && <br />}
-                    </span>
-                  ))}
-                </p>
-              )}
+          {/* Direttorio: colonne a larghezza fissa (auto-fit, nessun breakpoint
+              manuale sul numero di colonne), separate da hairline che cambiano
+              lato (sopra da impilate, a sinistra in riga) solo per orientamento. */}
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,320px))] gap-x-[clamp(32px,5vw,56px)] gap-y-[clamp(28px,4vw,36px)] border-t border-[rgb(244_238_221/0.16)] pt-[clamp(40px,5vw,56px)]">
+            {haDove && (
+              <div className="border-[rgb(244_238_221/0.14)] first:border-t-0 first:pt-0 first:sm:border-l-0 first:sm:pl-0 border-t pt-[clamp(24px,3vw,32px)] sm:border-t-0 sm:border-l sm:pt-0 sm:pl-[clamp(28px,4vw,44px)]">
+                {impostazioni.indirizzo && (
+                  <p className="mb-[10px] text-[0.84rem] leading-[1.9]">{impostazioni.indirizzo}</p>
+                )}
+                {impostazioni.orari.length > 0 && (
+                  <p className="text-[0.84rem] leading-[1.9]">
+                    {impostazioni.orari.map((fascia, i) => (
+                      <span key={i}>
+                        {fascia.giorni}
+                        {fascia.giorni && fascia.orario ? ' ' : ''}
+                        {fascia.orario}
+                        {i < impostazioni.orari.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="border-[rgb(244_238_221/0.14)] first:border-t-0 first:pt-0 first:sm:border-l-0 first:sm:pl-0 border-t pt-[clamp(24px,3vw,32px)] sm:border-t-0 sm:border-l sm:pt-0 sm:pl-[clamp(28px,4vw,44px)]">
               <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(nome + ' ' + impostazioni.indirizzo)}`}
                 target="_blank"
@@ -86,37 +91,34 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
             </div>
 
             {haContatti && (
-            <div className="flex flex-col gap-[11px]">
-              <p className="text-ambra-ink mb-1 text-[0.74rem] tracking-[0.22em] uppercase">
-                Contatti
-              </p>
-              {impostazioni.telefono && (
-                <a
-                  className="hover:text-panna text-[0.84rem] transition-colors"
-                  href={`tel:${impostazioni.telefono.replace(/\s/g, '')}`}
-                >
-                  {impostazioni.telefono}
-                </a>
-              )}
-              {impostazioni.instagram && (
-                <a className="hover:text-panna text-[0.84rem] transition-colors" href={impostazioni.instagram}>
-                  Instagram
-                </a>
-              )}
-              {impostazioni.facebook && (
-                <a className="hover:text-panna text-[0.84rem] transition-colors" href={impostazioni.facebook}>
-                  Facebook
-                </a>
-              )}
-              {impostazioni.email && (
-                <a
-                  className="hover:text-panna text-[0.84rem] transition-colors"
-                  href={`mailto:${impostazioni.email}`}
-                >
-                  {impostazioni.email}
-                </a>
-              )}
-            </div>
+              <div className="border-[rgb(244_238_221/0.14)] first:border-t-0 first:pt-0 first:sm:border-l-0 first:sm:pl-0 flex border-t flex-col gap-[11px] pt-[clamp(24px,3vw,32px)] sm:border-t-0 sm:border-l sm:pt-0 sm:pl-[clamp(28px,4vw,44px)]">
+                {impostazioni.telefono && (
+                  <a
+                    className="hover:text-panna text-[0.84rem] transition-colors"
+                    href={`tel:${impostazioni.telefono.replace(/\s/g, '')}`}
+                  >
+                    {impostazioni.telefono}
+                  </a>
+                )}
+                {impostazioni.instagram && (
+                  <a className="hover:text-panna text-[0.84rem] transition-colors" href={impostazioni.instagram}>
+                    Instagram
+                  </a>
+                )}
+                {impostazioni.facebook && (
+                  <a className="hover:text-panna text-[0.84rem] transition-colors" href={impostazioni.facebook}>
+                    Facebook
+                  </a>
+                )}
+                {impostazioni.email && (
+                  <a
+                    className="hover:text-panna text-[0.84rem] transition-colors"
+                    href={`mailto:${impostazioni.email}`}
+                  >
+                    {impostazioni.email}
+                  </a>
+                )}
+              </div>
             )}
           </div>
 

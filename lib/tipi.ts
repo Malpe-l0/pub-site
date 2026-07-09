@@ -65,14 +65,6 @@ export type FotoGalleria = {
   ordine: number
 }
 
-/** Riga della classifica del gioco della spillata. */
-export type Punteggio = {
-  id: number
-  sigla: string // tre lettere maiuscole, stile sala giochi
-  punteggio: number
-  creatoIl: string // datetime('now') di SQLite, UTC
-}
-
 /** Stato dell'integrazione Instagram, per il pannello (token escluso). */
 export type StatoInstagram = {
   configurato: boolean

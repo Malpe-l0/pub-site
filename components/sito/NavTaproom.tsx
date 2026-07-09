@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-// Ancore assolute alla home: funzionano anche da /menu, /galleria, /gioco.
+// Ancore assolute alla home: funzionano anche da /menu e /galleria.
 const VOCI = [
   { href: '/#birre', testo: 'Birre' },
   { href: '/#menu', testo: 'Menu' },

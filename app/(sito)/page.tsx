@@ -85,9 +85,11 @@ export default async function Home() {
             </p>
           )}
           <div className="entrata-hero entrata-hero-3 mt-8 flex flex-wrap items-center justify-center gap-[14px]">
+
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
               Vedi il menu
             </a>
+
             <a href="#dove" className="btn-targhetta btn-targhetta-ghost">
               Dove siamo
             </a>

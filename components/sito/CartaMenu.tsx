@@ -12,7 +12,9 @@ export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
 
   return (
     <>
-      <div className="mb-[clamp(30px,4vw,44px)] flex flex-wrap justify-center gap-[10px]">
+      {/* Mobile: striscia orizzontale scrollabile (le tab su una riga, si scorre
+          col pollice) invece della pila a scaletta del flex-wrap. Da sm: wrap centrato. */}
+      <div className="mb-[clamp(30px,4vw,44px)] flex gap-[10px] overflow-x-auto pb-2 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0">
         {categorie.map((c) => {
           const sel = c.id === attiva
           return (
@@ -21,7 +23,7 @@ export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
               type="button"
               onClick={() => setAttiva(c.id)}
               aria-pressed={sel}
-              className={`font-testo cursor-pointer border px-[22px] py-[11px] text-[0.74rem] tracking-[0.2em] uppercase transition-colors ${
+              className={`font-testo shrink-0 cursor-pointer border px-[22px] py-[11px] text-[0.74rem] whitespace-nowrap tracking-[0.2em] uppercase transition-colors ${
                 sel
                   ? 'bg-ambra border-ambra text-espresso'
                   : 'border-panna/35 text-panna hover:border-panna/70'

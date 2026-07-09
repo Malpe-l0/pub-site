@@ -13,7 +13,7 @@
   /* Black Friar — sito pubblico */
   --color-espresso: #1e6240; /* verde pagina + sezioni scure */
   --color-espresso-2: #1e6240; /* sezione menu (stesso verde) */
-  --color-espresso-3: #2e3732; /* footer */
+  --color-espresso-3: #16472e; /* footer: verde più scuro della sala, non grigio (il vecchio #2e3732 era troppo desaturato) */
   --color-nerocaldo: #243a2d; /* verde-inchiostro: testo sui pulsanti oro */
   --color-panna: #f4eedd;
   --color-panna-2: #d8ccb4;
@@ -42,6 +42,15 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Striscia scrollabile senza barra visibile (tab del menu su mobile): lo scroll
+   resta, l'affordance la dà la tab tagliata al bordo, non una scrollbar da desktop. */
+.scroll-pulito {
+  scrollbar-width: none;
+}
+.scroll-pulito::-webkit-scrollbar {
+  display: none;
 }
 
 body {

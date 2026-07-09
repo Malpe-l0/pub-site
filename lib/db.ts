@@ -102,16 +102,7 @@ function inizializza(db: Database.Database) {
       ordine INTEGER NOT NULL DEFAULT 0
     );
 
-    CREATE TABLE IF NOT EXISTS punteggi (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sigla TEXT NOT NULL CHECK (length(sigla) = 3),
-      punteggio INTEGER NOT NULL CHECK (punteggio >= 0),
-      creato_il TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_punteggi_punteggio ON punteggi (punteggio DESC);
-
-    CREATE TABLE IF NOT EXISTS foto_instagram (
+CREATE TABLE IF NOT EXISTS foto_instagram (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ig_id TEXT NOT NULL UNIQUE,        -- id del media su Instagram (dedup)
       file TEXT NOT NULL,                -- foto scaricata e ricompressa in data/uploads

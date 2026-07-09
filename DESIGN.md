@@ -203,10 +203,20 @@ Sezione carta-a-grana: 3 foto in griglia (1 col su mobile) dal **DB**
 bundle.
 
 ### Footer
-Verde footer. Centrato: **stemma (crest)** + tagline "Fermati. Accomodati.
-Resta." (Cinzel). Sotto, griglia 1.4fr/1fr: nome + indirizzo + orari + pulsante
-oro "Indicazioni su Maps" (link calcolato su nome+indirizzo) | "Contatti"
-(tel/Instagram/Facebook/email dal DB). Riga finale "© Chelsea House · British
+Verde footer, bordo superiore in oro (`border-ambra/25`) che segna la giuntura
+col verde di pagina. Insegna centrata: nome del pub (Cinzel/oro) + tagline
+"Fermati. Accomodati. Resta." tra due filetti oro — niente crest qui, l'oro e
+la tipografia bastano a firmare la sezione (il crest illustrato multicolore
+rompeva la Regola dell'Unico Accento).
+
+Sotto, un **direttorio**: colonne a larghezza fissa
+(`grid-cols-[repeat(auto-fit,minmax(200px,320px))]`, nessun breakpoint manuale
+sul numero di colonne) separate da hairline che cambiano lato con lo stack
+mobile (sopra da impilate, a sinistra in riga) — Dove (indirizzo + orari) |
+pulsante oro "Indicazioni su Maps" (colonna propria, non più schiacciato sotto
+il testo) | Contatti (tel/Instagram/Facebook/email dal DB). Ogni colonna
+compare solo se ha contenuto: footer senza dati collassa con garbo, mai
+un'etichetta o un divisore sul nulla. Riga finale "© Chelsea House · British
 Pub · Imola". Vive in `app/(sito)/layout.tsx`.
 
 ## 6. Do's and Don'ts

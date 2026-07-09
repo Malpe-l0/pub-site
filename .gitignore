@@ -49,3 +49,7 @@ next-env.d.ts
 
 # stato locale di impeccable live
 /.impeccable
+
+# copie locali della skill impeccable (arrivano dal plugin, non vanno nel repo)
+/.agents
+/.gemini
