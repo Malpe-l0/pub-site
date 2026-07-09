@@ -1,10 +1,16 @@
 import type { Metadata } from 'next'
-import { getMenuPubblico } from '@/lib/dati'
+import { getImpostazioni, getMenuPubblico } from '@/lib/dati'
 
 export const metadata: Metadata = { title: 'Menu' }
 
 export default async function PaginaMenu() {
   const categorie = getMenuPubblico().filter((c) => c.voci.length > 0)
+  const imp = getImpostazioni()
+  const contatto = imp.telefono
+    ? { href: `tel:${imp.telefono.replace(/\s/g, '')}`, testo: 'Chiama per la carta di stasera' }
+    : imp.instagram
+      ? { href: imp.instagram, testo: 'Chiedi su Instagram' }
+      : null
   const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' })
 
   return (
@@ -14,7 +20,14 @@ export default async function PaginaMenu() {
       </h1>
 
       {categorie.length === 0 ? (
-        <p className="text-panna-3">Il menu è in aggiornamento, torna a trovarci presto.</p>
+        <div>
+          <p className="text-panna-3">Il menu è in aggiornamento.</p>
+          {contatto && (
+            <a href={contatto.href} className="btn-targhetta btn-targhetta-primario mt-6 inline-block">
+              {contatto.testo}
+            </a>
+          )}
+        </div>
       ) : (
         categorie.map((cat) => (
           <section key={cat.id} aria-labelledby={`cat-${cat.id}`} className="mb-12">

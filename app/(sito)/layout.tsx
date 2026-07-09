@@ -2,7 +2,6 @@ import { getImpostazioni, getPopup } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
 import { NavTaproom } from '@/components/sito/NavTaproom'
 import { Popup } from '@/components/Popup'
-import { AnteprimaPalette } from '@/components/sito/AnteprimaPalette'
 
 // Pagine dinamiche: ogni richiesta legge il database, così le modifiche dal
 // pannello (e le logiche a date di pop-up ed eventi) sono subito visibili.
@@ -70,7 +69,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
                 href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(nome + ' ' + impostazioni.indirizzo)}`}
                 target="_blank"
                 rel="noopener"
-                className="btn-targhetta btn-targhetta-primario inline-flex items-center gap-[10px]"
+                className="btn-targhetta btn-targhetta-primario inline-flex w-full max-w-full items-center justify-center gap-[10px] sm:w-auto"
               >
                 <svg
                   width="14"
@@ -129,8 +128,6 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
       </footer>
 
       {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} />}
-      {/* ponytail: switcher palette TEMPORANEO — rimuovere dopo la scelta. */}
-      <AnteprimaPalette />
     </div>
   )
 }

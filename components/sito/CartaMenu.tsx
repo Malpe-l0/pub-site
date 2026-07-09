@@ -1,63 +1,86 @@
 'use client'
 
 import { useState } from 'react'
-import type { CategoriaConVoci } from '@/lib/tipi'
+import type { CategoriaConVoci, VoceMenu } from '@/lib/tipi'
 
 const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' })
 
-/** La carta a schede: una scheda per categoria del pannello, voci dal DB. */
+function Riga({ v }: { v: VoceMenu }) {
+  return (
+    <div className="flex items-baseline gap-[14px] border-b border-[rgb(244_238_221/0.18)] px-[2px] py-[15px]">
+      <span className="flex min-w-0 flex-col gap-[3px]">
+        <span className="font-titoli text-panna text-[1.06rem]">{v.nome}</span>
+        {v.descrizione && (
+          <span className="font-testo text-panna-3 text-[0.82rem] italic">{v.descrizione}</span>
+        )}
+      </span>
+      <span
+        aria-hidden
+        className="min-w-[20px] flex-1 -translate-y-[5px] border-b border-dotted border-[rgb(244_238_221/0.32)]"
+      />
+      <span className="text-ambra-ink text-[0.86rem] tracking-[0.06em] whitespace-nowrap">
+        {euro.format(v.prezzoCentesimi / 100)}
+      </span>
+    </div>
+  )
+}
+
+/** Home: mobile = 2 categorie + Vedi tutto → /menu; desktop = schede. */
 export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
   const [attiva, setAttiva] = useState(categorie[0].id)
   const corrente = categorie.find((c) => c.id === attiva) ?? categorie[0]
+  const anteprima = categorie.slice(0, 2)
 
   return (
     <>
-      {/* Mobile: striscia orizzontale scrollabile (le tab su una riga, si scorre
-          col pollice) invece della pila a scaletta del flex-wrap. Da sm: wrap centrato. */}
-      <div className="mb-[clamp(30px,4vw,44px)] flex gap-[10px] overflow-x-auto pb-2 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0">
-        {categorie.map((c) => {
-          const sel = c.id === attiva
-          return (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => setAttiva(c.id)}
-              aria-pressed={sel}
-              className={`font-testo shrink-0 cursor-pointer border px-[22px] py-[11px] text-[0.74rem] whitespace-nowrap tracking-[0.2em] uppercase transition-colors ${
-                sel
-                  ? 'bg-ambra border-ambra text-espresso'
-                  : 'border-panna/35 text-panna hover:border-panna/70'
-              }`}
-            >
+      {/* Mobile: niente tab — un paio di categorie, poi la carta intera su /menu */}
+      <div className="sm:hidden">
+        {anteprima.map((c) => (
+          <div key={c.id} className="mb-8">
+            <h3 className="font-titoli text-ambra-ink mb-3 text-[1.25rem] font-semibold">
               {c.nome}
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="grid border-t border-[rgb(242_203_92/0.35)] sm:grid-cols-2 sm:gap-x-[clamp(40px,6vw,72px)]">
-        {corrente.voci.map((v) => (
-          <div
-            key={v.id}
-            className="flex items-baseline gap-[14px] border-b border-[rgb(244_238_221/0.18)] px-[2px] py-[15px]"
-          >
-            <span className="flex min-w-0 flex-col gap-[3px]">
-              <span className="font-titoli text-panna text-[1.06rem]">{v.nome}</span>
-              {v.descrizione && (
-                <span className="font-testo text-[0.82rem] text-[#c2dccd] italic">
-                  {v.descrizione}
-                </span>
-              )}
-            </span>
-            <span
-              aria-hidden
-              className="min-w-[20px] flex-1 -translate-y-[5px] border-b border-dotted border-[rgb(244_238_221/0.32)]"
-            />
-            <span className="text-ambra-ink text-[0.86rem] tracking-[0.06em] whitespace-nowrap">
-              {euro.format(v.prezzoCentesimi / 100)}
-            </span>
+            </h3>
+            <div className="border-t border-[rgb(242_203_92/0.35)]">
+              {c.voci.map((v) => (
+                <Riga key={v.id} v={v} />
+              ))}
+            </div>
           </div>
         ))}
+        <div className="mt-2 text-center">
+          <a href="/menu" className="btn-targhetta btn-targhetta-primario w-full">
+            Vedi tutto
+          </a>
+        </div>
+      </div>
+
+      {/* Desktop: schede per categoria */}
+      <div className="hidden sm:block">
+        <div className="mb-[clamp(30px,4vw,44px)] flex flex-wrap justify-center gap-[10px]">
+          {categorie.map((c) => {
+            const sel = c.id === attiva
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setAttiva(c.id)}
+                aria-pressed={sel}
+                className={`font-testo cursor-pointer border px-[22px] py-[11px] text-[0.74rem] tracking-[0.2em] uppercase transition-colors ${
+                  sel
+                    ? 'bg-ambra border-ambra text-espresso'
+                    : 'border-panna/35 text-panna hover:border-panna/70'
+                }`}
+              >
+                {c.nome}
+              </button>
+            )
+          })}
+        </div>
+        <div className="grid border-t border-[rgb(242_203_92/0.35)] sm:grid-cols-2 sm:gap-x-[clamp(40px,6vw,72px)]">
+          {corrente.voci.map((v) => (
+            <Riga key={v.id} v={v} />
+          ))}
+        </div>
       </div>
     </>
   )

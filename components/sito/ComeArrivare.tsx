@@ -3,7 +3,15 @@
 // (l'iframe senza chiave viene bloccato), mentre i link a Maps funzionano sempre
 // e risolvono il locale per NOME (più l'indirizzo se presente), quindi sono
 // precisi anche senza coordinate.
-export function ComeArrivare({ nomePub, indirizzo }: { nomePub: string; indirizzo: string }) {
+export function ComeArrivare({
+  nomePub,
+  indirizzo,
+  orari = '',
+}: {
+  nomePub: string
+  indirizzo: string
+  orari?: string
+}) {
   const luogo = [nomePub, indirizzo].filter(Boolean).join(', ')
   const q = encodeURIComponent(luogo)
   const indicazioni = `https://www.google.com/maps/dir/?api=1&destination=${q}`
@@ -24,14 +32,17 @@ export function ComeArrivare({ nomePub, indirizzo }: { nomePub: string; indirizz
               ? `Ci trovi a ${indirizzo}. Apri le indicazioni e Google Maps ti porta al pub dal punto in cui ti trovi.`
               : 'Apri le indicazioni e Google Maps ti porta dritto al pub dal punto in cui ti trovi.'}
           </p>
+          {orari && (
+            <p className="text-panna mt-4 max-w-[420px] text-[1rem] leading-[1.6]">{orari}</p>
+          )}
           <div className="mt-8">
             <a
               href={indicazioni}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-targhetta btn-targhetta-primario"
+              className="btn-targhetta btn-targhetta-primario w-full sm:w-auto"
             >
-              Indicazioni con Google Maps
+              Indicazioni su Maps
             </a>
           </div>
         </div>

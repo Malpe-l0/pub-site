@@ -50,6 +50,12 @@ export default async function Home() {
         ? { href: impostazioni.instagram, testo: 'Orari e aperture su Instagram' }
         : null
     : null
+  const contattoVivo = impostazioni.telefono
+    ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: 'Chiama per la carta di stasera' }
+    : impostazioni.instagram
+      ? { href: impostazioni.instagram, testo: 'Chiedi su Instagram' }
+      : null
+  const haFotoGestore = vetrina.foto.length > 0
 
   return (
     <>
@@ -70,26 +76,24 @@ export default async function Home() {
             {nome}
           </h1>
           {heroServizio && (
-            <p className="text-panna-2 entrata-hero entrata-hero-2 mx-auto mt-6 max-w-[34ch] text-[0.86rem] leading-[1.6] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
+            <p className="text-panna entrata-hero entrata-hero-2 mx-auto mt-6 max-w-[42ch] text-[clamp(1rem,2.4vw,1.15rem)] leading-[1.55] font-medium tracking-[0.01em] [text-shadow:0_1px_14px_rgba(0,0,0,0.65)]">
               {heroServizio}
             </p>
           )}
           {fallbackOrari && (
-            <p className="entrata-hero entrata-hero-2 mt-3 text-[0.86rem] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
+            <p className="entrata-hero entrata-hero-2 mt-3 text-[1rem] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
               <a
                 href={fallbackOrari.href}
-                className="text-panna-2 hover:text-panna inline-block py-2 underline underline-offset-4 transition-colors"
+                className="text-panna hover:text-ambra-ink inline-block py-2 underline underline-offset-4 transition-colors"
               >
                 {fallbackOrari.testo}
               </a>
             </p>
           )}
-          <div className="entrata-hero entrata-hero-3 mt-8 flex flex-wrap items-center justify-center gap-[14px]">
-
+          <div className="entrata-hero entrata-hero-3 mx-auto mt-8 flex w-full max-w-[22rem] flex-col items-stretch gap-3 sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-[14px]">
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
               Vedi il menu
             </a>
-
             <a href="#dove" className="btn-targhetta btn-targhetta-ghost">
               Dove siamo
             </a>
@@ -103,7 +107,7 @@ export default async function Home() {
           <div className="flex items-center gap-[clamp(16px,3vw,30px)]">
             <span className="bg-ambra/40 h-px flex-1" />
             <span className="flex flex-col items-center text-center">
-              <span className="font-titoli text-panna text-[clamp(1.5rem,3.2vw,2.3rem)] leading-none whitespace-nowrap">
+              <span className="font-titoli text-panna text-[clamp(1.35rem,4.5vw,2.3rem)] leading-none text-balance">
                 30+ anni a Imola
               </span>
             </span>
@@ -118,11 +122,6 @@ export default async function Home() {
             <p className="text-panna-3 mt-[26px] max-w-[46ch] text-[1rem] leading-[1.85] text-pretty">
               {racconto}
             </p>
-            <div className="mt-[34px]">
-              <a href="#menu" className="btn-targhetta btn-targhetta-primario">
-                Scopri la carta
-              </a>
-            </div>
           </div>
           <img
             src="/taproom/foto-pinta.jpg"
@@ -143,14 +142,11 @@ export default async function Home() {
               Le nostre birre
             </h2>
             <p className="mt-[22px] text-[0.98rem] leading-[1.85] text-[#56544a] text-pretty">
-              Sei insegne sempre spillate al bancone, dalla Guinness alla lager continentale. La
-              rotazione cambia nel tempo: chiedi al banco le spine del giorno.
+              Sei spine al bancone, dalla Guinness alla lager continentale. Chiedi al banco cosa
+              c’è in spillatura stasera.
             </p>
           </div>
           <MuroBirre />
-          <p className="mt-5 text-center text-[0.82rem] text-[#6b6450] italic">
-            La selezione ruota nel tempo — sei spine, sempre fredde.
-          </p>
         </div>
       </section>
 
@@ -170,9 +166,17 @@ export default async function Home() {
           {categorie.length > 0 ? (
             <CartaMenu categorie={categorie} />
           ) : (
-            <p className="text-panna-3 text-center">
-              Il menu è in aggiornamento, torna a trovarci presto.
-            </p>
+            <div className="text-center">
+              <p className="text-panna-3">Il menu è in aggiornamento.</p>
+              {contattoVivo && (
+                <a
+                  href={contattoVivo.href}
+                  className="btn-targhetta btn-targhetta-primario mt-6 inline-block"
+                >
+                  {contattoVivo.testo}
+                </a>
+              )}
+            </div>
           )}
         </div>
       </section>
@@ -180,6 +184,19 @@ export default async function Home() {
       {/* ===== GALLERY ===== */}
       <section style={CARTA}>
         <div className="mx-auto max-w-[1320px] px-[clamp(24px,5vw,40px)] py-[clamp(56px,8vw,96px)]">
+          <div className="mb-[clamp(28px,4vw,40px)] flex items-end justify-between gap-4">
+            <h2 className="font-titoli text-[clamp(1.8rem,3.6vw,2.6rem)] leading-[1.05] font-semibold text-[#1e6240]">
+              La sala
+            </h2>
+            {haFotoGestore && (
+              <a
+                href="/galleria"
+                className="text-ambra-scura shrink-0 text-[0.82rem] tracking-[0.12em] uppercase underline-offset-4 hover:underline"
+              >
+                Tutta la galleria
+              </a>
+            )}
+          </div>
           <div className="grid grid-cols-1 gap-[14px] sm:h-[clamp(260px,34vw,400px)] sm:grid-cols-3">
             {fotoGalleria.map((foto) => (
               <img
@@ -194,7 +211,11 @@ export default async function Home() {
         </div>
       </section>
 
-      <ComeArrivare nomePub={nome} indirizzo={impostazioni.indirizzo} />
+      <ComeArrivare
+        nomePub={nome}
+        indirizzo={impostazioni.indirizzo}
+        orari={orariSintesi}
+      />
     </>
   )
 }
