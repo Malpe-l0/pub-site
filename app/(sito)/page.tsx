@@ -1,7 +1,6 @@
 import { getImpostazioni, getMenuPubblico, getGalleriaPubblica } from '@/lib/dati'
 import { MuroBirre } from '@/components/sito/MuroBirre'
 import { CartaMenu } from '@/components/sito/CartaMenu'
-import { ComeArrivare } from '@/components/sito/ComeArrivare'
 
 // Sfondo "carta" delle sezioni chiare (birre, gallery): crema + texture grana.
 const CARTA = {
@@ -34,22 +33,6 @@ export default async function Home() {
   const racconto =
     impostazioni.descrizione ||
     'Bancone in legno scuro, bicchieri appesi e l’atmosfera dei pub d’oltremanica. Buona compagnia, cucina semplice e una selezione di birre, cocktail e amari — dal 1993.'
-  // Riga di servizio nell'hero: indirizzo + orari dal pannello, così "che orari fa?"
-  // ha risposta già nella prima schermata (principio #4: prima gli orari e il menu).
-  const orariSintesi = impostazioni.orari
-    .map((f) => [f.giorni, f.orario].filter(Boolean).join(' '))
-    .filter(Boolean)
-    .join(' · ')
-  const heroServizio = [impostazioni.indirizzo, orariSintesi].filter(Boolean).join(' — ')
-  // Orari non ancora inseriti dal pannello: la domanda "che orari fa?" merita
-  // comunque una risposta — si rimanda a un canale vivo (telefono, poi Instagram).
-  const fallbackOrari = !orariSintesi
-    ? impostazioni.telefono
-      ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: 'Chiama per gli orari' }
-      : impostazioni.instagram
-        ? { href: impostazioni.instagram, testo: 'Orari e aperture su Instagram' }
-        : null
-    : null
   const contattoVivo = impostazioni.telefono
     ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: 'Chiama per la carta di stasera' }
     : impostazioni.instagram
@@ -62,7 +45,7 @@ export default async function Home() {
       {/* ===== HERO ===== */}
       <section
         id="top"
-        className="relative flex h-[clamp(560px,82vh,860px)] items-center justify-center bg-cover bg-center text-center"
+        className="relative flex h-[clamp(520px,78vh,800px)] items-center justify-center bg-cover bg-center text-center"
         style={{
           backgroundImage:
             "linear-gradient(rgba(18,16,12,0.32), rgba(18,16,12,0.55)), url('/taproom/foto-sala.jpg')",
@@ -75,27 +58,9 @@ export default async function Home() {
           <h1 className="font-titoli text-panna entrata-hero text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
             {nome}
           </h1>
-          {heroServizio && (
-            <p className="text-panna entrata-hero entrata-hero-2 mx-auto mt-6 max-w-[42ch] text-[clamp(1rem,2.4vw,1.15rem)] leading-[1.55] font-medium tracking-[0.01em] [text-shadow:0_1px_14px_rgba(0,0,0,0.65)]">
-              {heroServizio}
-            </p>
-          )}
-          {fallbackOrari && (
-            <p className="entrata-hero entrata-hero-2 mt-3 text-[1rem] tracking-[0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
-              <a
-                href={fallbackOrari.href}
-                className="text-panna hover:text-ambra-ink inline-block py-2 underline underline-offset-4 transition-colors"
-              >
-                {fallbackOrari.testo}
-              </a>
-            </p>
-          )}
-          <div className="entrata-hero entrata-hero-3 mx-auto mt-8 flex w-full max-w-[22rem] flex-col items-stretch gap-3 sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-[14px]">
+          <div className="entrata-hero entrata-hero-2 mt-8">
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
               Vedi il menu
-            </a>
-            <a href="#dove" className="btn-targhetta btn-targhetta-ghost">
-              Dove siamo
             </a>
           </div>
         </div>
@@ -210,12 +175,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      <ComeArrivare
-        nomePub={nome}
-        indirizzo={impostazioni.indirizzo}
-        orari={orariSintesi}
-      />
     </>
   )
 }

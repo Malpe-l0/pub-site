@@ -1,26 +1,31 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
-// Ancore assolute alla home: funzionano anche da /menu e /galleria.
+// Birre/Dove restano ancore home; Menu è la carta intera su /menu.
 const VOCI = [
   { href: '/#birre', testo: 'Birre' },
-  { href: '/#menu', testo: 'Menu' },
+  { href: '/menu', testo: 'Menu' },
   { href: '/#dove', testo: 'Dove siamo' },
 ]
 
-/** Barra di navigazione: trasparente, sovrapposta all'hero. Hamburger sotto 860px. */
+/** Barra di navigazione: trasparente sull'hero home; solida altrove. */
 export function NavTaproom({ nomePub }: { nomePub: string }) {
+  const pathname = usePathname()
+  const suHome = pathname === '/'
   const [aperto, setAperto] = useState(false)
   // Dopo l'hero la nav diventa solida e resta in alto: su un sito di servizio
   // l'accesso a Menu/Dove non deve sparire allo scroll. ponytail: scroll passivo.
-  const [fissa, setFissa] = useState(false)
+  const [scrollato, setScrollato] = useState(false)
   useEffect(() => {
-    const onScroll = () => setFissa(window.scrollY > 80)
+    if (!suHome) return
+    const onScroll = () => setScrollato(window.scrollY > 80)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [suHome])
+  const fissa = !suHome || scrollato
 
   return (
     <header
@@ -50,16 +55,22 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
 
         {/* Desktop (≥860px) */}
         <ul className="hidden items-center gap-[clamp(16px,2.4vw,32px)] min-[860px]:flex">
-          {VOCI.map((v) => (
-            <li key={v.href}>
-              <a
-                href={v.href}
-                className="text-panna hover:text-ambra-ink inline-block py-2 text-[0.76rem] tracking-[0.2em] uppercase transition-colors"
-              >
-                {v.testo}
-              </a>
-            </li>
-          ))}
+          {VOCI.map((v) => {
+            const qui = v.href === '/menu' && pathname === '/menu'
+            return (
+              <li key={v.href}>
+                <a
+                  href={v.href}
+                  aria-current={qui ? 'page' : undefined}
+                  className={`inline-block py-2 text-[0.76rem] tracking-[0.2em] uppercase transition-colors ${
+                    qui ? 'text-ambra-ink' : 'text-panna hover:text-ambra-ink'
+                  }`}
+                >
+                  {v.testo}
+                </a>
+              </li>
+            )
+          })}
         </ul>
 
         {/* Mobile (<860px) */}
