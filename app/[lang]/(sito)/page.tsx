@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { getImpostazioni, getMenuPubblico, getGalleriaPubblica } from '@/lib/dati'
+import { dizionario, percorso, type Lang } from '@/lib/dizionario'
 import { MuroBirre } from '@/components/sito/MuroBirre'
 import { CartaMenu } from '@/components/sito/CartaMenu'
+
+export const metadata: Metadata = {
+  alternates: { languages: { it: '/', en: '/en' } },
+}
 
 // Sfondo "carta" delle sezioni chiare (birre, gallery): crema + texture grana.
 const CARTA = {
@@ -9,34 +15,35 @@ const CARTA = {
   backgroundRepeat: 'repeat' as const,
 }
 
-// Galleria di riserva: foto del bundle, per rabboccare quando il gestore ne ha
-// caricate meno di tre — la griglia non deve mai restare mezza vuota.
-const FOTO_DEFAULT = [
-  { src: '/taproom/foto-bancone.jpg', alt: 'Il bancone in legno scuro, bicchieri appesi' },
-  { src: '/taproom/foto-pinta.jpg', alt: 'Una pinta appena spillata al bancone' },
-  { src: '/taproom/foto-sala.jpg', alt: 'La sala del pub, luci calde e boiserie' },
-]
-
-export default async function Home() {
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = (await params).lang as Lang
+  const t = dizionario(lang)
   const impostazioni = getImpostazioni()
   const categorie = getMenuPubblico().filter((c) => c.voci.length > 0)
   const vetrina = getGalleriaPubblica()
 
   const nome = impostazioni.nomePub || 'Il nostro pub'
+  // Galleria di riserva: foto del bundle, per rabboccare quando il gestore ne ha
+  // caricate meno di tre — la griglia non deve mai restare mezza vuota.
+  const fotoDefault = [
+    { src: '/taproom/foto-bancone.jpg', alt: t.home.altBancone },
+    { src: '/taproom/foto-pinta.jpg', alt: t.home.altPinta },
+    { src: '/taproom/foto-sala.jpg', alt: t.home.altSala },
+  ]
   const fotoGalleria = [
     ...vetrina.foto.slice(0, 3).map((f) => ({
       src: f.src,
-      alt: f.didascalia || `Foto di ${nome}`,
+      alt: f.didascalia || t.home.altFoto(nome),
     })),
-    ...FOTO_DEFAULT,
+    ...fotoDefault,
   ].slice(0, 3)
+  // La descrizione dal pannello è in italiano: in inglese si usa il testo fisso.
   const racconto =
-    impostazioni.descrizione ||
-    'Bancone in legno scuro, bicchieri appesi e l’atmosfera dei pub d’oltremanica. Buona compagnia, cucina semplice e una selezione di birre, cocktail e amari — dal 1993.'
+    (lang === 'it' && impostazioni.descrizione) || t.home.raccontoDefault
   const contattoVivo = impostazioni.telefono
-    ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: 'Chiama per la carta di stasera' }
+    ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: t.menu.chiama }
     : impostazioni.instagram
-      ? { href: impostazioni.instagram, testo: 'Chiedi su Instagram' }
+      ? { href: impostazioni.instagram, testo: t.menu.chiedi }
       : null
   const haFotoGestore = vetrina.foto.length > 0
 
@@ -53,14 +60,14 @@ export default async function Home() {
       >
         <div className="px-6">
           <p className="text-ambra-ink entrata-hero mb-[14px] text-[0.74rem] tracking-[0.42em] uppercase">
-            British Pub · dal 1993
+            {t.home.kicker}
           </p>
           <h1 className="font-titoli text-panna entrata-hero text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
             {nome}
           </h1>
           <div className="entrata-hero entrata-hero-2 mt-8">
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
-              Vedi il menu
+              {t.home.vediMenu}
             </a>
           </div>
         </div>
@@ -73,7 +80,7 @@ export default async function Home() {
             <span className="bg-ambra/40 h-px flex-1" />
             <span className="flex flex-col items-center text-center">
               <span className="font-titoli text-panna text-[clamp(1.35rem,4.5vw,2.3rem)] leading-none text-balance">
-                30+ anni a Imola
+                {t.home.band}
               </span>
             </span>
             <span className="bg-ambra/40 h-px flex-1" />
@@ -82,7 +89,7 @@ export default async function Home() {
         <div className="mx-auto grid max-w-[1180px] items-center gap-[clamp(32px,6vw,72px)] px-[clamp(24px,5vw,52px)] pt-[clamp(40px,6vw,64px)] pb-[clamp(64px,9vw,108px)] md:grid-cols-[1.05fr_0.95fr]">
           <div>
             <h2 className="font-titoli text-[clamp(2.2rem,5.2vw,4rem)] leading-[1.04] font-semibold text-balance">
-              Un angolo d’Inghilterra a Imola
+              {t.home.titoloStoria}
             </h2>
             <p className="text-panna-3 mt-[26px] max-w-[46ch] text-[1rem] leading-[1.85] text-pretty">
               {racconto}
@@ -90,7 +97,7 @@ export default async function Home() {
           </div>
           <img
             src="/taproom/foto-pinta.jpg"
-            alt="Pinte appena spillate al bancone del Chelsea House"
+            alt={t.home.altPinte(nome)}
             className="h-[clamp(340px,46vw,520px)] w-full border border-[rgb(234_179_37/0.28)] object-cover"
           />
         </div>
@@ -101,14 +108,13 @@ export default async function Home() {
         <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] py-[clamp(64px,9vw,120px)]">
           <div className="mx-auto mb-[clamp(44px,6vw,64px)] max-w-[680px] text-center">
             <p className="text-ambra-scura mb-4 text-[0.74rem] tracking-[0.4em] uppercase">
-              La selezione
+              {t.home.laSelezione}
             </p>
             <h2 className="font-titoli text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.05] font-semibold text-[#1e6240]">
-              Le nostre birre
+              {t.home.nostreBirre}
             </h2>
             <p className="mt-[22px] text-[0.98rem] leading-[1.85] text-[#56544a] text-pretty">
-              Sei spine al bancone, dalla Guinness alla lager continentale. Chiedi al banco cosa
-              c’è in spillatura stasera.
+              {t.home.birreBlurb}
             </p>
           </div>
           <MuroBirre />
@@ -119,20 +125,26 @@ export default async function Home() {
       <section id="menu" className="text-panna bg-espresso-2 scroll-mt-24">
         <div className="mx-auto max-w-[1040px] px-[clamp(24px,5vw,52px)] py-[clamp(64px,9vw,120px)]">
           <div className="mx-auto mb-[clamp(36px,5vw,52px)] max-w-[700px] text-center">
-            <p className="text-ambra-ink mb-4 text-[0.74rem] tracking-[0.4em] uppercase">La carta</p>
+            <p className="text-ambra-ink mb-4 text-[0.74rem] tracking-[0.4em] uppercase">
+              {t.home.laCarta}
+            </p>
             <h2 className="font-titoli text-[clamp(2.4rem,5.4vw,4rem)] leading-[1.04] font-semibold">
-              Il menu
+              {t.home.ilMenu}
             </h2>
             <p className="text-panna-3 mt-[22px] text-[0.98rem] leading-[1.85] text-pretty">
-              Birre alla spina e in bottiglia, cocktail, bibite, amari e cucina da pub. Con un
-              occhio di riguardo per le birre.
+              {t.home.menuBlurb}
             </p>
           </div>
           {categorie.length > 0 ? (
-            <CartaMenu categorie={categorie} />
+            <CartaMenu
+              categorie={categorie}
+              locale={t.locale}
+              vediTutto={t.menu.vediTutto}
+              hrefMenu={percorso(lang, '/menu')}
+            />
           ) : (
             <div className="text-center">
-              <p className="text-panna-3">Il menu è in aggiornamento.</p>
+              <p className="text-panna-3">{t.menu.inAggiornamento}</p>
               {contattoVivo && (
                 <a
                   href={contattoVivo.href}
@@ -151,14 +163,14 @@ export default async function Home() {
         <div className="mx-auto max-w-[1320px] px-[clamp(24px,5vw,40px)] py-[clamp(56px,8vw,96px)]">
           <div className="mb-[clamp(28px,4vw,40px)] flex items-end justify-between gap-4">
             <h2 className="font-titoli text-[clamp(1.8rem,3.6vw,2.6rem)] leading-[1.05] font-semibold text-[#1e6240]">
-              La sala
+              {t.home.laSala}
             </h2>
             {haFotoGestore && (
               <a
-                href="/galleria"
+                href={percorso(lang, '/galleria')}
                 className="text-ambra-scura shrink-0 text-[0.82rem] tracking-[0.12em] uppercase underline-offset-4 hover:underline"
               >
-                Tutta la galleria
+                {t.home.tuttaGalleria}
               </a>
             )}
           </div>

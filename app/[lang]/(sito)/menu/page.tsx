@@ -1,7 +1,18 @@
 import type { Metadata } from 'next'
 import { getImpostazioni, getMenuPubblico } from '@/lib/dati'
+import { dizionario, type Lang } from '@/lib/dizionario'
 
-export const metadata: Metadata = { title: 'Menu' }
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>
+}): Promise<Metadata> {
+  const lang = (await params).lang as Lang
+  return {
+    title: dizionario(lang).nav.menu,
+    alternates: { languages: { it: '/menu', en: '/en/menu' } },
+  }
+}
 
 // Carta stampata: fondo texture, inchiostro scuro — non il verde sala.
 const CARTA = {
@@ -12,26 +23,28 @@ const CARTA = {
   backgroundRepeat: 'no-repeat' as const,
 }
 
-export default async function PaginaMenu() {
+export default async function PaginaMenu({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = (await params).lang as Lang
+  const t = dizionario(lang)
   const categorie = getMenuPubblico().filter((c) => c.voci.length > 0)
   const imp = getImpostazioni()
   const contatto = imp.telefono
-    ? { href: `tel:${imp.telefono.replace(/\s/g, '')}`, testo: 'Chiama per la carta di stasera' }
+    ? { href: `tel:${imp.telefono.replace(/\s/g, '')}`, testo: t.menu.chiama }
     : imp.instagram
-      ? { href: imp.instagram, testo: 'Chiedi su Instagram' }
+      ? { href: imp.instagram, testo: t.menu.chiedi }
       : null
-  const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' })
+  const euro = new Intl.NumberFormat(t.locale, { style: 'currency', currency: 'EUR' })
 
   return (
     <div className="min-h-screen text-[#243a2d]" style={CARTA}>
       <div className="mx-auto max-w-[900px] px-[clamp(24px,5vw,40px)] pt-[120px] pb-[clamp(64px,9vw,110px)]">
         <h1 className="font-titoli mb-12 text-[clamp(2.8rem,7vw,4.6rem)] leading-[1] font-bold text-[#1e6240] text-balance">
-          Il menu
+          {t.menu.titolo}
         </h1>
 
         {categorie.length === 0 ? (
           <div>
-            <p className="text-[#56544a]">Il menu è in aggiornamento.</p>
+            <p className="text-[#56544a]">{t.menu.inAggiornamento}</p>
             {contatto && (
               <a href={contatto.href} className="btn-targhetta btn-targhetta-primario mt-6 inline-block">
                 {contatto.testo}

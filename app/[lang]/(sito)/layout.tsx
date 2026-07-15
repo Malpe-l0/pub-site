@@ -1,5 +1,6 @@
 import { getImpostazioni, getPopup } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
+import { dizionario, percorso, type Lang } from '@/lib/dizionario'
 import { NavTaproom } from '@/components/sito/NavTaproom'
 import { Popup } from '@/components/Popup'
 
@@ -20,7 +21,16 @@ function Colonna({
   )
 }
 
-export default async function LayoutSito({ children }: { children: React.ReactNode }) {
+export default async function LayoutSito({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{ lang: string }>
+}) {
+  // Il layout radice [lang] ha già validato la lingua (404 altrimenti).
+  const lang = (await params).lang as Lang
+  const t = dizionario(lang)
   const impostazioni = getImpostazioni()
   const avviso = popupDaMostrare(getPopup())
   const nome = impostazioni.nomePub || 'Il nostro pub'
@@ -38,7 +48,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
 
   return (
     <div className="sito-taproom relative flex min-h-screen flex-col overflow-x-hidden">
-      <NavTaproom nomePub={nome} />
+      <NavTaproom nomePub={nome} lang={lang} t={t.nav} />
       <main className="flex-1">{children}</main>
 
       <footer id="dove" className="bg-espresso-3 border-ambra/25 text-[#d8cfbe] scroll-mt-24 border-t">
@@ -50,7 +60,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
             <div className="mt-[18px] flex items-center gap-[clamp(14px,3vw,26px)]">
               <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
               <p className="font-titoli text-panna text-[clamp(1.3rem,2.8vw,1.9rem)] text-balance">
-                Fermati. Accomodati. Resta.
+                {t.footer.slogan}
               </p>
               <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
             </div>
@@ -63,7 +73,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
 
           <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-[clamp(28px,4vw,48px)] gap-y-[clamp(28px,4vw,36px)] border-t border-[rgb(244_238_221/0.16)] pt-[clamp(40px,5vw,56px)]">
             {haOrari && (
-              <Colonna titolo="Orari">
+              <Colonna titolo={t.footer.orari}>
                 <ul className="space-y-3 text-[0.92rem] leading-[1.55] text-[#e8e0d0]">
                   {impostazioni.orari.map((fascia, i) => (
                     <li key={i}>
@@ -76,7 +86,7 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
             )}
 
             {haContatti && (
-              <Colonna titolo="Contatti">
+              <Colonna titolo={t.footer.contatti}>
                 <ul className="flex flex-col gap-3 text-[0.92rem]">
                   {impostazioni.indirizzo && (
                     <li className="text-[#e8e0d0] leading-[1.65]">{impostazioni.indirizzo}</li>
@@ -148,27 +158,27 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
                       <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    Indicazioni su Maps
+                    {t.footer.indicazioniMaps}
                   </a>
                 )}
               </Colonna>
             )}
 
-            <Colonna titolo="Esplora">
+            <Colonna titolo={t.footer.esplora}>
               <ul className="flex flex-col gap-3 text-[0.92rem]">
                 <li>
-                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href="/menu">
-                    Menu
+                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href={percorso(lang, '/menu')}>
+                    {t.nav.menu}
                   </a>
                 </li>
                 <li>
-                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href="/#birre">
-                    Birre
+                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href={percorso(lang, '/#birre')}>
+                    {t.nav.birre}
                   </a>
                 </li>
                 <li>
-                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href="/galleria">
-                    Galleria
+                  <a className="text-[#e8e0d0] hover:text-panna transition-colors" href={percorso(lang, '/galleria')}>
+                    {t.footer.galleria}
                   </a>
                 </li>
               </ul>
@@ -176,12 +186,12 @@ export default async function LayoutSito({ children }: { children: React.ReactNo
           </div>
 
           <p className="text-panna-4 mt-[clamp(40px,5vw,60px)] text-center text-[0.78rem] tracking-[0.08em]">
-            © {nome} · British Pub · Imola · dal 1993
+            {t.footer.copyright(nome)}
           </p>
         </div>
       </footer>
 
-      {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} />}
+      {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} testoChiudi={t.popup.chiudi} />}
     </div>
   )
 }

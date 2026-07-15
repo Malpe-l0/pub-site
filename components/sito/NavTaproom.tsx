@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-
-// Birre/Dove restano ancore home; Menu è la carta intera su /menu.
-const VOCI = [
-  { href: '/#birre', testo: 'Birre' },
-  { href: '/menu', testo: 'Menu' },
-  { href: '/#dove', testo: 'Dove siamo' },
-]
+import { percorso, type Dizionario, type Lang } from '@/lib/dizionario'
 
 /** Barra di navigazione: trasparente sull'hero home; solida altrove. */
-export function NavTaproom({ nomePub }: { nomePub: string }) {
+export function NavTaproom({
+  nomePub,
+  lang,
+  t,
+}: {
+  nomePub: string
+  lang: Lang
+  t: Dizionario['nav']
+}) {
   const pathname = usePathname()
-  const suHome = pathname === '/'
+  const suHome = pathname === '/' || pathname === '/en'
   const [aperto, setAperto] = useState(false)
   // Dopo l'hero la nav diventa solida e resta in alto: su un sito di servizio
   // l'accesso a Menu/Dove non deve sparire allo scroll. ponytail: scroll passivo.
@@ -27,6 +29,33 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
   }, [suHome])
   const fissa = !suHome || scrollato
 
+  // Birre resta ancora home; Menu e Dove siamo sono pagine dedicate.
+  const voci = [
+    { href: percorso(lang, '/#birre'), testo: t.birre },
+    { href: percorso(lang, '/menu'), testo: t.menu },
+    { href: percorso(lang, '/dove'), testo: t.dove },
+  ]
+  const hrefMenu = percorso(lang, '/menu')
+
+  // Toggle lingua: cookie letto dal proxy + navigazione all'URL equivalente.
+  const altra: Lang = lang === 'it' ? 'en' : 'it'
+  const cambiaLingua = () => {
+    document.cookie = `lingua=${altra};path=/;max-age=31536000`
+    const senzaPrefisso = lang === 'en' ? pathname.replace(/^\/en/, '') || '/' : pathname
+    window.location.href = percorso(altra, senzaPrefisso)
+  }
+  const toggle = (
+    <button
+      type="button"
+      onClick={cambiaLingua}
+      aria-label={t.cambiaLingua}
+      title={t.cambiaLingua}
+      className="text-panna hover:text-ambra-ink border-panna/35 hover:border-panna/70 cursor-pointer border px-[10px] py-[5px] text-[0.72rem] tracking-[0.2em] uppercase transition-colors"
+    >
+      {t.linguaBreve}
+    </button>
+  )
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
@@ -36,12 +65,12 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
       }`}
     >
       <nav
-        aria-label="Principale"
+        aria-label={t.principale}
         className={`mx-auto flex max-w-[1180px] items-center justify-between px-[clamp(20px,4vw,52px)] transition-[padding] duration-300 ${
           fissa ? 'py-3' : 'py-5'
         }`}
       >
-        <a href="/" className="flex items-center gap-[12px]">
+        <a href={percorso(lang, '/')} className="flex items-center gap-[12px]">
           <img
             src="/taproom/crest.png"
             alt=""
@@ -55,8 +84,8 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
 
         {/* Desktop (≥860px) */}
         <ul className="hidden items-center gap-[clamp(16px,2.4vw,32px)] min-[860px]:flex">
-          {VOCI.map((v) => {
-            const qui = v.href === '/menu' && pathname === '/menu'
+          {voci.map((v) => {
+            const qui = v.href === hrefMenu && pathname === hrefMenu
             return (
               <li key={v.href}>
                 <a
@@ -71,41 +100,45 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
               </li>
             )
           })}
+          <li>{toggle}</li>
         </ul>
 
         {/* Mobile (<860px) */}
-        <button
-          type="button"
-          onClick={() => setAperto((a) => !a)}
-          aria-expanded={aperto}
-          aria-controls="menu-mobile"
-          aria-label={aperto ? 'Chiudi menu' : 'Apri menu'}
-          className="text-panna flex h-11 w-11 items-center justify-center min-[860px]:hidden"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            aria-hidden="true"
+        <div className="flex items-center gap-2 min-[860px]:hidden">
+          {toggle}
+          <button
+            type="button"
+            onClick={() => setAperto((a) => !a)}
+            aria-expanded={aperto}
+            aria-controls="menu-mobile"
+            aria-label={aperto ? t.chiudiMenu : t.apriMenu}
+            className="text-panna flex h-11 w-11 items-center justify-center"
           >
-            {aperto ? (
-              <>
-                <line x1="6" y1="6" x2="18" y2="18" />
-                <line x1="18" y1="6" x2="6" y2="18" />
-              </>
-            ) : (
-              <>
-                <line x1="3" y1="7" x2="21" y2="7" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="17" x2="21" y2="17" />
-              </>
-            )}
-          </svg>
-        </button>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              {aperto ? (
+                <>
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="7" x2="21" y2="7" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="17" x2="21" y2="17" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
       </nav>
 
       {aperto && (
@@ -113,7 +146,7 @@ export function NavTaproom({ nomePub }: { nomePub: string }) {
           id="menu-mobile"
           className="bg-espresso-3/95 border-ambra/20 flex flex-col border-t px-[clamp(24px,5vw,56px)] py-2 backdrop-blur-sm min-[860px]:hidden"
         >
-          {VOCI.map((v) => (
+          {voci.map((v) => (
             <li key={v.href}>
               <a
                 href={v.href}

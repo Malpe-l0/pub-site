@@ -3,9 +3,7 @@
 import { useState } from 'react'
 import type { CategoriaConVoci, VoceMenu } from '@/lib/tipi'
 
-const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' })
-
-function Riga({ v }: { v: VoceMenu }) {
+function Riga({ v, euro }: { v: VoceMenu; euro: Intl.NumberFormat }) {
   return (
     <div className="flex items-baseline gap-[14px] border-b border-[rgb(244_238_221/0.18)] px-[2px] py-[15px]">
       <span className="flex min-w-0 flex-col gap-[3px]">
@@ -26,7 +24,18 @@ function Riga({ v }: { v: VoceMenu }) {
 }
 
 /** Home: mobile = 2 categorie + Vedi tutto → /menu; desktop = schede. */
-export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
+export function CartaMenu({
+  categorie,
+  locale,
+  vediTutto,
+  hrefMenu,
+}: {
+  categorie: CategoriaConVoci[]
+  locale: string
+  vediTutto: string
+  hrefMenu: string
+}) {
+  const euro = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' })
   const [attiva, setAttiva] = useState(categorie[0].id)
   const corrente = categorie.find((c) => c.id === attiva) ?? categorie[0]
   const anteprima = categorie.slice(0, 2)
@@ -42,14 +51,14 @@ export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
             </h3>
             <div className="border-t border-[rgb(242_203_92/0.35)]">
               {c.voci.map((v) => (
-                <Riga key={v.id} v={v} />
+                <Riga key={v.id} v={v} euro={euro} />
               ))}
             </div>
           </div>
         ))}
         <div className="mt-2 text-center">
-          <a href="/menu" className="btn-targhetta btn-targhetta-primario w-full">
-            Vedi tutto
+          <a href={hrefMenu} className="btn-targhetta btn-targhetta-primario w-full">
+            {vediTutto}
           </a>
         </div>
       </div>
@@ -78,7 +87,7 @@ export function CartaMenu({ categorie }: { categorie: CategoriaConVoci[] }) {
         </div>
         <div className="grid border-t border-[rgb(242_203_92/0.35)] sm:grid-cols-2 sm:gap-x-[clamp(40px,6vw,72px)]">
           {corrente.voci.map((v) => (
-            <Riga key={v.id} v={v} />
+            <Riga key={v.id} v={v} euro={euro} />
           ))}
         </div>
       </div>
