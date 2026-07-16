@@ -2,6 +2,7 @@ import { getImpostazioni, getPopup } from '@/lib/dati'
 import { popupDaMostrare } from '@/lib/popup'
 import { dizionario, percorso, type Lang } from '@/lib/dizionario'
 import { NavTaproom } from '@/components/sito/NavTaproom'
+import { AnteprimaPalette } from '@/components/sito/AnteprimaPalette'
 import { Popup } from '@/components/Popup'
 
 export const dynamic = 'force-dynamic'
@@ -192,6 +193,8 @@ export default async function LayoutSito({
       </footer>
 
       {avviso && <Popup titolo={avviso.titolo} messaggio={avviso.messaggio} testoChiudi={t.popup.chiudi} />}
+      {/* ponytail: switcher palette TEMPORANEO — rimuovere dopo la scelta. */}
+      <AnteprimaPalette />
     </div>
   )
 }

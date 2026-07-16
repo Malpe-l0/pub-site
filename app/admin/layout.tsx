@@ -5,7 +5,10 @@ import '../globals.css'
 export default function LayoutAdmin({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it" className={`${cinzel.variable} ${ebGaramond.variable}`}>
-      <body>{children}</body>
+      <body>{children}{/* impeccable-live-start */}
+<script src="http://localhost:8400/live.js"></script>
+{/* impeccable-live-end */}
+</body>
     </html>
   )
 }
