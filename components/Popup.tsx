@@ -10,7 +10,15 @@ const CHIAVE_STORAGE = 'popup-avviso-chiuso'
  * Una volta chiuso non riappare nella stessa sessione di navigazione, ma un
  * avviso con testo diverso viene mostrato di nuovo.
  */
-export function Popup({ titolo, messaggio }: { titolo: string; messaggio?: string }) {
+export function Popup({
+  titolo,
+  messaggio,
+  testoChiudi,
+}: {
+  titolo: string
+  messaggio?: string
+  testoChiudi: string
+}) {
   const dialogo = useRef<HTMLDialogElement>(null)
   const chiave = `${titolo}|${messaggio ?? ''}`
 
@@ -29,7 +37,7 @@ export function Popup({ titolo, messaggio }: { titolo: string; messaggio?: strin
       </h2>
       {messaggio && <p className="text-panna-2 mt-3">{messaggio}</p>}
       <form method="dialog" className="mt-5 text-right">
-        <button className="btn-targhetta btn-targhetta-primario text-[0.95rem]">Chiudi</button>
+        <button className="btn-targhetta btn-targhetta-primario text-[0.95rem]">{testoChiudi}</button>
       </form>
     </dialog>
   )
