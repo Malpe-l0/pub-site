@@ -1,6 +1,6 @@
 ---
 name: Chelsea House
-description: British pub di Imola dal 1993 — direzione visiva "Black Friar": verde British drenched, accento oro/ottone, tipografia serif Cinzel + EB Garamond, sezioni "carta" su texture a grana. Il pannello /admin conserva la palette araldica su carta.
+description: British pub di Imola dal 1993 — direzione visiva "Black Friar / Muro di targhe": verde British drenched, accento oro/ottone, citazioni delle insegne smaltate d'epoca (targhe, filetti doppi, medaglione Est. 1993): verde British drenched, accento oro/ottone, tipografia serif Cinzel + EB Garamond, sezioni "carta" su texture a grana. Il pannello /admin conserva la palette araldica su carta.
 colors:
   verde: "#1e6240"
   verde-2: "#1e6240"
@@ -15,6 +15,9 @@ colors:
   oro-hover: "#f4c54a"
   oro-ink: "#f2cb5c"
   oro-scuro: "#7e5b1f"
+  smalto-rosso: "#922923"
+  smalto-nero: "#1c1e1a"
+  smalto-verde: "#14402a"
 typography:
   display:
     fontFamily: "Cinzel, Georgia, serif"
@@ -37,6 +40,10 @@ typography:
     fontSize: "0.98rem"
     fontWeight: 400
     lineHeight: 1.85
+  targa:
+    fontFamily: "Besley, Georgia, serif"
+    fontWeight: 700
+    textTransform: "uppercase"
 rounded:
   none: "0"
 spacing:
@@ -59,7 +66,14 @@ components:
     behavior: "schede per categoria (dal DB) + righe con filetto di puntini e prezzo oro"
   muro-birre:
     backgroundColor: "{colors.carta}"
-    behavior: "griglia 3 col su carta, loghi centrati, nessun bordo-muro"
+    behavior: "parete di targhe smaltate: griglia 3 col, ogni birra su piastra .targa col suo smalto"
+  targa:
+    border: "1px keyline esterno + keyline interno (box-shadow inset)"
+    behavior: "piastra smaltata squadrata con lamina di luce in alto (.targa + .targa-rosso|nero|verde|panna)"
+  filetto-epoca:
+    behavior: "divisore a doppio filetto con losanghe ◆ (.filetto-epoca, .su-carta per il tono oro-scuro)"
+  medaglione:
+    behavior: "tondo Est. 1993 a doppio anello, Besley (.medaglione)"
 ---
 
 # Design System: Chelsea House — "Black Friar"
@@ -79,6 +93,15 @@ Il sistema discende da un **handoff hi-fi** ("Black Friar", giugno 2026) e
 rimpiazza la precedente direzione "Taproom" (espresso/ambra, Oswald). La palette
 araldica su carta del vecchio "menu stampato del 1993" **sopravvive solo nel
 pannello /admin**, che non è toccato.
+
+**Evoluzione "Muro di targhe" (luglio 2026, branch estetica-retro):** il sito
+cita le insegne smaltate e i poster storici delle birre che tappezzano il
+locale. Vocabolario: piastre `.targa` con doppio keyline e lamina di luce
+(smalto rosso/nero/verde bottiglia/panna — gli smalti vivono SOLO dentro le
+targhe, il chrome resta verde+oro), divisori `.filetto-epoca` a doppio filetto
+con losanghe, medaglione `Est. 1993`, Besley (Clarendon) per slogan/targhe/
+prezzi. Il muro birre è la superficie signature: una parete di targhe di
+metallo. Lo slogan in targa rossa è la "réclame" citazionale.
 
 **Key Characteristics:**
 - Verde British drenched: lo sfondo è verde, non espresso né carta. La pagina è il pub.

@@ -35,7 +35,9 @@ const it = {
     copyright: (nome: string) => `© ${nome} · British Pub · Imola · dal 1993`,
   },
   home: {
-    kicker: 'British Pub · dal 1993',
+    kicker: 'British Pub · Imola',
+    insegna: 'Birre alla spina · Cucina di pub · Buona compagnia',
+    est: ['Dal', '1993'],
     vediMenu: 'Vedi il menu',
     band: '30+ anni a Imola',
     titoloStoria: 'Un angolo d’Inghilterra a Imola',
@@ -109,7 +111,9 @@ const en: typeof it = {
     copyright: (nome: string) => `© ${nome} · British Pub · Imola · since 1993`,
   },
   home: {
-    kicker: 'British Pub · since 1993',
+    kicker: 'British Pub · Imola',
+    insegna: 'Draught Beers · Pub Kitchen · Good Company',
+    est: ['Est.', '1993'],
     vediMenu: 'See the menu',
     band: '30+ years in Imola',
     titoloStoria: 'A corner of England in Imola',

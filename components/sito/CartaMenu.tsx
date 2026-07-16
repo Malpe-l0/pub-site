@@ -16,7 +16,7 @@ function Riga({ v, euro }: { v: VoceMenu; euro: Intl.NumberFormat }) {
         aria-hidden
         className="min-w-[20px] flex-1 -translate-y-[5px] border-b border-dotted border-[rgb(244_238_221/0.32)]"
       />
-      <span className="text-ambra-ink text-[0.86rem] tracking-[0.06em] whitespace-nowrap">
+      <span className="font-targa text-ambra-ink text-[0.86rem] font-medium tracking-[0.04em] whitespace-nowrap">
         {euro.format(v.prezzoCentesimi / 100)}
       </span>
     </div>

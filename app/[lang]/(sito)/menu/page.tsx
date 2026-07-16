@@ -38,9 +38,12 @@ export default async function PaginaMenu({ params }: { params: Promise<{ lang: s
   return (
     <div className="min-h-screen text-[#243a2d]" style={CARTA}>
       <div className="mx-auto max-w-[900px] px-[clamp(24px,5vw,40px)] pt-[120px] pb-[clamp(64px,9vw,110px)]">
-        <h1 className="font-titoli mb-12 text-[clamp(2.8rem,7vw,4.6rem)] leading-[1] font-bold text-[#1e6240] text-balance">
+        <h1 className="font-titoli text-[clamp(2.8rem,7vw,4.6rem)] leading-[1] font-bold text-[#1e6240] text-balance">
           {t.menu.titolo}
         </h1>
+        <div className="su-carta filetto-epoca mt-6 mb-12" aria-hidden>
+          <span className="text-[0.8rem] leading-none">◆</span>
+        </div>
 
         {categorie.length === 0 ? (
           <div>
@@ -72,7 +75,7 @@ export default async function PaginaMenu({ params }: { params: Promise<{ lang: s
                           aria-hidden
                           className="mx-1 flex-1 border-b border-dotted border-[#243a2d]/25"
                         />
-                        <p className="font-titoli text-[1.1rem] font-semibold whitespace-nowrap text-[#7e5b1f]">
+                        <p className="font-targa text-[1.02rem] font-bold whitespace-nowrap text-[#7e5b1f]">
                           {euro.format(v.prezzoCentesimi / 100)}
                         </p>
                       </div>

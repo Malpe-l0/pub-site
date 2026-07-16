@@ -57,12 +57,12 @@ export default async function LayoutSito({
             <p className="font-titoli text-ambra-ink text-[clamp(1.9rem,4vw,2.7rem)] font-semibold tracking-[0.01em]">
               {nome}
             </p>
-            <div className="mt-[18px] flex items-center gap-[clamp(14px,3vw,26px)]">
-              <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
-              <p className="font-titoli text-panna text-[clamp(1.3rem,2.8vw,1.9rem)] text-balance">
+            <div className="filetto-epoca mt-[18px] w-full max-w-[560px]">
+              <span aria-hidden className="text-[0.72rem] leading-none">◆</span>
+              <p className="font-targa text-panna text-center text-[clamp(1.1rem,2.4vw,1.5rem)] font-medium italic text-balance">
                 {t.footer.slogan}
               </p>
-              <span className="bg-ambra/40 h-px w-[clamp(28px,6vw,64px)]" />
+              <span aria-hidden className="text-[0.72rem] leading-none">◆</span>
             </div>
             {impostazioni.descrizione && (
               <p className="text-panna-3 mx-auto mt-5 max-w-[46ch] text-[0.95rem] leading-[1.75] text-pretty">
