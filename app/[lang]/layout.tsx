@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getImpostazioni } from '@/lib/dati'
 import { dizionario, haLingua, type Lang } from '@/lib/dizionario'
-import { besley, cinzel, ebGaramond } from '../fonts'
+import { cinzel, ebGaramond } from '../fonts'
 import '../globals.css'
 
 export async function generateMetadata({
@@ -33,10 +33,7 @@ export default async function RootLayout({
   const { lang } = await params
   if (!haLingua(lang)) notFound()
   return (
-    <html
-      lang={lang satisfies Lang}
-      className={`${cinzel.variable} ${ebGaramond.variable} ${besley.variable}`}
-    >
+    <html lang={lang satisfies Lang} className={`${cinzel.variable} ${ebGaramond.variable}`}>
       <body>{children}</body>
     </html>
   )

@@ -59,22 +59,13 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         }}
       >
         <div className="px-6">
-          <p className="entrata-hero mb-[18px]">
-            <span className="medaglione text-ambra-ink text-[0.62rem] tracking-[0.14em] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">
-              <span>{t.home.est[0]}</span>
-              <span className="text-[1.05rem] font-bold">{t.home.est[1]}</span>
-            </span>
-          </p>
           <p className="text-ambra-ink entrata-hero mb-[14px] text-[0.74rem] tracking-[0.42em] uppercase">
             {t.home.kicker}
           </p>
           <h1 className="font-titoli text-panna entrata-hero text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
             {nome}
           </h1>
-          <p className="font-targa text-panna-2 entrata-hero entrata-hero-2 mx-auto mt-6 max-w-[44ch] text-[clamp(0.82rem,1.8vw,1rem)] font-medium tracking-[0.14em] uppercase [text-shadow:0_1px_12px_rgba(0,0,0,0.6)]">
-            {t.home.insegna}
-          </p>
-          <div className="entrata-hero entrata-hero-3 mt-8">
+          <div className="entrata-hero entrata-hero-2 mt-8">
             <a href="#menu" className="btn-targhetta btn-targhetta-primario">
               {t.home.vediMenu}
             </a>
@@ -85,12 +76,14 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       {/* ===== STATEMENT BAND ===== */}
       <section className="text-panna bg-espresso">
         <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] pt-[clamp(34px,4.5vw,52px)]">
-          <div className="filetto-epoca">
-            <span aria-hidden className="text-[0.8rem] leading-none">◆</span>
-            <span className="font-titoli text-panna text-center text-[clamp(1.35rem,4.5vw,2.3rem)] leading-none text-balance">
-              {t.home.band}
+          <div className="flex items-center gap-[clamp(16px,3vw,30px)]">
+            <span className="bg-ambra/40 h-px flex-1" />
+            <span className="flex flex-col items-center text-center">
+              <span className="font-titoli text-panna text-[clamp(1.35rem,4.5vw,2.3rem)] leading-none text-balance">
+                {t.home.band}
+              </span>
             </span>
-            <span aria-hidden className="text-[0.8rem] leading-none">◆</span>
+            <span className="bg-ambra/40 h-px flex-1" />
           </div>
         </div>
         <div className="mx-auto grid max-w-[1180px] items-center gap-[clamp(32px,6vw,72px)] px-[clamp(24px,5vw,52px)] pt-[clamp(40px,6vw,64px)] pb-[clamp(64px,9vw,108px)] md:grid-cols-[1.05fr_0.95fr]">
@@ -125,18 +118,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             </p>
           </div>
           <MuroBirre />
-
-          {/* La citazione appesa al muro: slogan come réclame smaltata d'epoca */}
-          <div className="mx-auto mt-[clamp(44px,6vw,72px)] max-w-[640px]">
-            <div className="targa targa-rosso text-center">
-              <p className="font-targa text-[clamp(1.5rem,3.6vw,2.3rem)] leading-[1.25] font-bold italic text-balance">
-                {t.footer.slogan}
-              </p>
-              <p className="mt-[16px] text-[0.68rem] tracking-[0.3em] uppercase opacity-85">
-                {nome} · Imola
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
