@@ -42,6 +42,11 @@
 
 html {
   scroll-behavior: smooth;
+  /* Il sito ha un solo tema (Black Friar): niente dark mode. "only light" è
+     l'opt-out standard: senza, un telefono in dark mode scurisce i controlli
+     nativi e le funzioni "scurisci siti" (Auto Dark di Chrome ecc.) ridipingono
+     l'intera pagina. Dichiarato anche come <meta> nei layout radice. */
+  color-scheme: only light;
 }
 
 /* Striscia scrollabile senza barra visibile (tab del menu su mobile): lo scroll

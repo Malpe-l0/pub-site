@@ -1,9 +1,12 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
 import { getImpostazioni } from '@/lib/dati'
 import { dizionario, haLingua, type Lang } from '@/lib/dizionario'
 import { cinzel, ebGaramond } from '../fonts'
 import '../globals.css'
+
+// Un solo tema: dice ai browser di non generare una versione scura (Auto Dark ecc.).
+export const viewport: Viewport = { colorScheme: 'only light' }
 
 export async function generateMetadata({
   params,
@@ -34,10 +37,7 @@ export default async function RootLayout({
   if (!haLingua(lang)) notFound()
   return (
     <html lang={lang satisfies Lang} className={`${cinzel.variable} ${ebGaramond.variable}`}>
-      <body>{children}{/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js"></script>
-{/* impeccable-live-end */}
-</body>
+      <body>{children}</body>
     </html>
   )
 }

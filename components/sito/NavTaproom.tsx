@@ -37,23 +37,20 @@ export function NavTaproom({
   ]
   const hrefMenu = percorso(lang, '/menu')
 
-  // Toggle lingua: cookie letto dal proxy + navigazione all'URL equivalente.
+  // Toggle lingua: link puro al percorso senza prefisso con ?lingua; è il
+  // proxy (server) a scrivere il cookie e reindirizzare. Niente JS: funziona
+  // anche prima dell'hydration e sui browser che bloccano i cookie client-side.
   const altra: Lang = lang === 'it' ? 'en' : 'it'
-  const cambiaLingua = () => {
-    document.cookie = `lingua=${altra};path=/;max-age=31536000`
-    const senzaPrefisso = lang === 'en' ? pathname.replace(/^\/en/, '') || '/' : pathname
-    window.location.href = percorso(altra, senzaPrefisso)
-  }
+  const senzaPrefisso = lang === 'en' ? pathname.replace(/^\/en/, '') || '/' : pathname
   const toggle = (
-    <button
-      type="button"
-      onClick={cambiaLingua}
+    <a
+      href={`${senzaPrefisso}?lingua=${altra}`}
       aria-label={t.cambiaLingua}
       title={t.cambiaLingua}
-      className="text-panna hover:text-ambra-ink border-panna/35 hover:border-panna/70 cursor-pointer border px-[10px] py-[5px] text-[0.72rem] tracking-[0.2em] uppercase transition-colors"
+      className="text-panna hover:text-ambra-ink border-panna/35 hover:border-panna/70 border px-[10px] py-[5px] text-[0.72rem] tracking-[0.2em] uppercase transition-colors"
     >
       {t.linguaBreve}
-    </button>
+    </a>
   )
 
   return (
