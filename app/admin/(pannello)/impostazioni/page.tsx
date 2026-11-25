@@ -8,15 +8,17 @@ export default async function PaginaImpostazioni({
 }: {
   searchParams: Promise<{ salvato?: string }>
 }) {
-  await richiediAdmin()
+  await richiediAdmin('owner')
   const impostazioni = getImpostazioni()
   const { salvato } = await searchParams
 
   return (
     <>
-      <h1>Impostazioni del sito</h1>
+      <h1>Informazioni del locale</h1>
+      <p>Nome, contatti e orari che i clienti trovano sul sito.</p>
       {salvato && <p role="status">Salvato.</p>}
       <form action={salvaImpostazioni}>
+        <h2>Presentazione</h2>
         <p>
           <label>
             Nome del pub
@@ -29,6 +31,7 @@ export default async function PaginaImpostazioni({
             <textarea name="descrizione" defaultValue={impostazioni.descrizione} rows={3} />
           </label>
         </p>
+        <h2>Contatti e indirizzo</h2>
         <p>
           <label>
             Indirizzo
@@ -85,7 +88,7 @@ export default async function PaginaImpostazioni({
             </label>
           </p>
         </fieldset>
-        <button>Salva</button>
+        <button>Salva informazioni</button>
       </form>
     </>
   )

@@ -1,102 +1,26 @@
+import Link from 'next/link'
 import { richiediAdmin } from '@/lib/auth'
 import { getGalleria } from '@/lib/dati'
-import { getStatoInstagram } from '@/lib/instagram'
-import {
-  caricaFoto,
-  aggiornaFoto,
-  eliminaFotoGalleria,
-  configuraInstagram,
-  sincronizzaOra,
-} from './azioni'
-
-export default async function PaginaGalleriaAdmin() {
-  await richiediAdmin()
-  const foto = getGalleria()
-  const ig = getStatoInstagram()
-
-  return (
-    <>
-      <h1>Galleria fotografica</h1>
-      <p>
-        La pagina Galleria compare sul sito se c’è almeno una foto: dai post di Instagram, oppure
-        caricate qui sotto.
-      </p>
-
-      <h2>Sincronizza con Instagram</h2>
-      <p>
-        Se colleghi l’account Instagram (Business o Creator), la galleria mostra automaticamente gli
-        ultimi 9 post. Le foto caricate più sotto restano come riserva e ricompaiono se Instagram
-        non è disponibile.
-      </p>
-      <form action={configuraInstagram}>
-        <label>
-          ID account Instagram
-          <input name="userId" defaultValue={ig.userId} placeholder="es. 17841401234567890" />
-        </label>
-        <label>
-          Token di accesso (a lunga durata)
-          <input
-            name="accessToken"
-            type="password"
-            placeholder={ig.configurato ? '•••••• salvato — lascia vuoto per non cambiarlo' : 'Incolla qui il token'}
-          />
-        </label>
-        <button>Salva credenziali</button>
-      </form>
-      <form action={sincronizzaOra} style={{ display: 'inline' }}>
-        <button className="secondario" disabled={!ig.configurato}>
-          Sincronizza ora
-        </button>
-      </form>
-      <p>
-        Stato:{' '}
-        {ig.configurato
-          ? `collegato — ${ig.numeroFoto} foto${ig.ultimaSync ? `, ultima sincronizzazione ${new Date(ig.ultimaSync).toLocaleString('it-IT')}` : ''}`
-          : 'non collegato'}
-        {ig.ultimoEsito ? ` — ${ig.ultimoEsito}` : ''}
-      </p>
-
-      <h2>Foto di riserva (caricate a mano)</h2>
-      <p>Puoi selezionare più foto in una volta.</p>
-
-      <form action={caricaFoto} encType="multipart/form-data">
-        <label>
-          Carica foto
-          <input type="file" name="foto" accept="image/*" multiple required />
-        </label>
-        <button>Carica</button>
-      </form>
-
-      {foto.length === 0 ? (
-        <p>Nessuna foto caricata.</p>
-      ) : (
-        <ul>
-          {foto.map((f) => (
-            <li key={f.id}>
-              <img src={`/uploads/${f.file}`} alt="" style={{ height: 120 }} />
-              <form action={aggiornaFoto} style={{ display: 'inline' }}>
-                <input type="hidden" name="id" value={f.id} />
-                <label>
-                  Didascalia (facoltativa)
-                  <input name="didascalia" defaultValue={f.didascalia} placeholder="Es. Il bancone" />
-                </label>
-                <label>
-                  Posizione (numero basso = più in alto)
-                  <input type="number" name="ordine" defaultValue={f.ordine} />
-                </label>
-                <button>Salva</button>
-              </form>{' '}
-              <details style={{ display: 'inline-block' }} className="pericolo">
-                <summary>Elimina</summary>
-                <form action={eliminaFotoGalleria}>
-                  <input type="hidden" name="id" value={f.id} />
-                  <button>Conferma eliminazione</button>
-                </form>
-              </details>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
-  )
+import { getStatoInstagram,getFotoInstagram,getConfigGalleria } from '@/lib/instagram'
+import {StatoInstagram} from '@/components/admin/StatoInstagram'
+import {Submit} from '@/components/admin/Submit'
+import {caricaFoto,aggiornaFoto,eliminaFotoGalleria,aggiornaFonte,visibilitaInstagram} from './azioni'
+export default async function PaginaGalleriaAdmin({searchParams}:{searchParams:Promise<{salvato?:string}>}) {
+  const user=await richiediAdmin(),foto=getGalleria(),ig=getStatoInstagram(),post=getFotoInstagram(),config=getConfigGalleria(),q=await searchParams
+  return <>
+    <div className="admin-page-heading"><h1>Galleria</h1><p>Scegli quali immagini mostrare sul sito e da dove prenderle.</p></div>
+    {q.salvato&&<p role="status" className="admin-notice success">Preferenze salvate.</p>}
+    <section className="admin-panel"><h2>Foto da mostrare sul sito</h2><form action={aggiornaFonte}>
+      <label>Origine delle foto<select name="fonte" defaultValue={config.fonte}><option value="automatica">Instagram, con foto manuali se la cache è vuota</option><option value="manuale">Solo foto caricate a mano</option><option value="instagram">Solo Instagram</option><option value="mista">Foto manuali e Instagram insieme</option></select></label>
+      <p className="admin-help">Se Instagram non risponde, le foto già importate rimangono disponibili. In modalità mista, le foto manuali compaiono per prime.</p>
+      <label><input type="checkbox" name="includiReel" defaultChecked={config.includiReel}/> Importa anche le copertine dei video e dei Reel</label><p className="admin-help">La preferenza viene applicata alla prossima sincronizzazione. I video non vengono riprodotti sul sito.</p><Submit>Salva preferenze</Submit>
+    </form></section>
+    <section className="admin-panel"><div className="admin-section-heading"><h2>Foto caricate a mano <span className="admin-count">{foto.length}</span></h2></div><p>Aggiungi fino a 5 immagini per volta, da massimo 8 MB ciascuna.</p>
+      <form action={caricaFoto} className="admin-upload"><label>Seleziona immagini<input type="file" name="foto" accept="image/png,image/jpeg,image/webp,image/avif,image/svg+xml" multiple required/></label><Submit pending="Caricamento immagini…">Carica foto</Submit></form>
+      {!foto.length?<div className="admin-empty"><strong>Aggiungi le prime foto del locale</strong><p>Carica immagini del bancone, della sala o delle tue specialità.</p></div>:<div className="admin-photo-grid">{foto.map(f=><article key={f.id} className="admin-photo"><img src={`/uploads/${f.file}`} alt={f.didascalia||'Foto caricata del locale'} loading="lazy"/><div><form action={aggiornaFoto}><input type="hidden" name="id" value={f.id}/><label>Didascalia<input name="didascalia" defaultValue={f.didascalia} placeholder="Es. Il nostro bancone" maxLength={5000}/></label><label>Ordine di visualizzazione<input type="number" name="ordine" defaultValue={f.ordine} min={0}/></label><Submit className="secondario">Salva foto</Submit></form><details className="pericolo"><summary>Elimina foto</summary><p>La foto verrà rimossa dalla galleria del sito.</p><form action={eliminaFotoGalleria}><input type="hidden" name="id" value={f.id}/><Submit>Conferma eliminazione</Submit></form></details></div></article>)}</div>}
+    </section>
+    <section className="admin-panel"><div className="admin-section-heading"><h2>Foto da Instagram <span className="admin-count">{post.length}</span></h2><StatoInstagram stato={ig.stato}/></div><p>Importiamo fino a 9 foto o copertine recenti. Ogni carosello contribuisce con la sua copertina. Puoi nascondere le immagini che non vuoi mostrare.</p>{user.role==='owner'&&<p><Link href="/admin/instagram">Gestisci il collegamento e sincronizza le foto →</Link></p>}
+      {!post.length?<div className="admin-empty"><p>{ig.configurato?'Nessuna foto importata. Avvia una sincronizzazione dalla sezione Instagram.':'Collega Instagram per importare le foto, oppure usa quelle caricate a mano.'}</p></div>:<div className="admin-photo-grid">{post.map(f=><article key={f.id} className="admin-photo"><img src={`/uploads/${f.file}`} alt={f.didascalia||'Foto Instagram del locale'} loading="lazy"/><div><span className={`admin-badge ${f.nascosta?'':'success'}`}>{f.nascosta?'Nascosta dal sito':'Inclusa nella selezione Instagram'}</span><p className="admin-caption">{f.didascalia||'Senza didascalia'}</p><form action={visibilitaInstagram}><input type="hidden" name="id" value={f.id}/><input type="hidden" name="nascosta" value={f.nascosta?'0':'1'}/><Submit className="secondario">{f.nascosta?'Mostra foto':'Nascondi foto'}</Submit></form></div></article>)}</div>}
+    </section>
+  </>
 }

@@ -14,16 +14,22 @@ export default async function PaginaLogin({
   const { errore } = await searchParams
 
   return (
-    <main className="admin mx-auto max-w-sm px-4 py-16">
-      <h1>Pannello del pub</h1>
-      {errore && <p role="alert">Password sbagliata, riprova.</p>}
+    <main className="admin admin-login">
+      <h1>Accedi alla gestione del sito</h1>
+      <p>Menu, foto e informazioni del tuo locale.</p>
+      {errore && <p role="alert">{errore === 'limite' ? 'Troppi tentativi. Riprova fra 15 minuti.' : 'Nome utente o password non corretti.'}</p>}
       <form action={accedi}>
         <label>
+          Nome utente
+          <input name="username" autoComplete="username" defaultValue="admin" required maxLength={64} />
+        </label>
+        <label>
           Password
-          <input type="password" name="password" required autoFocus />
+          <input type="password" name="password" required autoComplete="current-password" maxLength={128} />
         </label>
         <button>Entra</button>
       </form>
+      <p>Accesso perso? Il titolare può reimpostare il tuo account. Per recuperare il primo account contatta chi gestisce il sito.</p>
     </main>
   )
 }

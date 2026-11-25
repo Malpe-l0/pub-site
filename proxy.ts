@@ -47,5 +47,7 @@ export function proxy(req: NextRequest) {
 // admin/uploads/asset non c'entrano con la lingua. Il toggle punta sempre a uno
 // di questi percorsi (senza prefisso) col parametro ?lingua, così passa di qui.
 export const config = {
-  matcher: ['/', '/menu', '/galleria', '/dove'],
+  // NOTA: '/prova-hero' è temporaneo (confronto varianti hero) — rimuoverlo
+  // insieme alla pagina di prova una volta scelto l'hero definitivo.
+  matcher: ['/', '/menu', '/galleria', '/dove', '/prova-hero'],
 }

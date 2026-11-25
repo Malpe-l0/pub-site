@@ -2,32 +2,39 @@
 
 /*
  * Due sistemi convivono:
- * - Sito pubblico "Black Friar": verde British, crema e oro/ottone. Cinzel + EB Garamond.
- *   I nomi dei token restano quelli del vecchio look (espresso/panna/ambra) ma i valori
- *   sono ridipinti sul verde: così le pagine /menu e /galleria ereditano il tema senza
- *   toccarne le classi. ponytail: remap dei token invece di riscrivere ogni className.
- * - Pannello admin + gioco: palette "stemma" originale (verde/ottone/oro su carta).
- * I font sono esposti come variabili da next/font nel root layout.
+ * - Sito pubblico: estetica shadcn/ui — neutri zinc, bianco, bordi sottili,
+ *   radius morbidi, Geist sans + Geist Mono. Tema solo light (vincolo).
+ * - Pannello admin: controlli e navigazione dedicati in app/admin/admin.css.
+ * I font sono esposti come variabili da next/font nei due layout radice.
  */
 @theme {
-  /* Black Friar — sito pubblico */
-  --color-espresso: #1e6240; /* verde pagina + sezioni scure */
-  --color-espresso-2: #1e6240; /* sezione menu (stesso verde) */
-  --color-espresso-3: #16472e; /* footer: verde più scuro della sala, non grigio (il vecchio #2e3732 era troppo desaturato) */
-  --color-nerocaldo: #243a2d; /* verde-inchiostro: testo sui pulsanti oro */
-  --color-panna: #f4eedd;
-  --color-panna-2: #d8ccb4;
-  --color-panna-3: #d8ccb4;
-  --color-panna-4: #d8ccb4; /* note/footnote sul verde — 4.59:1 è il pavimento AA: più scuro non passa; il "quieto" lo fanno corpo e corsivo */
-  --color-panna-muro: #f4eedd; /* carta (sezioni birre/gallery) */
-  --color-panna-muro-hover: #efe6d3;
-  --color-lineamuro: #ddccaa;
-  --color-ambra: #eab325;
-  --color-ambra-hover: #f4c54a;
-  --color-ambra-scura: #7e5b1f; /* oro-come-testo su carta (eyebrow/etichette): 5.32:1 su crema, WCAG AA */
-  --color-ambra-ink: #f2cb5c; /* oro-come-testo sul verde */
+  /* shadcn/ui — sito pubblico (tema chiaro, scala zinc).
+     Unico accento: ottone brunito #7e5b1f (eredita l'oro storico del pub,
+     scurito per stare su bianco — 5.1:1, WCAG AA). */
+  --color-background: #ffffff;
+  --color-foreground: #09090b; /* zinc-950 */
+  --color-card: #ffffff;
+  --color-card-foreground: #09090b;
+  --color-primary: #7e5b1f; /* ottone brunito */
+  --color-primary-foreground: #fafafa; /* zinc-50 — 5.1:1 sull'ottone, AA */
+  --color-secondary: #f4f4f5; /* zinc-100 */
+  --color-secondary-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a; /* zinc-500 — 4.75:1 su bianco, AA */
+  --color-accent: #f4f4f5;
+  --color-accent-foreground: #18181b;
+  --color-border: #e4e4e7; /* zinc-200 */
+  --color-input: #e4e4e7;
+  --color-ring: #9a7a3f; /* ottone desaturato — anello focus visibile su bianco */
 
-  /* Palette "stemma" — pannello admin e gioco */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', monospace;
+
+  /* Variabili tipografiche storiche, conservate per i componenti esistenti. */
+  --font-titoli: var(--font-oswald);
+  --font-testo: var(--font-mulish);
+
+  /* Colori storici e accento verde della gestione. */
   --color-verde: #1f3d2b;
   --color-ottone: #8a6d1f;
   --color-oro: #d4b14a;
@@ -35,14 +42,11 @@
   --color-pergamena: #fffdf7;
   --color-inchiostro: #2b2418;
   --color-mattone: #8c2f1b;
-
-  --font-titoli: var(--font-oswald);
-  --font-testo: var(--font-mulish);
 }
 
 html {
   scroll-behavior: smooth;
-  /* Il sito ha un solo tema (Black Friar): niente dark mode. "only light" è
+  /* Il sito ha un solo tema (chiaro): niente dark mode. "only light" è
      l'opt-out standard: senza, un telefono in dark mode scurisce i controlli
      nativi e le funzioni "scurisci siti" (Auto Dark di Chrome ecc.) ridipingono
      l'intera pagina. Dichiarato anche come <meta> nei layout radice. */
@@ -64,106 +68,36 @@ body {
   font-family: var(--font-testo), system-ui, sans-serif;
 }
 
-/* Il sito pubblico vira la pagina sul verde British; il pannello admin resta
-   su carta chiara. Distinzione via :has() sul wrapper del sito. */
+/* Il sito pubblico usa il sistema bianco/zinc/Geist. Il pannello ha le sue
+   superfici nel foglio di stile dedicato, sotto .admin-body e .admin. */
 body:has(.sito-taproom) {
-  background: var(--color-espresso);
-  color: var(--color-panna);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
 }
 
-/* Pulsanti Black Friar: filetto sottile, EB Garamond spaziato.
-   max-width 100% + box-sizing: su 320–768px tracking+padding non devono
-   sforare la viewport (né i CTA affiancati né le etichette lunghe tipo Maps). */
-.btn-targhetta {
-  display: inline-block;
-  box-sizing: border-box;
-  max-width: 100%;
-  text-align: center;
-  font-family: var(--font-testo), serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.74rem;
-  padding: 15px 30px;
-  border: 1px solid transparent;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
-}
-@media (max-width: 640px) {
-  .btn-targhetta {
-    letter-spacing: 0.12em;
-    font-size: 0.7rem;
-    padding: 14px 18px;
-  }
-}
-.btn-targhetta-primario {
-  background: var(--color-ambra);
-  color: var(--color-nerocaldo);
-  border-color: var(--color-ambra);
-}
-.btn-targhetta-primario:hover {
-  background: var(--color-ambra-hover);
-  border-color: var(--color-ambra-hover);
-}
-.btn-targhetta-ghost {
-  background: transparent;
-  color: var(--color-panna);
-  border-color: var(--color-panna);
-}
-.btn-targhetta-ghost:hover {
-  background: var(--color-panna);
-  color: var(--color-espresso);
-}
-
-/* L'unico momento di motion della pagina: l'entrata dell'hero, "la porta che
-   si apre la sera". Keyframe CSS puri (partono al load, niente scroll-trigger),
-   ease-out-quint, tre battute brevi. Il resto della pagina resta fermo. */
-@keyframes entrata-hero {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.entrata-hero {
-  animation: entrata-hero 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.entrata-hero-2 {
-  animation-delay: 0.14s;
-}
-.entrata-hero-3 {
-  animation-delay: 0.28s;
-}
-@media (prefers-reduced-motion: reduce) {
-  .entrata-hero {
-    animation: none;
-  }
-}
-
-/* Focus da tastiera: anello ambra, squadrato come il resto del sistema.
-   Usa ambra-ink così resta visibile anche in tema chiaro (scurita su crema). */
+/* Focus da tastiera: anello zinc, come da sistema shadcn. */
 .sito-taproom :focus-visible {
-  outline: 2px solid var(--color-ambra-ink);
+  outline: 2px solid var(--color-ring);
   outline-offset: 2px;
 }
 
-/* Pop-up avvisi: <dialog> nativo, vestito da pannello scuro. */
+/* Pop-up avvisi: <dialog> nativo, vestito da card shadcn. */
 dialog {
   margin: auto;
   max-width: 28rem;
-  border: 1px solid var(--color-ambra);
-  background: var(--color-espresso-2);
-  color: var(--color-panna);
-  padding: 1.5rem 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  padding: 1.5rem;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 dialog::backdrop {
-  background: rgb(13 11 8 / 0.7);
+  background: rgb(0 0 0 / 0.5);
 }
 
 /* Bollicine del gioco della spillata: salgono e svaniscono nella birra. */
@@ -190,108 +124,4 @@ dialog::backdrop {
     animation: none;
     opacity: 0;
   }
-}
-
-/*
- * Pannello admin: "minimo sindacale" — regole element-scoped sotto .admin
- * così non serve toccare ogni form del pannello.
- */
-.admin h1 {
-  font-family: var(--font-titoli), Georgia, serif;
-  color: var(--color-verde);
-  font-size: 1.6rem;
-  margin: 1.25rem 0 0.75rem;
-}
-
-.admin h2 {
-  color: var(--color-verde);
-  font-size: 1.15rem;
-  margin: 1.25rem 0 0.5rem;
-}
-
-.admin label {
-  display: block;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.admin input:not([type='checkbox']):not([type='radio']):not([type='file']),
-.admin textarea,
-.admin select {
-  display: block;
-  width: 100%;
-  max-width: 28rem;
-  border: 1px solid #b8a878;
-  border-radius: 4px;
-  background: #fff;
-  padding: 0.45rem 0.6rem;
-  margin-top: 0.2rem;
-  font: inherit;
-}
-
-.admin button {
-  background: var(--color-verde);
-  color: #fff;
-  border: 0;
-  border-radius: 4px;
-  padding: 0.45rem 1rem;
-  margin-top: 0.4rem;
-  cursor: pointer;
-  font: inherit;
-}
-
-/* I <details> ripiegano le azioni meno frequenti. Quelli neutri (rinomina,
-   nuova categoria) sono verdi come i link; i distruttivi prendono .pericolo. */
-.admin details summary {
-  cursor: pointer;
-  color: var(--color-verde);
-  font-size: 0.9rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.admin details.pericolo summary {
-  color: #8c2f1b;
-}
-
-.admin details.pericolo button {
-  background: #8c2f1b; /* azioni distruttive: rosso mattone */
-}
-
-/* Azioni secondarie nelle righe (Nascondi/Mostra): presenti ma non dominanti. */
-.admin button.secondario {
-  background: #fff;
-  color: var(--color-verde);
-  border: 1px solid #b8a878;
-  margin-top: 0;
-}
-
-/* I link nel contenuto del pannello devono distinguersi dal testo:
-   il gestore non è tecnico, l'affordance va dichiarata. (La nav in alto
-   ha le sue classi e resta esclusa.) */
-.admin main a {
-  color: var(--color-verde);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.admin main a:hover {
-  text-decoration-thickness: 2px;
-}
-
-.admin ::placeholder {
-  color: #6e6552; /* 4.6:1 su bianco: anche gli esempi si devono leggere */
-  opacity: 1;
-}
-
-.admin p {
-  margin: 0.5rem 0;
-}
-
-.admin ul {
-  padding-left: 1.1rem;
-}
-
-.admin li {
-  margin: 0.6rem 0;
 }

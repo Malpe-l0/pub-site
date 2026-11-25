@@ -1,192 +1,62 @@
 import type { Metadata } from 'next'
-import { getImpostazioni, getMenuPubblico, getGalleriaPubblica } from '@/lib/dati'
+import Image from 'next/image'
+import { Clock, MapPin, Phone } from 'lucide-react'
+import { getImpostazioni, getMenuPubblico, getGalleriaPubblica, getEventiFuturi, getServiziAttivi } from '@/lib/dati'
 import { dizionario, percorso, type Lang } from '@/lib/dizionario'
 import { MuroBirre } from '@/components/sito/MuroBirre'
 import { CartaMenu } from '@/components/sito/CartaMenu'
+import { fotoDelLocale } from '@/components/sito/foto'
+import { testoBrand } from '@/lib/branding'
 
-export const metadata: Metadata = {
-  alternates: { languages: { it: '/', en: '/en' } },
-}
-
-// Sfondo "carta" delle sezioni chiare (birre, gallery): crema + texture grana.
-const CARTA = {
-  backgroundColor: '#f4eedd',
-  backgroundImage: "url('/taproom/grain.png')",
-  backgroundRepeat: 'repeat' as const,
-}
+export const metadata: Metadata = { alternates: { languages: { it: '/', en: '/en' } } }
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const lang = (await params).lang as Lang
   const t = dizionario(lang)
-  const impostazioni = getImpostazioni()
+  const imp = getImpostazioni()
+  const brand = imp.branding
+  const copia = (key: string, fallback: string) => testoBrand(brand, lang, key, fallback)
+  const nome = imp.nomePub || 'Il nostro pub'
   const categorie = getMenuPubblico().filter((c) => c.voci.length > 0)
-  const vetrina = getGalleriaPubblica()
-
-  const nome = impostazioni.nomePub || 'Il nostro pub'
-  // Galleria di riserva: foto del bundle, per rabboccare quando il gestore ne ha
-  // caricate meno di tre — la griglia non deve mai restare mezza vuota.
-  const fotoDefault = [
-    { src: '/taproom/foto-bancone.jpg', alt: t.home.altBancone },
-    { src: '/taproom/foto-pinta.jpg', alt: t.home.altPinta },
-    { src: '/taproom/foto-sala.jpg', alt: t.home.altSala },
+  const foto = fotoDelLocale(getGalleriaPubblica().foto, brand.legacy, lang).slice(0, 3)
+  const eventi = brand.sezioni.eventi ? getEventiFuturi() : []
+  const servizi = brand.sezioni.servizi ? getServiziAttivi() : []
+  const racconto = copia('home.raccontoDefault', (lang === 'it' && imp.descrizione) || (brand.legacy && lang === 'en' ? 'Draught beer, late-night food and thirty years of good company, brick and dark wood.' : t.home.raccontoDefault))
+  const contatto = imp.telefono ? { href: `tel:${imp.telefono.replace(/\s/g, '')}`, testo: t.menu.chiama } : imp.instagram ? { href: imp.instagram, testo: t.menu.chiedi } : null
+  const fatti = [
+    ...(imp.orari.length ? [{ icona: Clock, nome: t.footer.orari, righe: imp.orari.map((f) => [f.giorni, f.orario].filter(Boolean).join(' · ')), href: '' }] : []),
+    ...(imp.indirizzo ? [{ icona: MapPin, nome: t.dove.indirizzo, righe: [imp.indirizzo], href: percorso(lang, '/dove') }] : []),
+    ...(imp.telefono ? [{ icona: Phone, nome: t.dove.telefono, righe: [imp.telefono], href: `tel:${imp.telefono.replace(/\s/g, '')}` }] : []),
   ]
-  const fotoGalleria = [
-    ...vetrina.foto.slice(0, 3).map((f) => ({
-      src: f.src,
-      alt: f.didascalia || t.home.altFoto(nome),
-    })),
-    ...fotoDefault,
-  ].slice(0, 3)
-  // La descrizione dal pannello è in italiano: in inglese si usa il testo fisso.
-  const racconto =
-    (lang === 'it' && impostazioni.descrizione) || t.home.raccontoDefault
-  const contattoVivo = impostazioni.telefono
-    ? { href: `tel:${impostazioni.telefono.replace(/\s/g, '')}`, testo: t.menu.chiama }
-    : impostazioni.instagram
-      ? { href: impostazioni.instagram, testo: t.menu.chiedi }
-      : null
-  const haFotoGestore = vetrina.foto.length > 0
 
-  return (
-    <>
-      {/* ===== HERO ===== */}
-      <section
-        id="top"
-        className="relative flex h-[clamp(520px,78vh,800px)] items-center justify-center bg-cover bg-center text-center"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(18,16,12,0.32), rgba(18,16,12,0.55)), url('/taproom/foto-sala.jpg')",
-        }}
-      >
-        <div className="px-6">
-          <p className="text-ambra-ink entrata-hero mb-[14px] text-[0.74rem] tracking-[0.42em] uppercase">
-            {t.home.kicker}
-          </p>
-          <h1 className="font-titoli text-panna entrata-hero text-[clamp(2.6rem,7vw,6rem)] leading-[1.04] font-semibold text-balance [text-shadow:0_2px_26px_rgba(0,0,0,0.5)]">
-            {nome}
-          </h1>
-          <div className="entrata-hero entrata-hero-2 mt-8">
-            <a href="#menu" className="btn-targhetta btn-targhetta-primario">
-              {t.home.vediMenu}
-            </a>
-          </div>
-        </div>
-      </section>
+  return <>
+    <section className={`pub-hero${brand.hero ? '' : ' pub-hero-no-photo'}`} aria-labelledby="pub-title">
+      {brand.hero && <Image className="pub-hero-photo" src={brand.hero} alt={brand.heroAlt || t.home.altSala} fill sizes="100vw" preload />}
+      <div className="pub-hero-shade" />
+      <div className="pub-hero-frame" aria-hidden />
+      <div className="pub-hero-content">
+        <p className="pub-kicker">{copia('home.kicker', t.home.kicker)}</p>
+        <h1 id="pub-title">{nome}</h1>
+        <div className="pub-ornament" aria-hidden><span />✦<span /></div>
+        <p className="pub-hero-description">{racconto}</p>
+        <div className="pub-actions"><a href={brand.sezioni.menu ? '#menu' : percorso(lang, '/menu')} className="pub-button">{t.home.vediMenu}</a><a href={percorso(lang, '/dove')} className="pub-button pub-button-outline">{t.nav.dove}</a></div>
+      </div>
+    </section>
 
-      {/* ===== STATEMENT BAND ===== */}
-      <section className="text-panna bg-espresso">
-        <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] pt-[clamp(34px,4.5vw,52px)]">
-          <div className="flex items-center gap-[clamp(16px,3vw,30px)]">
-            <span className="bg-ambra/40 h-px flex-1" />
-            <span className="flex flex-col items-center text-center">
-              <span className="font-titoli text-panna text-[clamp(1.35rem,4.5vw,2.3rem)] leading-none text-balance">
-                {t.home.band}
-              </span>
-            </span>
-            <span className="bg-ambra/40 h-px flex-1" />
-          </div>
-        </div>
-        <div className="mx-auto grid max-w-[1180px] items-center gap-[clamp(32px,6vw,72px)] px-[clamp(24px,5vw,52px)] pt-[clamp(40px,6vw,64px)] pb-[clamp(64px,9vw,108px)] md:grid-cols-[1.05fr_0.95fr]">
-          <div>
-            <h2 className="font-titoli text-[clamp(2.2rem,5.2vw,4rem)] leading-[1.04] font-semibold text-balance">
-              {t.home.titoloStoria}
-            </h2>
-            <p className="text-panna-3 mt-[26px] max-w-[46ch] text-[1rem] leading-[1.85] text-pretty">
-              {racconto}
-            </p>
-          </div>
-          <img
-            src="/taproom/foto-pinta.jpg"
-            alt={t.home.altPinte(nome)}
-            className="h-[clamp(340px,46vw,520px)] w-full border border-[rgb(234_179_37/0.28)] object-cover"
-          />
-        </div>
-      </section>
+    {fatti.length > 0 && <div className="pub-service-strip"><div className="pub-container pub-service-grid">{fatti.map((f) => <div key={f.nome} className="pub-service-item"><f.icona size={19} strokeWidth={1.5} aria-hidden /><div><p className="pub-service-label">{f.nome}</p>{f.righe.map((r) => f.href ? <a key={r} href={f.href}>{r}</a> : <p key={r}>{r}</p>)}</div></div>)}</div></div>}
 
-      {/* ===== BIRRE ===== */}
-      <section id="birre" className="scroll-mt-24 text-[#243a2d]" style={CARTA}>
-        <div className="mx-auto max-w-[1180px] px-[clamp(24px,5vw,52px)] py-[clamp(64px,9vw,120px)]">
-          <div className="mx-auto mb-[clamp(44px,6vw,64px)] max-w-[680px] text-center">
-            <p className="text-ambra-scura mb-4 text-[0.74rem] tracking-[0.4em] uppercase">
-              {t.home.laSelezione}
-            </p>
-            <h2 className="font-titoli text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.05] font-semibold text-[#1e6240]">
-              {t.home.nostreBirre}
-            </h2>
-            <p className="mt-[22px] text-[0.98rem] leading-[1.85] text-[#56544a] text-pretty">
-              {t.home.birreBlurb}
-            </p>
-          </div>
-          <MuroBirre />
-        </div>
-      </section>
+    {brand.legacy && <section className="pub-story pub-container">
+      <div><h2>{t.home.titoloStoria}</h2><p>{t.home.raccontoDefault}</p><a href={percorso(lang, '/galleria')} className="pub-text-link">{t.galleria.titolo}<span aria-hidden>→</span></a></div>
+      <figure><Image src="/taproom/foto-spine.jpg" alt={t.home.altPinta} width={960} height={660} sizes="(max-width: 600px) 90vw, 45vw" loading="lazy" /><figcaption>{lang === 'it' ? 'Una buona pinta. Il posto giusto.' : 'A good pint. The right place.'}</figcaption></figure>
+    </section>}
 
-      {/* ===== MENU (carta a schede, dal pannello) ===== */}
-      <section id="menu" className="text-panna bg-espresso-2 scroll-mt-24">
-        <div className="mx-auto max-w-[1040px] px-[clamp(24px,5vw,52px)] py-[clamp(64px,9vw,120px)]">
-          <div className="mx-auto mb-[clamp(36px,5vw,52px)] max-w-[700px] text-center">
-            <p className="text-ambra-ink mb-4 text-[0.74rem] tracking-[0.4em] uppercase">
-              {t.home.laCarta}
-            </p>
-            <h2 className="font-titoli text-[clamp(2.4rem,5.4vw,4rem)] leading-[1.04] font-semibold">
-              {t.home.ilMenu}
-            </h2>
-            <p className="text-panna-3 mt-[22px] text-[0.98rem] leading-[1.85] text-pretty">
-              {t.home.menuBlurb}
-            </p>
-          </div>
-          {categorie.length > 0 ? (
-            <CartaMenu
-              categorie={categorie}
-              locale={t.locale}
-              vediTutto={t.menu.vediTutto}
-              hrefMenu={percorso(lang, '/menu')}
-            />
-          ) : (
-            <div className="text-center">
-              <p className="text-panna-3">{t.menu.inAggiornamento}</p>
-              {contattoVivo && (
-                <a
-                  href={contattoVivo.href}
-                  className="btn-targhetta btn-targhetta-primario mt-6 inline-block"
-                >
-                  {contattoVivo.testo}
-                </a>
-              )}
-            </div>
-          )}
-        </div>
-      </section>
+    {brand.sezioni.birre && brand.birre.length > 0 && <section id="birre" className="pub-paper pub-section"><div className="pub-container"><div className="pub-section-heading"><h2>{copia('home.nostreBirre', t.home.nostreBirre)}</h2><p>{copia('home.birreBlurb', t.home.birreBlurb)}</p></div><MuroBirre birre={brand.birre} /></div></section>}
 
-      {/* ===== GALLERY ===== */}
-      <section style={CARTA}>
-        <div className="mx-auto max-w-[1320px] px-[clamp(24px,5vw,40px)] py-[clamp(56px,8vw,96px)]">
-          <div className="mb-[clamp(28px,4vw,40px)] flex items-end justify-between gap-4">
-            <h2 className="font-titoli text-[clamp(1.8rem,3.6vw,2.6rem)] leading-[1.05] font-semibold text-[#1e6240]">
-              {t.home.laSala}
-            </h2>
-            {haFotoGestore && (
-              <a
-                href={percorso(lang, '/galleria')}
-                className="text-ambra-scura shrink-0 text-[0.82rem] tracking-[0.12em] uppercase underline-offset-4 hover:underline"
-              >
-                {t.home.tuttaGalleria}
-              </a>
-            )}
-          </div>
-          <div className="grid grid-cols-1 gap-[14px] sm:h-[clamp(260px,34vw,400px)] sm:grid-cols-3">
-            {fotoGalleria.map((foto) => (
-              <img
-                key={foto.src}
-                src={foto.src}
-                alt={foto.alt}
-                loading="lazy"
-                className="aspect-[16/10] w-full object-cover sm:aspect-auto sm:h-full"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  )
+    {brand.sezioni.menu && <section id="menu" className="pub-section pub-menu-section"><div className="pub-container"><div className="pub-section-heading"><p className="pub-kicker">{t.home.laCarta}</p><h2>{copia('home.ilMenu', t.home.ilMenu)}</h2><p>{copia('home.menuBlurb', t.home.menuBlurb)}</p></div>{categorie.length > 0 ? <CartaMenu categorie={categorie} locale={t.locale} vediTutto={t.menu.vediTutto} hrefMenu={percorso(lang, '/menu')} /> : <div className="pub-empty"><p>{t.menu.inAggiornamento}</p>{contatto && <a href={contatto.href} className="pub-button">{contatto.testo}</a>}</div>}</div></section>}
+
+    {brand.sezioni.galleria && foto.length > 0 && <section className="pub-paper pub-section"><div className="pub-container"><div className="pub-gallery-heading"><div><h2>{copia('home.laSala', t.home.laSala)}</h2><p>{lang === 'it' ? 'Legno scuro, luci calde e un tavolo per te.' : 'Dark wood, warm lights and a table for you.'}</p></div><a href={percorso(lang, '/galleria')} className="pub-text-link">{t.home.tuttaGalleria}<span aria-hidden>→</span></a></div><div className="pub-gallery-preview">{foto.map((f) => <Image key={f.src} src={f.src} alt={f.didascalia || t.home.altFoto(nome)} width={960} height={720} sizes="(max-width: 600px) 90vw, (max-width: 859px) 45vw, 33vw" loading="lazy" />)}</div></div></section>}
+
+    {eventi.length > 0 && <section className="pub-section pub-container"><div className="pub-section-heading"><h2>{lang === 'it' ? 'Al pub' : 'At the pub'}</h2></div><ul className="pub-events">{eventi.map((e) => <li key={e.id}>{e.immagine && <Image src={`/uploads/${e.immagine}`} alt="" width={640} height={480} sizes="(max-width: 600px) 90vw, 240px" loading="lazy" />}<div><p className="pub-event-date">{e.dataOra.replace('T', ' · ')}</p><h3>{e.titolo}</h3><p>{e.descrizione}</p></div></li>)}</ul></section>}
+    {servizi.length > 0 && <section className="pub-section pub-container"><div className="pub-section-heading"><h2>{lang === 'it' ? 'Da noi' : 'At our pub'}</h2></div><ul className="pub-services">{servizi.map((s) => <li key={s.id}>{s.logo && <Image src={`/uploads/${s.logo}`} alt="" width={140} height={70} loading="lazy" />}<p>{s.nome}</p></li>)}</ul></section>}
+  </>
 }

@@ -8,7 +8,7 @@ export function FormEvento({
   azione: (formData: FormData) => Promise<void>
 }) {
   return (
-    <form action={azione} encType="multipart/form-data">
+    <form action={azione}>
       {evento && <input type="hidden" name="id" value={evento.id} />}
       <p>
         <label>

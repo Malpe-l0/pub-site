@@ -1,7 +1,18 @@
-import { Cinzel, EB_Garamond } from 'next/font/google'
+import { Cinzel, EB_Garamond, Geist, Geist_Mono } from 'next/font/google'
 
-// Sistema "Black Friar": Cinzel (display, capitali romane) + EB Garamond (testo).
-// Condivisi dai due layout radice (pubblico [lang] e admin).
+// Sistema pubblico "shadcn": Geist (sans) per testo e titoli, Geist Mono per
+// prezzi e numeri. Anche il pannello usa Geist per rendere leggibili i controlli.
+export const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+})
+
+export const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+})
+
+// Font del pannello admin (invariati): Cinzel (display) + EB Garamond (testo).
 export const cinzel = Cinzel({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],

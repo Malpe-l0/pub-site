@@ -13,6 +13,7 @@ export type Impostazioni = {
   instagram: string
   orari: FasciaOraria[]
   stileSito: StileSito
+  branding: import('./branding').Branding
 }
 
 export type Popup = {
@@ -66,14 +67,7 @@ export type FotoGalleria = {
 }
 
 /** Stato dell'integrazione Instagram, per il pannello (token escluso). */
-export type StatoInstagram = {
-  configurato: boolean
-  userId: string
-  tokenScadeIl: string | null
-  ultimaSync: string | null
-  ultimoEsito: string
-  numeroFoto: number
-}
+export type StatoInstagram = ReturnType<typeof import('./instagram').getStatoInstagram>
 
 /** Foto normalizzata per la galleria pubblica (Instagram o caricata a mano). */
 export type FotoVetrina = {

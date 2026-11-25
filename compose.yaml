@@ -1,0 +1,39 @@
+name: ${SITE_ID:?Impostare SITE_ID diverso per ciascun locale}
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      NODE_ENV: production
+      DATA_DIR: /data
+      TRUST_PROXY: '1'
+    volumes:
+      - site_data:/data
+    expose: ['3000']
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      DATA_DIR: /data
+      BACKUP_DIR: /backups
+    command: ['npm', 'run', 'maintenance', '--', '--watch']
+    volumes:
+      - site_data:/data
+      - ${BACKUP_PATH:?Impostare una destinazione backup dedicata}:/backups
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ['80:80', '443:443']
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Impostare il dominio del locale}
+    volumes:
+      - ./deployment/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [app]
+volumes:
+  site_data:
+  caddy_data:
+  caddy_config:

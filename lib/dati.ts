@@ -1,3 +1,4 @@
+import { leggiBranding } from './branding'
 import { db } from './db'
 import { adessoInItalia } from './dataora'
 import type {
@@ -25,11 +26,13 @@ type RigaImpostazioni = {
   instagram: string
   orari: string
   stile_sito: string
+  branding_json: string
 }
 
 export function getImpostazioni(): Impostazioni {
   const riga = db.prepare('SELECT * FROM impostazioni WHERE id = 1').get() as RigaImpostazioni
   return {
+    branding: leggiBranding(riga.branding_json),
     nomePub: riga.nome_pub,
     descrizione: riga.descrizione,
     indirizzo: riga.indirizzo,
@@ -194,23 +197,26 @@ export function getGalleria(): FotoGalleria[] {
 
 function fotoInstagramVetrina(): FotoVetrina[] {
   const righe = db
-    .prepare('SELECT file, permalink FROM foto_instagram ORDER BY ordine, id')
-    .all() as { file: string; permalink: string }[]
-  return righe.map((r) => ({ src: `/uploads/${r.file}`, didascalia: '', href: r.permalink || null }))
+    .prepare('SELECT file, permalink, didascalia FROM foto_instagram WHERE nascosta=0 ORDER BY ordine, id')
+    .all() as { file: string; permalink: string; didascalia: string }[]
+  return righe.map((r) => ({ src: `/uploads/${r.file}`, didascalia: r.didascalia, href: r.permalink || null }))
 }
 
 /**
- * Galleria pubblica: i post Instagram se ce ne sono, altrimenti le foto
- * caricate a mano dal pannello. Così la galleria non resta mai vuota per colpa
- * di Instagram (token scaduto, API giù…).
+ * Selezione pubblica secondo la fonte scelta nel pannello. La modalità
+ * automatica usa le foto manuali quando non ci sono foto Instagram visibili;
+ * gli errori dell'API conservano invece la cache già importata.
  */
-export function getGalleriaPubblica(): { fonte: 'instagram' | 'manuale'; foto: FotoVetrina[] } {
+export function getGalleriaPubblica(): { fonte: 'instagram' | 'manuale' | 'mista'; foto: FotoVetrina[] } {
+  const config = db.prepare('SELECT fonte FROM galleria_config WHERE id=1').get() as {fonte:string}
   const instagram = fotoInstagramVetrina()
-  if (instagram.length > 0) return { fonte: 'instagram', foto: instagram }
   const manuali: FotoVetrina[] = getGalleria().map((f) => ({
     src: `/uploads/${f.file}`,
     didascalia: f.didascalia,
     href: null,
   }))
+  if (config.fonte === 'mista') return {fonte:'mista',foto:[...manuali,...instagram]}
+  if (config.fonte === 'instagram') return {fonte:'instagram',foto:instagram}
+  if (config.fonte === 'automatica' && instagram.length) return {fonte:'instagram',foto:instagram}
   return { fonte: 'manuale', foto: manuali }
 }

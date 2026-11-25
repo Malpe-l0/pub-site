@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { Button } from '@/components/ui/button'
 
 const CHIAVE_STORAGE = 'popup-avviso-chiuso'
 
@@ -32,12 +33,12 @@ export function Popup({
 
   return (
     <dialog ref={dialogo} onClose={ricordaChiusura} aria-labelledby="popup-titolo">
-      <h2 id="popup-titolo" className="font-titoli text-ambra-ink text-[1.7rem] leading-tight font-bold">
+      <h2 id="popup-titolo" className="text-lg font-semibold tracking-tight">
         {titolo}
       </h2>
-      {messaggio && <p className="text-panna-2 mt-3">{messaggio}</p>}
-      <form method="dialog" className="mt-5 text-right">
-        <button className="btn-targhetta btn-targhetta-primario text-[0.95rem]">{testoChiudi}</button>
+      {messaggio && <p className="text-muted-foreground mt-2 text-sm leading-6">{messaggio}</p>}
+      <form method="dialog" className="mt-6 flex justify-end">
+        <Button type="submit">{testoChiudi}</Button>
       </form>
     </dialog>
   )

@@ -1,14 +1,14 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { richiediAdmin } from '@/lib/auth'
+import { richiediAdmin, registraAudit } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getServizio } from '@/lib/dati'
 import { salvaFoto, eliminaFoto, fileCaricato } from '@/lib/upload'
 import { testo, numero } from '@/lib/form'
 
 export async function creaServizio(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const nome = testo(formData, 'nome')
   if (!nome) redirect('/admin/servizi')
 
@@ -19,11 +19,12 @@ export async function creaServizio(formData: FormData) {
     logo,
     numero(formData, 'ordine')
   )
+  registraAudit('servizi.creaServizio', amministratore.id)
   redirect('/admin/servizi')
 }
 
 export async function aggiornaServizio(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const id = numero(formData, 'id')
   const esistente = getServizio(id)
   const nome = testo(formData, 'nome')
@@ -32,8 +33,8 @@ export async function aggiornaServizio(formData: FormData) {
   let logo = esistente.logo
   const file = formData.get('logo')
   if (fileCaricato(file)) {
-    await eliminaFoto(esistente.logo)
     logo = await salvaFoto(file, 400)
+    await eliminaFoto(esistente.logo)
   }
 
   db.prepare('UPDATE servizi SET nome = ?, logo = ?, ordine = ? WHERE id = ?').run(
@@ -42,25 +43,28 @@ export async function aggiornaServizio(formData: FormData) {
     numero(formData, 'ordine'),
     id
   )
+  registraAudit('servizi.aggiornaServizio', amministratore.id)
   redirect('/admin/servizi')
 }
 
 export async function impostaAttivo(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   db.prepare('UPDATE servizi SET attivo = ? WHERE id = ?').run(
     formData.get('attivo') === '1' ? 1 : 0,
     numero(formData, 'id')
   )
+  registraAudit('servizi.impostaAttivo', amministratore.id)
   redirect('/admin/servizi')
 }
 
 export async function eliminaServizio(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const id = numero(formData, 'id')
   const servizio = getServizio(id)
   if (servizio) {
     await eliminaFoto(servizio.logo)
     db.prepare('DELETE FROM servizi WHERE id = ?').run(id)
   }
+  registraAudit('servizi.eliminaServizio', amministratore.id)
   redirect('/admin/servizi')
 }

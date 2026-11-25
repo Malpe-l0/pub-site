@@ -8,8 +8,8 @@ export default async function PaginaServiziAdmin() {
 
   return (
     <>
-      <h1>Servizi (loghi del carosello)</h1>
-      <p>I loghi attivi scorrono nel carosello in home (Sky, Serie A, DAZN, ...).</p>
+      <h1>Servizi</h1>
+      <p>Gestisci i servizi e i loro loghi, ad esempio Sky o DAZN. La sezione compare se è abilitata in Aspetto e testi.</p>
 
       <section aria-label="Nuovo servizio">
         <h2>Nuovo servizio</h2>

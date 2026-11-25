@@ -1,16 +1,16 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { richiediAdmin } from '@/lib/auth'
+import { richiediAdmin, registraAudit } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getVoceMenu } from '@/lib/dati'
 import { eliminaFoto, fileDaForm } from '@/lib/upload'
-import { testo, numero } from '@/lib/form'
+import { testo, numero, prezzo } from '@/lib/form'
 
 // --- Categorie ---
 
 export async function creaCategoria(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const nome = testo(formData, 'nome')
   if (nome) {
     db.prepare('INSERT INTO categorie (nome, ordine) VALUES (?, ?)').run(
@@ -18,11 +18,12 @@ export async function creaCategoria(formData: FormData) {
       numero(formData, 'ordine')
     )
   }
+  registraAudit('menu.creaCategoria', amministratore.id)
   redirect('/admin/menu')
 }
 
 export async function aggiornaCategoria(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const nome = testo(formData, 'nome')
   if (nome) {
     db.prepare('UPDATE categorie SET nome = ?, ordine = ? WHERE id = ?').run(
@@ -31,11 +32,12 @@ export async function aggiornaCategoria(formData: FormData) {
       numero(formData, 'id')
     )
   }
+  registraAudit('menu.aggiornaCategoria', amministratore.id)
   redirect('/admin/menu')
 }
 
 export async function eliminaCategoria(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const id = numero(formData, 'id')
   // Elimina anche i file delle foto delle voci (la riga sparisce col CASCADE).
   const foto = db
@@ -43,17 +45,18 @@ export async function eliminaCategoria(formData: FormData) {
     .all(id) as { foto: string }[]
   for (const f of foto) await eliminaFoto(f.foto)
   db.prepare('DELETE FROM categorie WHERE id = ?').run(id)
+  registraAudit('menu.eliminaCategoria', amministratore.id)
   redirect('/admin/menu')
 }
 
 // --- Voci ---
 
 export async function creaVoce(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const nome = testo(formData, 'nome')
   if (!nome) redirect('/admin/menu')
 
-  const prezzoCentesimi = Math.round(Number(formData.get('prezzo')) * 100)
+  const prezzoCentesimi = prezzo(formData)
   const foto = await fileDaForm(formData, 'foto', 800, null)
 
   db.prepare(
@@ -62,23 +65,24 @@ export async function creaVoce(formData: FormData) {
   ).run(
     nome,
     testo(formData, 'descrizione'),
-    Number.isFinite(prezzoCentesimi) ? prezzoCentesimi : 0,
+    prezzoCentesimi,
     numero(formData, 'categoriaId'),
     formData.get('disponibile') === 'on' ? 1 : 0,
     numero(formData, 'ordine'),
     foto
   )
+  registraAudit('menu.creaVoce', amministratore.id)
   redirect('/admin/menu')
 }
 
 export async function aggiornaVoce(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const id = numero(formData, 'id')
   const esistente = getVoceMenu(id)
   const nome = testo(formData, 'nome')
   if (!esistente || !nome) redirect('/admin/menu')
 
-  const prezzoCentesimi = Math.round(Number(formData.get('prezzo')) * 100)
+  const prezzoCentesimi = prezzo(formData)
   const foto = await fileDaForm(formData, 'foto', 800, esistente.foto)
 
   db.prepare(
@@ -89,32 +93,35 @@ export async function aggiornaVoce(formData: FormData) {
   ).run(
     nome,
     testo(formData, 'descrizione'),
-    Number.isFinite(prezzoCentesimi) ? prezzoCentesimi : 0,
+    prezzoCentesimi,
     numero(formData, 'categoriaId'),
     formData.get('disponibile') === 'on' ? 1 : 0,
     numero(formData, 'ordine'),
     foto,
     id
   )
+  registraAudit('menu.aggiornaVoce', amministratore.id)
   redirect('/admin/menu')
 }
 
 export async function impostaDisponibile(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   db.prepare('UPDATE voci_menu SET disponibile = ? WHERE id = ?').run(
     formData.get('disponibile') === '1' ? 1 : 0,
     numero(formData, 'id')
   )
+  registraAudit('menu.impostaDisponibile', amministratore.id)
   redirect('/admin/menu')
 }
 
 export async function eliminaVoce(formData: FormData) {
-  await richiediAdmin()
+  const amministratore = await richiediAdmin()
   const id = numero(formData, 'id')
   const voce = getVoceMenu(id)
   if (voce) {
     await eliminaFoto(voce.foto)
     db.prepare('DELETE FROM voci_menu WHERE id = ?').run(id)
   }
+  registraAudit('menu.eliminaVoce', amministratore.id)
   redirect('/admin/menu')
 }

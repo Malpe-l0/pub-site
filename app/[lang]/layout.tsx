@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
+import { testoBrand } from '@/lib/branding'
 import { getImpostazioni } from '@/lib/dati'
 import { dizionario, haLingua, type Lang } from '@/lib/dizionario'
-import { cinzel, ebGaramond } from '../fonts'
+import { cinzel, ebGaramond, geistMono, geistSans } from '../fonts'
 import '../globals.css'
 
 // Un solo tema: dice ai browser di non generare una versione scura (Auto Dark ecc.).
@@ -19,7 +20,7 @@ export async function generateMetadata({
   const nome = impostazioni.nomePub || 'Il nostro pub'
   // La descrizione dal pannello è in italiano; in inglese si usa il testo fisso.
   const descrizione =
-    lang === 'it' ? impostazioni.descrizione || undefined : dizionario(lang).home.raccontoDefault
+    testoBrand(impostazioni.branding, lang, 'home.raccontoDefault', lang === 'it' ? impostazioni.descrizione : dizionario(lang).home.raccontoDefault)
   return {
     title: { default: nome, template: `%s — ${nome}` },
     description: descrizione,
@@ -36,7 +37,10 @@ export default async function RootLayout({
   const { lang } = await params
   if (!haLingua(lang)) notFound()
   return (
-    <html lang={lang satisfies Lang} className={`${cinzel.variable} ${ebGaramond.variable}`}>
+    <html
+      lang={lang satisfies Lang}
+      className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${ebGaramond.variable}`}
+    >
       <body>{children}</body>
     </html>
   )

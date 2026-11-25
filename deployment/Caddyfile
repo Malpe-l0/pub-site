@@ -1,0 +1,9 @@
+{$SITE_DOMAIN} {
+  request_body {
+    max_size 45MB
+  }
+  reverse_proxy app:3000 {
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Host {host}
+  }
+}

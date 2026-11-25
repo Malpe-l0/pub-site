@@ -16,7 +16,7 @@ export function FormVoce({
   azione: (formData: FormData) => Promise<void>
 }) {
   return (
-    <form action={azione} encType="multipart/form-data">
+    <form action={azione}>
       {voce && <input type="hidden" name="id" value={voce.id} />}
       <p>
         <label>
